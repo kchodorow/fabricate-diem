@@ -7,9 +7,9 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-camera.position.z = -200;
-camera.position.y = 250;
-camera.lookAt(new THREE.Vector3(0, 250, 0));
+camera.position.z = -20;
+camera.position.y = 10;
+camera.lookAt(new THREE.Vector3(0, 10, 0));
 
 var ambient = new THREE.AmbientLight(0x101030);
 scene.add(ambient);
@@ -33,7 +33,7 @@ var clothGeometry;
 
 var addFabric = function() {
   var loader = new THREE.TextureLoader();
-  var clothTexture = loader.load( 'textures/patterns/circuit_pattern.png' );
+  var clothTexture = loader.load('textures/patterns/circuit_pattern.png');
   clothTexture.wrapS = clothTexture.wrapT = THREE.RepeatWrapping;
   clothTexture.anisotropy = 16;
 
@@ -42,22 +42,21 @@ var addFabric = function() {
     map: clothTexture,
     side: THREE.DoubleSide,
     alphaTest: 0.5
-  } );
+  });
 
   // cloth geometry
   clothGeometry = new THREE.ParametricGeometry(clothFunction, cloth.w, cloth.h );
   clothGeometry.dynamic = true;
 
-  var uniforms = { texture:  { type: "t", value: clothTexture } };
-  var vertexShader = document.getElementById( 'vertexShaderDepth' ).textContent;
-  var fragmentShader = document.getElementById( 'fragmentShaderDepth' ).textContent;
+  var uniforms = {texture:  {type: "t", value: clothTexture}};
+  var vertexShader = document.getElementById('vertexShaderDepth').textContent;
+  var fragmentShader = document.getElementById('fragmentShaderDepth').textContent;
 
   // cloth mesh
-
-  var object = new THREE.Mesh( clothGeometry, clothMaterial );
-  object.position.set( 0, 0, 0 );
+  var object = new THREE.Mesh(clothGeometry, clothMaterial);
+  object.position.set(0, 0, 0);
   object.castShadow = true;
-  scene.add( object );
+  scene.add(object);
 
   object.customDepthMaterial = new THREE.ShaderMaterial( {
     uniforms: uniforms,
