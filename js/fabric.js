@@ -19,5 +19,5 @@ diem.Fabric.prototype.getGravity = function() {
 };
 
 diem.Fabric.prototype.getRestDistance = function() {
-  return this.restDistance;
+  return this.restDistance_;
 };

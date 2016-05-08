@@ -28,55 +28,51 @@ diem.Cloth = function(camera) {
 
   this.fabric_ = new diem.Fabric();
 
-  var particles = [];
-  var constrains = [];
+  this.particles = [];
+  this.constrains = [];
 
-  var u, v;
-
-  // Create particles
-  for (v = 0; v <= this.h; v++) {
-    for (u = 0; u <= this.w; u++) {
-      particles.push(
+  // There are (w + 1) * (h + 1) particles, as the fabric is bounded on every
+  // side by them.
+  for (var v = 0; v <= this.h; ++v) {
+    for (var u = 0; u <= this.w; ++u) {
+      this.particles.push(
 	new diem.Particle(u / this.w, v / this.h, 0, this.fabric_)
      );
     }
   }
 
   // Structural
-  for (v = 0; v < this.h; v ++) {
-    for (u = 0; u < this.w; u ++) {
-      constrains.push([
-	particles[this.index_(u, v) ],
-	particles[this.index_(u, v + 1) ],
+  for (v = 0; v < this.h; ++v) {
+    for (u = 0; u < this.w; ++u) {
+      this.constrains.push([
+	this.particles[this.index_(u, v)],
+	this.particles[this.index_(u, v + 1)],
 	this.fabric_.getRestDistance()
       ]);
 
-      constrains.push([
-	particles[this.index_(u, v) ],
-	particles[this.index_(u + 1, v) ],
+      this.constrains.push([
+	this.particles[this.index_(u, v)],
+	this.particles[this.index_(u + 1, v)],
 	this.fabric_.getRestDistance()
       ]);
     }
   }
 
-  for (u = this.w, v = 0; v < this.h; v ++) {
-    constrains.push([
-      particles[this.index_(u, v) ],
-      particles[this.index_(u, v + 1) ],
+  for (v = 0; v < this.h; ++v) {
+    this.constrains.push([
+      this.particles[this.index_(this.w, v)],
+      this.particles[this.index_(this.w, v + 1)],
       this.fabric_.getRestDistance()
     ]);
   }
 
-  for (v = this.h, u = 0; u < this.w; u ++) {
-    constrains.push([
-      particles[this.index_(u, v) ],
-      particles[this.index_(u + 1, v) ],
+  for (u = 0; u < this.w; ++u) {
+    this.constrains.push([
+      this.particles[this.index_(u, this.h)],
+      this.particles[this.index_(u + 1, this.h)],
       this.fabric_.getRestDistance()
     ]);
   }
-
-  this.particles = particles;
-  this.constrains = constrains;
 };
 
 diem.Cloth.prototype.index_ = function(u, v) {
@@ -90,15 +86,32 @@ var tmpForce = new THREE.Vector3();
 var diff = new THREE.Vector3();
 var FLOOR = 0;
 
-function satisifyConstrains(p1, p2, distance) {
+/**
+ * Finds the vector from p2 -> p1.
+ * Scales that vector by the ratio of the resting distance to the vector's length.
+ * Adds half of that to p1, subtracts half of that from p2.
+ *
+ * Example:
+ * p1: (20, 20)
+ * p2: (20, 32)
+ * rest: 10
+ * current: 12
+ * diff: (0, 12)
+ * correction = (0, 12) * (1 - 5/6 = 1/6) = (0, 2)
+ * p1 -> (20, 21)
+ * p2 -> (20, 31)
+ */
+diem.Cloth.satisifyConstrains_ = function(p1, p2, restDistance) {
   diff.subVectors(p2.position, p1.position);
   var currentDist = diff.length();
-  if (currentDist === 0) return; // prevents division by 0
-  var correction = diff.multiplyScalar(1 - distance / currentDist);
+  if (currentDist === 0) {
+    return; // prevents division by 0
+  }
+  var correction = diff.multiplyScalar(1 - (restDistance / currentDist));
   var correctionHalf = correction.multiplyScalar(0.5);
   p1.position.add(correctionHalf);
   p2.position.sub(correctionHalf);
-}
+};
 
 diem.Cloth.prototype.setPerson = function(person) {
   this.person_ = person;
@@ -120,7 +133,7 @@ diem.Cloth.prototype.simulate = function(time) {
   // Start Constrains
   for (i = 0; i < this.constrains.length; i++) {
     var constrain = this.constrains[i];
-    satisifyConstrains(constrain[0], constrain[1], constrain[2]);
+    diem.Cloth.satisifyConstrains_(constrain[0], constrain[1], constrain[2]);
   }
 
   // Floor Constains
@@ -133,7 +146,7 @@ diem.Cloth.prototype.simulate = function(time) {
   }
 
   // Human
-  if (this.person_ != null) {
+/*  if (this.person_ != null) {
     for (i = 0; i < this.particles.length; i++) {
       particle = this.particles[i];
       pos = particle.position;
@@ -147,7 +160,7 @@ diem.Cloth.prototype.simulate = function(time) {
       }
     }
   }
-
+*/
   // Pin Constrains
   for (i = 0; i < this.pins_.length; i++) {
     var xy = this.pins_[i];
