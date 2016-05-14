@@ -180,6 +180,10 @@ diem.Cloth.prototype.simulate = function(time) {
     }
   }
 
+  var handle = this.particles[this.index_(this.w, this.h)];
+  handle.position.copy(mouse);
+  handle.previous.copy(mouse);
+
   // Human
   if (this.person_ != null) {
     for (i = 0; i < this.particles.length; i++) {
@@ -195,10 +199,6 @@ diem.Cloth.prototype.simulate = function(time) {
       }
     }
   }
-
-  var handle = this.particles[this.index_(this.w, this.h)];
-  handle.position.copy(mouse);
-  handle.previous.copy(mouse);
 
   // Pin Constrains
 /*  for (i = 0; i < this.pins_.length; i++) {
