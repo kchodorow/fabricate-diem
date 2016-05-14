@@ -3,6 +3,7 @@
 goog.require('diem.Cloth');
 goog.require('diem.Globals');
 goog.require('diem.Person');
+goog.require('diem.Ruler');
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -40,6 +41,8 @@ function render() {
 }
 
 function init() {
+  window.addEventListener('mousemove', onMouseMove, false);
+
   var cloth = new diem.Cloth(camera);
   var mesh = cloth.load();
   scene.add(mesh);
@@ -48,7 +51,8 @@ function init() {
   var person = new diem.Person();
   person.load(scene, cloth);
 
+  var ruler = new diem.Ruler();
+  scene.add(ruler.load());
+
   render();
 }
-
-window.addEventListener('mousemove', onMouseMove, false);

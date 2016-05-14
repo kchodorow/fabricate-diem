@@ -5,3 +5,4 @@ goog.addDependency('../../../../js/fabric.js', ['diem.Fabric'], [], false);
 goog.addDependency('../../../../js/globals.js', ['diem.Globals'], [], false);
 goog.addDependency('../../../../js/particle.js', ['diem.Particle'], ['diem.Fabric'], false);
 goog.addDependency('../../../../js/person.js', ['diem.Person'], [], false);
+goog.addDependency('../../../../js/ruler.js', ['diem.Ruler'], [], false);
