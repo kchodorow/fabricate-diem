@@ -29,6 +29,12 @@ scene.add(directionalLight);
 var mouse = new THREE.Vector3();
 mouse.z = 0;
 
+var cloth;
+
+var onMouseDown = function(event) {
+  cloth.handleClick();
+};
+
 var onMouseMove = function(event) {
   var vector = new THREE.Vector3();
   vector.set(
@@ -53,9 +59,10 @@ function render() {
 }
 
 function init() {
-  window.addEventListener('mousemove', onMouseMove, false);
+  document.addEventListener('mousedown', onMouseDown, false);
+  document.addEventListener('mousemove', onMouseMove, false);
 
-  var cloth = new diem.Cloth(camera);
+  cloth = new diem.Cloth(camera);
   var mesh = cloth.load();
   scene.add(mesh);
   diem.Globals.renderList.push(cloth);
