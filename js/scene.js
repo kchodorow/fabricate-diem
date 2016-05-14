@@ -5,12 +5,16 @@ goog.require('diem.Globals');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
 
+// TODO: more dynamic.
+var WIDTH = 500;
+var HEIGHT = 600;
+
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+var camera = new THREE.PerspectiveCamera(75, WIDTH / HEIGHT, 0.1, 50);
 
 var renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.setSize(WIDTH, HEIGHT);
+document.getElementById('model-box').appendChild(renderer.domElement);
 
 camera.position.z = -20;
 camera.position.y = 10;
@@ -28,9 +32,9 @@ mouse.z = 0;
 var onMouseMove = function(event) {
   var vector = new THREE.Vector3();
   vector.set(
-    ( event.clientX / window.innerWidth ) * 2 - 1,
-      - ( event.clientY / window.innerHeight ) * 2 + 1,
-    0.5 );
+    (event.clientX / WIDTH) * 2 - 1,
+    - (event.clientY / HEIGHT) * 2 + 1,
+    0.5);
 
   vector.unproject( camera );
   var dir = vector.sub( camera.position ).normalize();
