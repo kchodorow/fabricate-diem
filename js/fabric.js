@@ -3,7 +3,7 @@ goog.provide('diem.Fabric');
 // The physical properties of a piece of fabric.
 diem.Fabric = function() {
   this.restDistance_ = 1;
-  this.mass_ = 0.1;
+  this.mass_ = 11;
   this.gravity_ = new THREE.Vector3(
     0, - diem.Fabric.GRAVITY, 0).multiplyScalar(this.mass_);
 };

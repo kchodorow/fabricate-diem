@@ -1,4 +1,4 @@
-/* Globals:  THREE */
+/* global THREE */
 
 /*
  * Cloth Simulation using a relaxed constrains solver
@@ -24,7 +24,7 @@ diem.Cloth = function(camera) {
   this.lastTime_ = 0;
   this.w = 10;
   this.h = 10;
-  this.pins_ = [0, Math.floor(this.w/2), this.w];
+  this.pins_ = [this.index_(this.w, this.h), this.index_(0, this.h)];
 
   this.fabric_ = new diem.Fabric();
 
@@ -146,7 +146,7 @@ diem.Cloth.prototype.simulate = function(time) {
   }
 
   // Human
-/*  if (this.person_ != null) {
+  if (this.person_ != null) {
     for (i = 0; i < this.particles.length; i++) {
       particle = this.particles[i];
       pos = particle.position;
@@ -155,17 +155,21 @@ diem.Cloth.prototype.simulate = function(time) {
       // children[0] is the whole body.
       var intersections = this.raycaster_.intersectObject(this.person_.children[0]);
       if (intersections.length % 2 == 1) {
-        // We're inside a body.
-        pos.copy(intersections[0].point);
+        var closest = intersections[0];
+        pos.add(diff.subVectors(closest.point, pos));
       }
     }
   }
-*/
+
+  var handle = this.particles[this.index_(this.w, this.h)];
+  handle.position.copy(mouse);
+  handle.previous.copy(mouse);
+
   // Pin Constrains
-  for (i = 0; i < this.pins_.length; i++) {
+/*  for (i = 0; i < this.pins_.length; i++) {
     var xy = this.pins_[i];
     var p = this.particles[xy];
     p.position.copy(p.original);
     p.previous.copy(p.original);
-  }
+  }*/
 };

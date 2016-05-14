@@ -31,7 +31,7 @@ diem.Particle = function(x, y, z, fabric) {
   this.tmp2 = new THREE.Vector3();
 };
 
-diem.Particle.DAMPING = 0.03;
+diem.Particle.DAMPING = 0.1;
 diem.Particle.DRAG = 1 - diem.Particle.DAMPING;
 
 // Force -> Acceleration
@@ -42,9 +42,19 @@ diem.Particle.prototype.addForce = function(force) {
 };
 
 // Performs verlet integration
+/**
+ * Gets the vector pointing from the previous pos to the current one.
+ * Multiplies that by the drag and adds it to the current position.
+ * Then adds the
+ * Example:
+ * prev: (0, 12)
+ * pos: (0, 10)
+ * newPos = (0, 2)
+ *
+ */
 diem.Particle.prototype.integrate = function(timesq) {
-  var newPos = this.tmp.subVectors(this.position, this.previous);
-  newPos.multiplyScalar(diem.Particle.DRAG).add(this.position);
+  var velocity = this.tmp.subVectors(this.position, this.previous);
+  var newPos = velocity.multiplyScalar(diem.Particle.DRAG).add(this.position);
   newPos.add(this.a.multiplyScalar(timesq));
 
   this.tmp = this.previous;

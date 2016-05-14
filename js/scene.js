@@ -1,6 +1,8 @@
-/* Globals:  THREE */
+/* global THREE, requestAnimationFrame */
 
 goog.require('diem.Cloth');
+goog.require('diem.Globals');
+goog.require('diem.Person');
 
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -19,19 +21,6 @@ scene.add(ambient);
 var directionalLight = new THREE.DirectionalLight(0xffeedd);
 directionalLight.position.set(0,0,-30);
 scene.add(directionalLight);
-
-// Add body.
-var addBody = function() {
-  var loader = new THREE.ObjectLoader();
-  loader.load(
-    'assets/standard-female-figure.json',
-    function(object) {
-      scene.add(object);
-      cloth.setPerson(object);
-    }
-  );
-};
-
 
 var clothGeometry;
 
@@ -70,13 +59,21 @@ var addFabric = function() {
   });
 };
 
+var mouse = new THREE.Vector3();
+mouse.z = 0;
+
+var onMouseMove = function(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+  diem.Globals.raycaster.setFromCamera(mouse, camera);
+};
+
 function render() {
   cloth.simulate(Date.now());
   requestAnimationFrame(render);
-  var p = cloth.particles;
 
-  for ( var i = 0, il = p.length; i < il; i ++ ) {
-    clothGeometry.vertices[ i ].copy( p[ i ].position );
+  for ( var i = 0; i < cloth.particles.length; ++i) {
+    clothGeometry.vertices[i].copy(cloth.particles[i].position);
   }
 
   clothGeometry.computeFaceNormals();
@@ -87,6 +84,12 @@ function render() {
   renderer.render(scene, camera);
 }
 
-addBody();
+function init() {
+  var person = new diem.Person();
+  person.load(scene, cloth);
+}
+
 addFabric();
 render();
+
+window.addEventListener('mousemove', onMouseMove, false);
