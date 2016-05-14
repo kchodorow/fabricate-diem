@@ -3,3 +3,4 @@
 goog.provide('diem.Globals');
 
 diem.Globals.raycaster = new THREE.Raycaster();
+diem.Globals.renderList = [];

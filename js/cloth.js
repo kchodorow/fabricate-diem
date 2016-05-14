@@ -75,6 +75,41 @@ diem.Cloth = function(camera) {
   }
 };
 
+diem.Cloth.prototype.load = function() {
+  var loader = new THREE.TextureLoader();
+  var clothTexture = loader.load('textures/patterns/circuit_pattern.png');
+  clothTexture.wrapS = clothTexture.wrapT = THREE.RepeatWrapping;
+  clothTexture.anisotropy = 16;
+
+  var clothMaterial = new THREE.MeshPhongMaterial( {
+    specular: 0x030303,
+    map: clothTexture,
+    side: THREE.DoubleSide,
+    alphaTest: 0.5
+  });
+
+  // cloth geometry
+  this.clothGeometry_ = new THREE.ParametricGeometry(clothFunction, this.w, this.h);
+  this.clothGeometry_.dynamic = true;
+
+  var uniforms = {texture:  {type: "t", value: clothTexture}};
+  var vertexShader = document.getElementById('vertexShaderDepth').textContent;
+  var fragmentShader = document.getElementById('fragmentShaderDepth').textContent;
+
+  // cloth mesh
+  var object = new THREE.Mesh(this.clothGeometry_, clothMaterial);
+  object.position.set(0, 0, 0);
+  object.castShadow = true;
+
+  object.customDepthMaterial = new THREE.ShaderMaterial( {
+    uniforms: uniforms,
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    side: THREE.DoubleSide
+  });
+  return object;
+};
+
 diem.Cloth.prototype.index_ = function(u, v) {
   return u + v * (this.w + 1);
 };
@@ -172,4 +207,15 @@ diem.Cloth.prototype.simulate = function(time) {
     p.position.copy(p.original);
     p.previous.copy(p.original);
   }*/
+
+  // Update geometry.
+  for ( var i = 0; i < this.particles.length; ++i) {
+    this.clothGeometry_.vertices[i].copy(this.particles[i].position);
+  }
+
+  this.clothGeometry_.computeFaceNormals();
+  this.clothGeometry_.computeVertexNormals();
+
+  this.clothGeometry_.normalsNeedUpdate = true;
+  this.clothGeometry_.verticesNeedUpdate = true;
 };
