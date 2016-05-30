@@ -20,9 +20,8 @@ goog.require('diem.Fabric');
 
 goog.require('goog.asserts');
 
-diem.Cloth = function(camera) {
+diem.Cloth = function() {
   this.raycaster_ = new THREE.Raycaster();
-  this.camera_ = camera;
   this.person_ = null;
   this.lastTime_ = 0;
   this.w = 10;
@@ -170,11 +169,7 @@ diem.Cloth.satisifyConstrains_ = function(p1, p2, restDistance) {
   p2.position.sub(correctionHalf);
 };
 
-diem.Cloth.prototype.setPerson = function(person) {
-  this.person_ = person;
-};
-
-diem.Cloth.prototype.simulate = function(time) {
+diem.Cloth.prototype.simulate = function(time, camera, person, mouse) {
   if (this.lastTime_ == 0) {
     this.lastTime_ = time;
     return;
@@ -208,14 +203,14 @@ diem.Cloth.prototype.simulate = function(time) {
   }
 
   // Human
-  if (this.person_ != null) {
+  if (person != null) {
     for (i = 0; i < this.particles.length; i++) {
       particle = this.particles[i];
       pos = particle.position;
       // Look at the camera from this particle of fabric.
-      this.raycaster_.set(pos, this.camera_.getWorldDirection().negate());
+      this.raycaster_.set(pos, camera.getWorldDirection().negate());
       // children[0] is the whole body.
-      var intersections = this.raycaster_.intersectObject(this.person_.children[0]);
+      var intersections = this.raycaster_.intersectObject(person);
       if (intersections.length % 2 == 1) {
         var closest = intersections[0];
         pos.add(diff.subVectors(closest.point, pos));
@@ -242,8 +237,8 @@ diem.Cloth.prototype.simulate = function(time) {
   this.clothGeometry_.verticesNeedUpdate = true;
 };
 
-diem.Cloth.prototype.handleClick = function() {
-  var intersections = this.raycaster_.intersectObject(this.person_.children[0]);
+diem.Cloth.prototype.handleClick = function(personObj) {
+  var intersections = this.raycaster_.intersectObject(personObj);
 
   if (intersections.length > 0) {
     if (this.currentlyHolding()) {

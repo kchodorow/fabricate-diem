@@ -6,10 +6,18 @@
     <style>
       body { margin: 0; }
       canvas { width: 100%; height: 100% }
+      img#add-piece {
+        background-color: red;
+        border-radius: 24px;
+        position: absolute;
+      }
     </style>
   </head>
   <body>
-    <div id="model-box"></div>
+    <img id="add-piece" src="assets/ic_add_white_24dp_2x.png" />
+
+    <div id="model-box">
+    </div>
 
     <script type="x-shader/x-fragment" id="fragmentShaderDepth">
 #include <packing>
