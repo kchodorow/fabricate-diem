@@ -8,7 +8,7 @@ diem.Fabric = function() {
     0, - diem.Fabric.GRAVITY, 0).multiplyScalar(this.mass_);
 };
 
-diem.Fabric.GRAVITY = 0;//981 * 1.4;
+diem.Fabric.GRAVITY = 5;//981 * 1.4;
 
 diem.Fabric.prototype.getMass = function() {
   return this.mass_;
@@ -20,4 +20,8 @@ diem.Fabric.prototype.getGravity = function() {
 
 diem.Fabric.prototype.getRestDistance = function() {
   return this.restDistance_;
+};
+
+diem.Fabric.prototype.getRestDiagonal = function() {
+  return this.restDistance_ * Math.SQRT2;
 };

@@ -43,16 +43,8 @@ diem.Cloth = function(camera) {
     }
   }
 
-
-  this.pins_ = [
-    new diem.Pin(
-      this.particles[this.index_(0, this.h)],
-      this.particles[this.index_(0, this.h)].position),
-    new diem.Pin(
-      this.particles[this.index_(this.w, this.h)],
-      this.particles[this.index_(this.w, this.h)].position)];
-  //  this.handle_ = this.particles[this.index_(this.w, this.h)];
-  this.handle_ = null;
+  this.pins_ = [];
+  this.handle_ = this.particles[this.index_(this.w, this.h)];
 
   // Structural
   for (v = 0; v < this.h; ++v) {
@@ -85,6 +77,23 @@ diem.Cloth = function(camera) {
       this.particles[this.index_(u + 1, this.h)],
       this.fabric_.getRestDistance()
     ]);
+  }
+
+  // Add diagonal struts for stability.
+  for (v=0;v<this.h;v++) {
+    for (u=0;u<this.w;u++) {
+      this.constrains.push([
+        this.particles[this.index_(u, v)],
+        this.particles[this.index_(u+1, v+1)],
+        this.fabric_.getRestDiagonal()
+      ]);
+
+      this.constrains.push([
+        this.particles[this.index_(u+1, v)],
+        this.particles[this.index_(u, v+1)],
+        this.fabric_.getRestDiagonal()
+      ]);
+    }
   }
 };
 
