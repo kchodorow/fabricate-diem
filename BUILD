@@ -3,7 +3,11 @@ load("@io_bazel_rules_appengine//appengine:appengine.bzl", "appengine_war")
 appengine_war(
    name = "diem",
    jars = [":mylib"],
-   data = [":xml"],
+   data = [
+       ":xml",
+       "//webapp/static:uncompiled",
+       "//webapp/static:js",
+   ],
    data_path = "/webapp",
 )
 
@@ -18,5 +22,5 @@ java_library(
 
 filegroup(
     name = "xml",
-    srcs = glob(["webapp/**"]),
+    srcs = glob(["webapp/WEB-INF/*.xml"]),
 )

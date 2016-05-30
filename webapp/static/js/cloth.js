@@ -18,6 +18,8 @@ goog.require('diem.Particle');
 goog.require('diem.Pin');
 goog.require('diem.Fabric');
 
+goog.require('goog.asserts');
+
 diem.Cloth = function(camera) {
   this.raycaster_ = new THREE.Raycaster();
   this.camera_ = camera;
@@ -40,8 +42,17 @@ diem.Cloth = function(camera) {
      );
     }
   }
-  this.pins_ = [];
-  this.handle_ = this.particles[this.index_(this.w, this.h)];
+
+
+  this.pins_ = [
+    new diem.Pin(
+      this.particles[this.index_(0, this.h)],
+      this.particles[this.index_(0, this.h)].position),
+    new diem.Pin(
+      this.particles[this.index_(this.w, this.h)],
+      this.particles[this.index_(this.w, this.h)].position)];
+  //  this.handle_ = this.particles[this.index_(this.w, this.h)];
+  this.handle_ = null;
 
   // Structural
   for (v = 0; v < this.h; ++v) {
@@ -226,9 +237,27 @@ diem.Cloth.prototype.handleClick = function() {
   var intersections = this.raycaster_.intersectObject(this.person_.children[0]);
 
   if (intersections.length > 0) {
-    var pin = new diem.Pin(this.handle_, intersections[0].point);
-    scene.add(pin.getSprite());
-    this.pins_.push(pin);
-    this.handle_ = null;
+    if (this.currentlyHolding()) {
+      this.pinInPlace(intersections);
+    } else {
+      this.grab(intersections);
+    }
   }
+};
+
+diem.Cloth.prototype.currentlyHolding = function() {
+  return this.handle_ != null;
+};
+
+diem.Cloth.prototype.pinInPlace = function(intersections) {
+  goog.asserts.assert(this.handle_ != null);
+  var pin = new diem.Pin(this.handle_, intersections[0].point);
+  scene.add(pin.getSprite());
+  this.pins_.push(pin);
+  this.handle_ = null;
+};
+
+diem.Cloth.prototype.grab = function(intersections) {
+  goog.asserts.assert(this.handle_ == null);
+  this.handle_ = intersections[0].point;
 };

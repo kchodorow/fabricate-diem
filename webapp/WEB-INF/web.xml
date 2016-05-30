@@ -9,7 +9,7 @@
 
   <servlet-mapping>
     <servlet-name>diem</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/login/*</url-pattern>
   </servlet-mapping>
 
   <security-constraint>

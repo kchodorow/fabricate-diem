@@ -31,7 +31,7 @@ diem.Particle = function(x, y, z, fabric) {
   this.tmp2 = new THREE.Vector3();
 };
 
-diem.Particle.DAMPING = 0.1;
+diem.Particle.DAMPING = 0.03;
 diem.Particle.DRAG = 1 - diem.Particle.DAMPING;
 
 // Force -> Acceleration
