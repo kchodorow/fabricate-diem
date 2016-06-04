@@ -98,8 +98,8 @@ diem.Cloth = function() {
 };
 
 diem.Cloth.prototype.addToScene = function(scene) {
-  this.drapingClothObj_ = this.load(0, 0, 0);
-  scene.add(this.drapingClothObj_);
+//  this.drapingClothObj_ = this.load(0, 0, 0);
+//  scene.add(this.drapingClothObj_);
   this.workboardClothObj_ = this.load(-15, 10, 0);
   scene.add(this.workboardClothObj_);
 };
@@ -178,7 +178,7 @@ diem.Cloth.satisifyConstrains_ = function(p1, p2, restDistance) {
   p2.position.sub(correctionHalf);
 };
 
-diem.Cloth.prototype.simulate = function(time, camera, person, mouse) {
+diem.Cloth.prototype.simulate = function(time, camera, person) {
   if (this.lastTime_ == 0) {
     this.lastTime_ = time;
     return;
@@ -207,8 +207,8 @@ diem.Cloth.prototype.simulate = function(time, camera, person, mouse) {
   }
 
   if (this.handle_ != null) {
-    this.handle_.position.copy(mouse);
-    this.handle_.previous.copy(mouse);
+    this.handle_.position.copy(diem.Globals.mouse);
+    this.handle_.previous.copy(diem.Globals.mouse);
   }
 
   // Human
@@ -235,7 +235,7 @@ diem.Cloth.prototype.simulate = function(time, camera, person, mouse) {
   }
 
   // Update geometry.
-  var geo = this.drapingClothObj_.geometry;
+/*  var geo = this.drapingClothObj_.geometry;
   for (i = 0; i < this.particles.length; ++i) {
     geo.vertices[i].copy(this.particles[i].position);
   }
@@ -244,7 +244,7 @@ diem.Cloth.prototype.simulate = function(time, camera, person, mouse) {
   geo.computeVertexNormals();
 
   geo.normalsNeedUpdate = true;
-  geo.verticesNeedUpdate = true;
+  geo.verticesNeedUpdate = true;*/
 };
 
 diem.Cloth.prototype.handleClick = function(personObj) {
