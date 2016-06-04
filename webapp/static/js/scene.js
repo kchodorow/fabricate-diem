@@ -65,6 +65,8 @@ diem.SceneContainer.prototype.initModels_ = function() {
   var ruler = new diem.Ruler();
   this.scene.add(ruler.load());
 
+  this.addPiece();
+
   this.workboard = new diem.Workboard();
 };
 
@@ -91,8 +93,7 @@ diem.SceneContainer.prototype.onMouseMove = function(event) {
 
 diem.SceneContainer.prototype.addPiece = function() {
   var cloth = new diem.Cloth();
-  var mesh = cloth.load();
-  this.scene.add(mesh);
+  var mesh = cloth.addToScene(this.scene);
   this.cloth_.push(cloth);
 };
 

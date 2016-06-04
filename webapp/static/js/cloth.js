@@ -14,6 +14,7 @@
 
 goog.provide('diem.Cloth');
 
+goog.require('diem.Globals');
 goog.require('diem.Particle');
 goog.require('diem.Pin');
 goog.require('diem.Fabric');
@@ -96,9 +97,16 @@ diem.Cloth = function() {
   }
 };
 
-diem.Cloth.prototype.load = function() {
-  var loader = new THREE.TextureLoader();
-  var clothTexture = loader.load('textures/patterns/circuit_pattern.png');
+diem.Cloth.prototype.addToScene = function(scene) {
+  this.drapingClothObj_ = this.load(0, 0, 0);
+  scene.add(this.drapingClothObj_);
+  this.workboardClothObj_ = this.load(-15, 10, 0);
+  scene.add(this.workboardClothObj_);
+};
+
+diem.Cloth.prototype.load = function(x, y, z) {
+  var clothTexture = diem.Globals.textureLoader.load(
+    'textures/patterns/circuit_pattern.png');
   clothTexture.wrapS = clothTexture.wrapT = THREE.RepeatWrapping;
   clothTexture.anisotropy = 16;
 
@@ -109,17 +117,17 @@ diem.Cloth.prototype.load = function() {
     alphaTest: 0.5
   });
 
-  // cloth geometry
-  this.clothGeometry_ = new THREE.ParametricGeometry(clothFunction, this.w, this.h);
-  this.clothGeometry_.dynamic = true;
+  // Geometry stored in object.geometry.
+  var clothGeometry = new THREE.ParametricGeometry(clothFunction, this.w, this.h);
+  clothGeometry.dynamic = true;
 
   var uniforms = {texture:  {type: "t", value: clothTexture}};
   var vertexShader = document.getElementById('vertexShaderDepth').textContent;
   var fragmentShader = document.getElementById('fragmentShaderDepth').textContent;
 
   // cloth mesh
-  var object = new THREE.Mesh(this.clothGeometry_, clothMaterial);
-  object.position.set(0, 0, 0);
+  var object = new THREE.Mesh(clothGeometry, clothMaterial);
+  object.position.set(x, y, z);
   object.castShadow = true;
 
   object.customDepthMaterial = new THREE.ShaderMaterial( {
@@ -128,6 +136,7 @@ diem.Cloth.prototype.load = function() {
     fragmentShader: fragmentShader,
     side: THREE.DoubleSide
   });
+
   return object;
 };
 
@@ -226,15 +235,16 @@ diem.Cloth.prototype.simulate = function(time, camera, person, mouse) {
   }
 
   // Update geometry.
-  for ( var i = 0; i < this.particles.length; ++i) {
-    this.clothGeometry_.vertices[i].copy(this.particles[i].position);
+  var geo = this.drapingClothObj_.geometry;
+  for (i = 0; i < this.particles.length; ++i) {
+    geo.vertices[i].copy(this.particles[i].position);
   }
 
-  this.clothGeometry_.computeFaceNormals();
-  this.clothGeometry_.computeVertexNormals();
+  geo.computeFaceNormals();
+  geo.computeVertexNormals();
 
-  this.clothGeometry_.normalsNeedUpdate = true;
-  this.clothGeometry_.verticesNeedUpdate = true;
+  geo.normalsNeedUpdate = true;
+  geo.verticesNeedUpdate = true;
 };
 
 diem.Cloth.prototype.handleClick = function(personObj) {
