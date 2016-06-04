@@ -13,7 +13,6 @@ var WIDTH = 800;
 var HEIGHT = 600;
 
 diem.SceneContainer = function() {
-  this.cloth_ = [];
   this.person_ = null;
 
   this.scene = new THREE.Scene();
@@ -28,10 +27,11 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
-  new diem.EventHandler(this);
-
   this.initLights_();
   this.initModels_();
+
+  // Must go afer initModels_, so cloth is defined.
+  new diem.EventHandler(this);
 };
 
 diem.SceneContainer.prototype.initLights_ = function() {
@@ -49,15 +49,14 @@ diem.SceneContainer.prototype.initModels_ = function() {
   var ruler = new diem.Ruler();
   this.scene.add(ruler.load());
 
-  this.addPiece();
+  this.cloth = new diem.Cloth();
+  this.cloth.addToScene(this.scene);
 
   this.workboard = new diem.Workboard();
 };
 
 diem.SceneContainer.prototype.onClick = function() {
-  for (var i = 0; i < this.cloth_.length; ++i) {
-    this.cloth_[i].handleClick(this.person_.object.children[0]);
-  }
+  this.cloth.handleClick(this.person_.object.children[0], this.scene);
 };
 
 // TODO: move this to Cloth or Particle.
@@ -75,21 +74,12 @@ diem.SceneContainer.prototype.onMouseMove = function(event) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera);
 };
 
-
-diem.SceneContainer.prototype.addPiece = function() {
-  var cloth = new diem.Cloth();
-  var mesh = cloth.addToScene(this.scene);
-  this.cloth_.push(cloth);
-};
-
 diem.SceneContainer.prototype.render = function(now) {
   if (diem.Globals.mouse == null) {
     // Before closure is loaded.
     diem.Globals.mouse = new THREE.Vector3();
   }
-  for (var i = 0; i < this.cloth_.length; ++i) {
-    this.cloth_[i].simulate(now, this.camera, this.person_.object, this.mouse);
-  }
+  this.cloth.simulate(now, this.camera, this.person_.object, this.mouse);
 
   requestAnimationFrame(render);
   this.renderer.render(this.scene, this.camera);

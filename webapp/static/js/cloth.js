@@ -49,59 +49,85 @@ diem.Cloth = function() {
   // Structural
   for (v = 0; v < this.h; ++v) {
     for (u = 0; u < this.w; ++u) {
-      this.constrains.push([
+      this.addConstraint(
 	this.particles[this.index_(u, v)],
 	this.particles[this.index_(u, v + 1)],
-	this.fabric_.getRestDistance()
-      ]);
+	this.fabric_.getRestDistance());
 
-      this.constrains.push([
+      this.addConstraint(
 	this.particles[this.index_(u, v)],
 	this.particles[this.index_(u + 1, v)],
-	this.fabric_.getRestDistance()
-      ]);
+	this.fabric_.getRestDistance());
     }
   }
 
   for (v = 0; v < this.h; ++v) {
-    this.constrains.push([
+    this.addConstraint(
       this.particles[this.index_(this.w, v)],
       this.particles[this.index_(this.w, v + 1)],
-      this.fabric_.getRestDistance()
-    ]);
+      this.fabric_.getRestDistance());
   }
 
   for (u = 0; u < this.w; ++u) {
-    this.constrains.push([
+    this.addConstraint(
       this.particles[this.index_(u, this.h)],
       this.particles[this.index_(u + 1, this.h)],
-      this.fabric_.getRestDistance()
-    ]);
+      this.fabric_.getRestDistance());
   }
 
   // Add diagonal struts for stability.
-  for (v=0;v<this.h;v++) {
-    for (u=0;u<this.w;u++) {
-      this.constrains.push([
+  for (v = 0; v < this.h; v++) {
+    for (u = 0; u < this.w; u++) {
+      this.addConstraint(
         this.particles[this.index_(u, v)],
         this.particles[this.index_(u+1, v+1)],
-        this.fabric_.getRestDiagonal()
-      ]);
+        this.fabric_.getRestDiagonal());
 
-      this.constrains.push([
+      this.addConstraint(
         this.particles[this.index_(u+1, v)],
         this.particles[this.index_(u, v+1)],
-        this.fabric_.getRestDiagonal()
-      ]);
+        this.fabric_.getRestDiagonal());
     }
   }
 };
 
+diem.Cloth.prototype.addConstraint = function(particle1, particle2, dist) {
+  particle1.addConstraint(particle2, dist, true);
+  particle2.addConstraint(particle1, dist, false);
+};
+
 diem.Cloth.prototype.addToScene = function(scene) {
-//  this.drapingClothObj_ = this.load(0, 0, 0);
-//  scene.add(this.drapingClothObj_);
+  this.drapingClothObj_ = this.load(0, 0, 0);
+  scene.add(this.drapingClothObj_);
   this.workboardClothObj_ = this.load(-15, 10, 0);
   scene.add(this.workboardClothObj_);
+};
+
+diem.Cloth.prototype.removeNearestParticle = function(vec3) {
+  var pos = this.mapPosToWorkboard_(vec3);
+  var nearestParticleIndex = this.findNearestParticleIndex_(pos);
+  if (nearestParticleIndex == -1) {
+    // this didn't round to a particle.
+    return;
+  }
+
+  this.particles[nearestParticleIndex].clearConstraints();
+};
+
+diem.Cloth.prototype.mapPosToWorkboard_ = function(vec3) {
+  return vec3.sub(this.workboardClothObj_.position);
+};
+
+/**
+ * @return {Number}
+ * @private
+ */
+diem.Cloth.prototype.findNearestParticleIndex_ = function(pos) {
+  var i = this.index_(Math.round(pos.x), Math.round(pos.y));
+  if (i >= 0 && i < this.particles.length) {
+    return i;
+  }
+  return -1;
 };
 
 diem.Cloth.prototype.load = function(x, y, z) {
@@ -151,33 +177,6 @@ var tmpForce = new THREE.Vector3();
 var diff = new THREE.Vector3();
 var FLOOR = 0;
 
-/**
- * Finds the vector from p2 -> p1.
- * Scales that vector by the ratio of the resting distance to the vector's length.
- * Adds half of that to p1, subtracts half of that from p2.
- *
- * Example:
- * p1: (20, 20)
- * p2: (20, 32)
- * rest: 10
- * current: 12
- * diff: (0, 12)
- * correction = (0, 12) * (1 - 5/6 = 1/6) = (0, 2)
- * p1 -> (20, 21)
- * p2 -> (20, 31)
- */
-diem.Cloth.satisifyConstrains_ = function(p1, p2, restDistance) {
-  diff.subVectors(p2.position, p1.position);
-  var currentDist = diff.length();
-  if (currentDist === 0) {
-    return; // prevents division by 0
-  }
-  var correction = diff.multiplyScalar(1 - (restDistance / currentDist));
-  var correctionHalf = correction.multiplyScalar(0.5);
-  p1.position.add(correctionHalf);
-  p2.position.sub(correctionHalf);
-};
-
 diem.Cloth.prototype.simulate = function(time, camera, person) {
   if (this.lastTime_ == 0) {
     this.lastTime_ = time;
@@ -189,12 +188,7 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
     var particle = this.particles[i];
     particle.addForce(this.fabric_.getGravity());
     particle.integrate(TIMESTEP_SQ);
-  }
-
-  // Start Constrains
-  for (i = 0; i < this.constrains.length; i++) {
-    var constrain = this.constrains[i];
-    diem.Cloth.satisifyConstrains_(constrain[0], constrain[1], constrain[2]);
+    particle.satisfyConstraints();
   }
 
   // Floor Constains
@@ -235,7 +229,7 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
   }
 
   // Update geometry.
-/*  var geo = this.drapingClothObj_.geometry;
+  var geo = this.drapingClothObj_.geometry;
   for (i = 0; i < this.particles.length; ++i) {
     geo.vertices[i].copy(this.particles[i].position);
   }
@@ -244,15 +238,15 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
   geo.computeVertexNormals();
 
   geo.normalsNeedUpdate = true;
-  geo.verticesNeedUpdate = true;*/
+  geo.verticesNeedUpdate = true;
 };
 
-diem.Cloth.prototype.handleClick = function(personObj) {
+diem.Cloth.prototype.handleClick = function(personObj, scene) {
   var intersections = this.raycaster_.intersectObject(personObj);
 
   if (intersections.length > 0) {
     if (this.currentlyHolding()) {
-      this.pinInPlace(intersections);
+      this.pinInPlace(intersections, scene);
     } else {
       this.grab(intersections);
     }
@@ -263,7 +257,7 @@ diem.Cloth.prototype.currentlyHolding = function() {
   return this.handle_ != null;
 };
 
-diem.Cloth.prototype.pinInPlace = function(intersections) {
+diem.Cloth.prototype.pinInPlace = function(intersections, scene) {
   goog.asserts.assert(this.handle_ != null);
   var pin = new diem.Pin(this.handle_, intersections[0].point);
   scene.add(pin.getSprite());
@@ -272,6 +266,6 @@ diem.Cloth.prototype.pinInPlace = function(intersections) {
 };
 
 diem.Cloth.prototype.grab = function(intersections) {
-  goog.asserts.assert(this.handle_ == null);
-  this.handle_ = intersections[0].point;
+//  goog.asserts.assert(this.handle_ == null);
+//  this.handle_ = intersections[0].point;
 };
