@@ -31,10 +31,13 @@ diem.Cloth = function() {
   this.fabric_ = new diem.Fabric();
   this.particles = [];
 
+  var neg = -0.1;
   for (var v = 0; v < this.h; ++v) {
+    neg = v % 2 == 0 ? 0.1 : -0.1;
     for (var u = 0; u < this.w; ++u) {
+      neg = -neg;
       this.particles.push(
-	new diem.Particle(u, v, 0, this.fabric_)
+	new diem.Particle(u, v, neg, this.fabric_)
      );
     }
   }
@@ -98,10 +101,10 @@ diem.Cloth.prototype.addConstraint = function(particle1, particle2, dist) {
 diem.Cloth.prototype.addToScene = function(scene) {
   this.drapingClothObj_ = new diem.Part(this.w, this.h).getObject();
   scene.add(this.drapingClothObj_);
-  this.drapingClothObj_.position.set(15, 15, 0);
+  this.drapingClothObj_.position.set(0, 0, 0);
   this.workboardClothObj_ = new diem.Part(this.w, this.h).getObject();
   scene.add(this.workboardClothObj_);
-  this.workboardClothObj_.position.set(0, 0, 0);
+  this.workboardClothObj_.position.set(10, 10, 0);
 };
 
 diem.Cloth.prototype.removeNearestParticle = function(vec3) {
