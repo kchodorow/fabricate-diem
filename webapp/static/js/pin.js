@@ -2,10 +2,10 @@
 
 goog.provide('diem.Pin');
 
-diem.Pin = function(particle, pos) {
+diem.Pin = function(particle) {
   this.particle_ = particle;
   this.sprite_ = new THREE.Sprite(diem.Pin.MATERIAL);
-  this.sprite_.position.copy(pos);
+  this.sprite_.position.copy(particle.position);
   this.sprite_.scale.x = this.sprite_.scale.y = 16;
 };
 
