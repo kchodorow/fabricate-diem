@@ -23,7 +23,7 @@ diem.SceneContainer = function() {
   document.getElementById(diem.Globals.WEBGL_DIV_ID).appendChild(
     this.renderer.domElement);
 
-  this.camera.position.z = -20;
+  this.camera.position.z = 20;
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
@@ -38,7 +38,7 @@ diem.SceneContainer.prototype.initLights_ = function() {
   var ambient = new THREE.AmbientLight(0x101030);
   this.scene.add(ambient);
   var directionalLight = new THREE.DirectionalLight(0xffeedd);
-  directionalLight.position.set(0,0,-30);
+  directionalLight.position.set(0,0,30);
   this.scene.add(directionalLight);
 };
 
