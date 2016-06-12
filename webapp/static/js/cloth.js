@@ -15,6 +15,7 @@
 goog.provide('diem.Cloth');
 
 goog.require('diem.Globals');
+goog.require('diem.Part');
 goog.require('diem.Particle');
 goog.require('diem.Pin');
 goog.require('diem.Fabric');
@@ -26,29 +27,27 @@ diem.Cloth = function() {
   this.person_ = null;
   this.lastTime_ = 0;
   this.w = 10;
-  this.h = 10;
-
+  this.h = 7;
   this.fabric_ = new diem.Fabric();
-
   this.particles = [];
-  this.constrains = [];
 
-  // There are (w + 1) * (h + 1) particles, as the fabric is bounded on every
-  // side by them.
-  for (var v = 0; v <= this.h; ++v) {
-    for (var u = 0; u <= this.w; ++u) {
+  for (var v = 0; v < this.h; ++v) {
+    for (var u = 0; u < this.w; ++u) {
       this.particles.push(
-	new diem.Particle(u / this.w, v / this.h, 0, this.fabric_)
+	new diem.Particle(u, v, 0, this.fabric_)
      );
     }
   }
 
-  this.pins_ = [];
-  this.handle_ = this.particles[this.index_(this.w, this.h)];
+  this.pins_ = [
+    new diem.Pin(this.particles[this.index_(0, this.h - 1)]),
+    new diem.Pin(this.particles[this.index_(this.w - 1, this.h - 1)])];
+  // this.handle_ = this.particles[this.index_(this.w, this.h)];
+  this.handle_ = null;
 
   // Structural
-  for (v = 0; v < this.h; ++v) {
-    for (u = 0; u < this.w; ++u) {
+  for (v = 0; v < this.h - 1; ++v) {
+    for (u = 0; u < this.w - 1; ++u) {
       this.addConstraint(
 	this.particles[this.index_(u, v)],
 	this.particles[this.index_(u, v + 1)],
@@ -61,23 +60,23 @@ diem.Cloth = function() {
     }
   }
 
-  for (v = 0; v < this.h; ++v) {
+  for (v = 0; v < this.h - 1; ++v) {
     this.addConstraint(
-      this.particles[this.index_(this.w, v)],
-      this.particles[this.index_(this.w, v + 1)],
+      this.particles[this.index_(this.w - 1, v)],
+      this.particles[this.index_(this.w - 1, v + 1)],
       this.fabric_.getRestDistance());
   }
 
-  for (u = 0; u < this.w; ++u) {
+  for (u = 0; u < this.w - 1; ++u) {
     this.addConstraint(
-      this.particles[this.index_(u, this.h)],
-      this.particles[this.index_(u + 1, this.h)],
+      this.particles[this.index_(u, this.h - 1)],
+      this.particles[this.index_(u + 1, this.h - 1)],
       this.fabric_.getRestDistance());
   }
 
   // Add diagonal struts for stability.
-  for (v = 0; v < this.h; v++) {
-    for (u = 0; u < this.w; u++) {
+  for (v = 0; v < this.h - 1; v++) {
+    for (u = 0; u < this.w - 1; u++) {
       this.addConstraint(
         this.particles[this.index_(u, v)],
         this.particles[this.index_(u+1, v+1)],
@@ -97,25 +96,22 @@ diem.Cloth.prototype.addConstraint = function(particle1, particle2, dist) {
 };
 
 diem.Cloth.prototype.addToScene = function(scene) {
-  this.drapingClothObj_ = this.load(0, 0, 0);
+  this.drapingClothObj_ = new diem.Part(this.w, this.h).getObject();
   scene.add(this.drapingClothObj_);
-  this.workboardClothObj_ = this.load(-15, 10, 0);
+  this.drapingClothObj_.position.set(15, 15, 0);
+  this.workboardClothObj_ = new diem.Part(this.w, this.h).getObject();
   scene.add(this.workboardClothObj_);
+  this.workboardClothObj_.position.set(0, 0, 0);
 };
 
 diem.Cloth.prototype.removeNearestParticle = function(vec3) {
-  var pos = this.mapPosToWorkboard_(vec3);
+  var pos = vec3.sub(this.workboardClothObj_.position);
   var nearestParticleIndex = this.findNearestParticleIndex_(pos);
   if (nearestParticleIndex == -1) {
     // this didn't round to a particle.
     return;
   }
-
   this.particles[nearestParticleIndex].clearConstraints();
-};
-
-diem.Cloth.prototype.mapPosToWorkboard_ = function(vec3) {
-  return vec3.sub(this.workboardClothObj_.position);
 };
 
 /**
@@ -130,44 +126,8 @@ diem.Cloth.prototype.findNearestParticleIndex_ = function(pos) {
   return -1;
 };
 
-diem.Cloth.prototype.load = function(x, y, z) {
-  var clothTexture = diem.Globals.textureLoader.load(
-    'textures/patterns/circuit_pattern.png');
-  clothTexture.wrapS = clothTexture.wrapT = THREE.RepeatWrapping;
-  clothTexture.anisotropy = 16;
-
-  var clothMaterial = new THREE.MeshPhongMaterial( {
-    specular: 0x030303,
-    map: clothTexture,
-    side: THREE.DoubleSide,
-    alphaTest: 0.5
-  });
-
-  // Geometry stored in object.geometry.
-  var clothGeometry = new THREE.ParametricGeometry(clothFunction, this.w, this.h);
-  clothGeometry.dynamic = true;
-
-  var uniforms = {texture:  {type: "t", value: clothTexture}};
-  var vertexShader = document.getElementById('vertexShaderDepth').textContent;
-  var fragmentShader = document.getElementById('fragmentShaderDepth').textContent;
-
-  // cloth mesh
-  var object = new THREE.Mesh(clothGeometry, clothMaterial);
-  object.position.set(x, y, z);
-  object.castShadow = true;
-
-  object.customDepthMaterial = new THREE.ShaderMaterial( {
-    uniforms: uniforms,
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-    side: THREE.DoubleSide
-  });
-
-  return object;
-};
-
 diem.Cloth.prototype.index_ = function(u, v) {
-  return u + v * (this.w + 1);
+  return u + (v * this.w);
 };
 
 var TIMESTEP = 18 / 1000;
@@ -221,11 +181,11 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
     }
   }
 
-  // Pin Constrains
+  // Pin constraints.
   for (i = 0; i < this.pins_.length; i++) {
     var p = this.pins_[i].getParticle();
-    p.position.copy(p.previous);
-    p.previous.copy(p.previous);
+    p.position.copy(p.original);
+    p.previous.copy(p.original);
   }
 
   // Update geometry.
@@ -259,7 +219,7 @@ diem.Cloth.prototype.currentlyHolding = function() {
 
 diem.Cloth.prototype.pinInPlace = function(intersections, scene) {
   goog.asserts.assert(this.handle_ != null);
-  var pin = new diem.Pin(this.handle_, intersections[0].point);
+  var pin = new diem.Pin(this.handle_);
   scene.add(pin.getSprite());
   this.pins_.push(pin);
   this.handle_ = null;

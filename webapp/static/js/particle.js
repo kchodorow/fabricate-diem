@@ -1,29 +1,15 @@
+/* global THREE */
+
 goog.provide('diem.Particle');
 
 goog.require('diem.Fabric');
 
 var restDistance = 1;
 
-var xSegs = 10;
-var ySegs = 10;
-
-function plane(width, height) {
-  return function(u, v) {
-
-    var x = (u - 0.5) * width;
-    var y = (v + 0.5) * height;
-    var z = 0;
-
-    return new THREE.Vector3(x, y, z);
-  };
-}
-
-var clothFunction = plane(restDistance * xSegs, restDistance * ySegs);
-
 diem.Particle = function(x, y, z, fabric) {
-  this.position = clothFunction(x, y); // position
-  this.previous = clothFunction(x, y); // previous
-  this.original = clothFunction(x, y);
+  this.position = new THREE.Vector3(x, y, z);
+  this.previous = new THREE.Vector3(x, y, z);
+  this.original = new THREE.Vector3(x, y, z);
   this.a = new THREE.Vector3(0, 0, 0); // acceleration
   this.mass = fabric.getMass();
   this.invMass = 1 / fabric.getMass();
@@ -45,7 +31,7 @@ diem.Particle.prototype.addForce = function(force) {
 diem.Particle.Constraint = function(particle, dist, satisfy) {
   this.particle = particle;
   this.dist = dist;
-  this.satistfy = satisfy;
+  this.satisfy = satisfy;
 };
 
 diem.Particle.prototype.addConstraint = function(particle, dist, satisfy) {
@@ -54,13 +40,17 @@ diem.Particle.prototype.addConstraint = function(particle, dist, satisfy) {
 
 diem.Particle.prototype.clearConstraints = function() {
   for (var i = 0; i < this.constraints_.length; ++i) {
-    var other = this.constraints_[i].particle;
+    var otherConstraint = this.constraints_[i];
+    if (otherConstraint == null) {
+      continue;
+    }
+    var other = otherConstraint.particle;
     for (var j = 0; j < other.constraints_.length; ++j) {
       if (other.constraints_[j] == null) {
         continue;
       }
       if (other.constraints_[j].particle == this) {
-        other.constraints[j] = null;
+        other.constraints_[j] = null;
         break;
       }
     }

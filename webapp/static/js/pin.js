@@ -2,7 +2,10 @@
 
 goog.provide('diem.Pin');
 
+goog.require('goog.asserts');
+
 diem.Pin = function(particle) {
+  goog.asserts.assert(particle != null);
   this.particle_ = particle;
   this.sprite_ = new THREE.Sprite(diem.Pin.MATERIAL);
   this.sprite_.position.copy(particle.position);
