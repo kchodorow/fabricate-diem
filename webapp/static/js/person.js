@@ -2,6 +2,9 @@
 
 goog.provide('diem.Person');
 
+/**
+ * @constructor
+ */
 diem.Person = function() {
 };
 
@@ -12,6 +15,7 @@ diem.Person.prototype.load = function(scene) {
     'assets/standard-female-figure.json',
     function(object) {
       tmp.object = object;
+      object.rotation.y = Math.PI;
       scene.add(object);
     }
   );

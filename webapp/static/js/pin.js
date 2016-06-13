@@ -4,6 +4,9 @@ goog.provide('diem.Pin');
 
 goog.require('goog.asserts');
 
+/**
+ * @constructor
+ */
 diem.Pin = function(particle) {
   goog.asserts.assert(particle != null);
   this.particle_ = particle;

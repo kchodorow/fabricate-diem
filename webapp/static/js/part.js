@@ -1,6 +1,9 @@
 /* global THREE */
 goog.provide('diem.Part');
 
+/**
+ * @constructor
+ */
 diem.Part = function(width, height) {
   var triangleGeometry = new THREE.Geometry();
   for (var y = 0; y < height; ++y) {

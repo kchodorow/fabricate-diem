@@ -6,6 +6,8 @@ goog.require('goog.events.EventType');
 
 /**
  * Allows editing pieces laying flat.
+ *
+ * @constructor
  */
-diem.Workboard = function(sceneContainer) {
+diem.Workboard = function() {
 };

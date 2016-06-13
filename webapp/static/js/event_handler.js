@@ -10,6 +10,9 @@ goog.require('goog.events.KeyCodes');
 goog.require('goog.fx.Dragger');
 goog.require('goog.ui.KeyboardShortcutHandler');
 
+/**
+ * @constructor
+ */
 diem.EventHandler = function(sceneContainer) {
   this.camera = sceneContainer.camera;
   this.cloth = sceneContainer.cloth;

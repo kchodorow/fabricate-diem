@@ -5,8 +5,7 @@ appengine_war(
    jars = [":mylib"],
    data = [
        ":xml",
-       "//webapp/static:uncompiled",
-       "//webapp/static:js",
+       "//webapp/static",
    ],
    data_path = "/webapp",
 )

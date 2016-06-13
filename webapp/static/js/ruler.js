@@ -2,6 +2,9 @@
 
 goog.provide('diem.Ruler');
 
+/**
+ * @constructor
+ */
 diem.Ruler = function() {
 };
 

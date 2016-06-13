@@ -1,6 +1,9 @@
 goog.provide('diem.Fabric');
 
-// The physical properties of a piece of fabric.
+/**
+ * The physical properties of a piece of fabric.
+ * @constructor
+ */
 diem.Fabric = function() {
   this.restDistance_ = 1;
   this.mass_ = .1;

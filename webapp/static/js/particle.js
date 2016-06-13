@@ -6,6 +6,9 @@ goog.require('diem.Fabric');
 
 var restDistance = 1;
 
+/**
+ * @constructor
+ */
 diem.Particle = function(x, y, z, fabric) {
   this.position = new THREE.Vector3(x, y, z);
   this.previous = new THREE.Vector3(x, y, z);
@@ -28,6 +31,9 @@ diem.Particle.prototype.addForce = function(force) {
  );
 };
 
+/**
+ * @constructor
+ */
 diem.Particle.Constraint = function(particle, dist, satisfy) {
   this.particle = particle;
   this.dist = dist;
@@ -58,8 +64,6 @@ diem.Particle.prototype.clearConstraints = function() {
   }
 };
 
-var diff = new THREE.Vector3();
-
 /**
  * Finds the vector from p2 -> p1.
  * Scales that vector by the ratio of the resting distance to the vector's length.
@@ -76,6 +80,7 @@ var diff = new THREE.Vector3();
  * p2 -> (20, 31)
  */
 diem.Particle.prototype.satisfyConstraints = function() {
+  var diff = new THREE.Vector3();
   for (var i = 0; i < this.constraints_.length; ++i) {
     var constraint = this.constraints_[i];
     if (constraint == null || !constraint.satisfy) {

@@ -12,6 +12,9 @@ goog.require('diem.Workboard');
 var WIDTH = 800;
 var HEIGHT = 600;
 
+/**
+ * @constructor
+ */
 diem.SceneContainer = function() {
   this.person_ = null;
 
@@ -79,7 +82,7 @@ diem.SceneContainer.prototype.render = function(now) {
     // Before closure is loaded.
     diem.Globals.mouse = new THREE.Vector3();
   }
-  this.cloth.simulate(now, this.camera, this.person_.object, this.mouse);
+  this.cloth.simulate(now, this.camera, this.person_.object, diem.Globals.mouse);
 
   requestAnimationFrame(render);
   this.renderer.render(this.scene, this.camera);

@@ -22,7 +22,11 @@ goog.require('diem.Fabric');
 
 goog.require('goog.asserts');
 
+/**
+ * @constructor
+ */
 diem.Cloth = function() {
+  this.diff_ = new THREE.Vector3();
   this.raycaster_ = new THREE.Raycaster();
   this.person_ = null;
   this.lastTime_ = 0;
@@ -109,24 +113,22 @@ diem.Cloth.prototype.addToScene = function(scene) {
 
 diem.Cloth.prototype.removeNearestParticle = function(vec3) {
   var pos = vec3.sub(this.workboardClothObj_.position);
-  var nearestParticleIndex = this.findNearestParticleIndex_(pos);
-  if (nearestParticleIndex == -1) {
-    // this didn't round to a particle.
+  var nearestParticleIndex = this.index_(Math.round(pos.x), Math.round(pos.y));
+  if (nearestParticleIndex < 0
+      || nearestParticleIndex >= this.particles.length) {
     return;
   }
   this.particles[nearestParticleIndex].clearConstraints();
-};
 
-/**
- * @return {Number}
- * @private
- */
-diem.Cloth.prototype.findNearestParticleIndex_ = function(pos) {
-  var i = this.index_(Math.round(pos.x), Math.round(pos.y));
-  if (i >= 0 && i < this.particles.length) {
-    return i;
-  }
-  return -1;
+  /*
+   * Update meshes.
+   * . . .    .  .  .
+   * |\|\|    |\| |\|
+   * . x . -> . x n .
+   * |\|\|    |\| |\|
+   * . . .    .  .  .
+   */
+  this.drapingClothObj_.removeFace(pos.x, pos.y);
 };
 
 diem.Cloth.prototype.index_ = function(u, v) {
@@ -137,7 +139,6 @@ var TIMESTEP = 18 / 1000;
 var TIMESTEP_SQ = TIMESTEP * TIMESTEP;
 
 var tmpForce = new THREE.Vector3();
-var diff = new THREE.Vector3();
 var FLOOR = 0;
 
 diem.Cloth.prototype.simulate = function(time, camera, person) {
@@ -179,7 +180,7 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
       var intersections = this.raycaster_.intersectObject(person);
       if (intersections.length % 2 == 1) {
         var closest = intersections[0];
-        pos.add(diff.subVectors(closest.point, pos));
+        pos.add(this.diff_.subVectors(closest.point, pos));
       }
     }
   }
