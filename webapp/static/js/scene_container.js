@@ -1,6 +1,7 @@
 /* global THREE, requestAnimationFrame */
 goog.provide('diem.SceneContainer');
 
+goog.require('diem.cloth.Workboard');
 goog.require('diem.Cloth');
 goog.require('diem.EventHandler');
 goog.require('diem.Globals');
@@ -30,6 +31,8 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
+  /** Pattern pieces */
+  this.pieces_ = [];
   this.initLights_();
   this.initModels_();
 
@@ -52,10 +55,24 @@ diem.SceneContainer.prototype.initModels_ = function() {
   var ruler = new diem.Ruler();
   this.scene.add(ruler.load());
 
-  this.cloth = new diem.Cloth();
-  this.cloth.addToScene(this.scene);
-
+  this.cloth = this.addCloth();
   this.workboard = new diem.Workboard();
+};
+
+diem.SceneContainer.CLOTH_OFFSET_X = 10;
+diem.SceneContainer.CLOTH_OFFSET_Y = 8;
+
+/**
+ * Create a new piece of cloth, adds it to the array of pieces, and returns it.
+ */
+diem.SceneContainer.prototype.addCloth = function() {
+  var cloth = new diem.cloth.Workboard();
+  this.scene.add(cloth.getMesh());
+  cloth.setPosition(
+    diem.SceneContainer.CLOTH_OFFSET_X,
+    diem.SceneContainer.CLOTH_OFFSET_Y * this.pieces_.length);
+  this.pieces_.push(cloth);
+  return cloth;
 };
 
 diem.SceneContainer.prototype.onClick = function() {
@@ -82,7 +99,7 @@ diem.SceneContainer.prototype.render = function(now) {
     // Before closure is loaded.
     diem.Globals.mouse = new THREE.Vector3();
   }
-  this.cloth.simulate(now, this.camera, this.person_.object, diem.Globals.mouse);
+//  this.cloth.simulate(now, this.camera, this.person_.object, diem.Globals.mouse);
 
   requestAnimationFrame(render);
   this.renderer.render(this.scene, this.camera);

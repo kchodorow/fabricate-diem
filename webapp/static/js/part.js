@@ -29,8 +29,8 @@ diem.Part = function(width, height) {
   }
 
   var triangleMaterial = new THREE.MeshBasicMaterial({
-    color:0xFFFFFF,
-    side:THREE.DoubleSide
+    color : diem.Fabric.getRandomColor(),
+    side : THREE.DoubleSide
   });
 
   this.mesh_ = new THREE.Mesh(triangleGeometry, triangleMaterial);

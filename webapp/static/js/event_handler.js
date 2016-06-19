@@ -14,6 +14,8 @@ goog.require('goog.ui.KeyboardShortcutHandler');
  * @constructor
  */
 diem.EventHandler = function(sceneContainer) {
+  this.scene_container = sceneContainer;
+  // Used to get mouse coordinates.
   this.camera = sceneContainer.camera;
   this.cloth = sceneContainer.cloth;
 
@@ -26,6 +28,8 @@ diem.EventHandler = function(sceneContainer) {
     this);
 
   this.shortcuts.registerShortcut(
+    diem.EventHandler.CREATE_NEW, goog.events.KeyCodes.C);
+  this.shortcuts.registerShortcut(
     diem.EventHandler.SCISSORS_TOOL, goog.events.KeyCodes.S);
   this.shortcuts.registerShortcut(
     diem.EventHandler.HEM_TOOL, goog.events.KeyCodes.H);
@@ -37,6 +41,8 @@ diem.EventHandler = function(sceneContainer) {
   this.dragger.defaultAction = goog.bind(this.dragAction, this);
 };
 
+diem.EventHandler.CREATE_NEW = "CREATE_NEW";
+
 diem.EventHandler.SCISSORS_TOOL = "SCISSORS_TOOL";
 diem.EventHandler.HEM_TOOL = "HEM_TOOL";
 
@@ -45,6 +51,9 @@ diem.EventHandler.prototype.handleKeypress = function(event) {
   case diem.EventHandler.SCISSORS_TOOL:
   case diem.EventHandler.HEM_TOOL:
     this.activeTool = new diem.tools.Scissors(this.cloth);
+    break;
+  case diem.EventHandler.CREATE_NEW:
+    this.scene_container.addCloth();
     break;
   default:
     console.log('no tool selected');

@@ -41,7 +41,7 @@ diem.Cloth = function() {
     for (var u = 0; u < this.w; ++u) {
       neg = -neg;
       this.particles.push(
-	new diem.Particle(u, v, neg, this.fabric_)
+        new diem.Particle(u, v, neg, this.fabric_)
      );
     }
   }
@@ -49,8 +49,7 @@ diem.Cloth = function() {
   this.pins_ = [
     new diem.Pin(this.particles[this.index_(0, this.h - 1)]),
     new diem.Pin(this.particles[this.index_(this.w - 1, this.h - 1)])];
-  // this.handle_ = this.particles[this.index_(this.w, this.h)];
-  this.handle_ = null;
+  this.handle_ = this.particles[this.index_(0, 0)];
 
   // Structural
   for (v = 0; v < this.h - 1; ++v) {
@@ -164,11 +163,6 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
     }
   }
 
-  if (this.handle_ != null) {
-    this.handle_.position.copy(diem.Globals.mouse);
-    this.handle_.previous.copy(diem.Globals.mouse);
-  }
-
   // Human
   if (person != null) {
     for (i = 0; i < this.particles.length; i++) {
@@ -190,6 +184,11 @@ diem.Cloth.prototype.simulate = function(time, camera, person) {
     var p = this.pins_[i].getParticle();
     p.position.copy(p.original);
     p.previous.copy(p.original);
+  }
+
+  if (this.handle_ != null) {
+    this.handle_.position.copy(diem.Globals.mouse);
+    this.handle_.previous.copy(diem.Globals.mouse);
   }
 
   // Update geometry.
@@ -232,4 +231,11 @@ diem.Cloth.prototype.pinInPlace = function(intersections, scene) {
 diem.Cloth.prototype.grab = function(intersections) {
 //  goog.asserts.assert(this.handle_ == null);
 //  this.handle_ = intersections[0].point;
+};
+
+/**
+ * Sets the position of the cloth on the workboard, not the model.
+ */
+diem.Cloth.prototype.setWorkboardPosition = function(x, y) {
+  this.workboardClothObj_.position = new THREE.Vector3(x, y, 0);
 };
