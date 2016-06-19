@@ -12,7 +12,12 @@ diem.cloth.Workboard = function() {
   this.h = 7;
   this.fabric_ = new diem.Fabric();
 
-  // Initial square of cloth.
+  this.initMesh_();
+  this.initBezier_();
+};
+
+// Initial square of cloth.
+diem.cloth.Workboard.prototype.initMesh_ = function() {
   this.geometry_ = new THREE.Geometry();
   this.geometry_.vertices.push(new THREE.Vector3(0, 0, 0));
   this.geometry_.vertices.push(new THREE.Vector3(this.w, 0, 0));
@@ -23,6 +28,16 @@ diem.cloth.Workboard = function() {
   this.geometry_.faces.push(new THREE.Face3(1, 3, 2));
 
   this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
+};
+
+diem.cloth.Workboard.prototype.initBezier_ = function() {
+  for (var i = 0; i < 4; ++i) {
+    this.bezier_ = new THREE.CubicBezierCurve3(
+      this.geometry_.vertices[i],
+      this.geometry_.vertices[i],
+      this.geometry_.vertices[(i + 1) % 4],
+      this.geometry_.vertices[(i + 1) % 4]);
+  }
 };
 
 diem.cloth.Workboard.prototype.getMesh = function() {
