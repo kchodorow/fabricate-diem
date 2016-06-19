@@ -11,14 +11,14 @@ goog.require('goog.fx.Dragger');
 goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
+ * Any class that wants a keyboard shortcut should call registerShortcut,
+ * providing the function to call and the key to bind to. E.g.,
+ * eventHandler.registerShortcut(
+ *     'MOVE_PIECE', goog.bind(this.moveTool, this), goog.events.KeyCodes.V);
  * @constructor
  */
-diem.EventHandler = function(sceneContainer) {
-  this.scene_container = sceneContainer;
-  // Used to get mouse coordinates.
-  this.camera = sceneContainer.camera;
-  this.cloth = sceneContainer.cloth;
-
+diem.EventHandler = function() {
+  this.funcMap_ = {};
   this.shortcuts = new goog.ui.KeyboardShortcutHandler(document);
   goog.events.listen(
     this.shortcuts,
@@ -27,13 +27,6 @@ diem.EventHandler = function(sceneContainer) {
     false,
     this);
 
-  this.shortcuts.registerShortcut(
-    diem.EventHandler.CREATE_NEW, goog.events.KeyCodes.C);
-  this.shortcuts.registerShortcut(
-    diem.EventHandler.SCISSORS_TOOL, goog.events.KeyCodes.S);
-  this.shortcuts.registerShortcut(
-    diem.EventHandler.HEM_TOOL, goog.events.KeyCodes.H);
-
   this.activeTool = null;
 
   this.dragger = new goog.fx.Dragger(
@@ -41,24 +34,21 @@ diem.EventHandler = function(sceneContainer) {
   this.dragger.defaultAction = goog.bind(this.dragAction, this);
 };
 
-diem.EventHandler.CREATE_NEW = "CREATE_NEW";
+diem.EventHandler.prototype.registerShortcut = function(id, func, keycode) {
+  this.shortcuts.registerShortcut(id, keycode);
+  this.funcMap_[id] = func;
+};
 
 diem.EventHandler.SCISSORS_TOOL = "SCISSORS_TOOL";
 diem.EventHandler.HEM_TOOL = "HEM_TOOL";
 
 diem.EventHandler.prototype.handleKeypress = function(event) {
-  switch (event.identifier)  {
-  case diem.EventHandler.SCISSORS_TOOL:
-  case diem.EventHandler.HEM_TOOL:
-    this.activeTool = new diem.tools.Scissors(this.cloth);
-    break;
-  case diem.EventHandler.CREATE_NEW:
-    this.scene_container.addCloth();
-    break;
-  default:
+  if (!(event.identifier in this.funcMap_)) {
     console.log('no tool selected');
     this.activeTool = null;
+    return;
   }
+  this.funcMap_[event.identifier].call(event);
 };
 
 diem.EventHandler.prototype.getMouseCoordinates = function(x, y) {
