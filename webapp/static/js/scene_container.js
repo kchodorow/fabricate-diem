@@ -7,7 +7,6 @@ goog.require('diem.Globals');
 goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
-goog.require('diem.Workboard');
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -35,6 +34,9 @@ diem.SceneContainer = function() {
   eventHandler.registerShortcut(
     diem.Pattern.ADD_PIECE, goog.bind(this.addPatternPiece, this),
     goog.events.KeyCodes.C);
+  eventHandler.registerShortcut(
+    diem.Pattern.PATH_TOOL, goog.bind(this.pathTool, this),
+    goog.events.KeyCodes.A);
 
   /** Pattern pieces */
   this.pattern_ = new diem.Pattern(eventHandler);
@@ -56,13 +58,18 @@ diem.SceneContainer.prototype.initModels_ = function() {
 
   var ruler = new diem.Ruler();
   this.scene.add(ruler.load());
-
-  this.workboard = new diem.Workboard();
 };
 
 diem.SceneContainer.prototype.addPatternPiece = function() {
   var piece = this.pattern_.addPiece();
   this.scene.add(piece);
+};
+
+diem.SceneContainer.prototype.pathTool = function() {
+  var anchors = this.pattern_.getAnchors();
+  for (var i = 0; i < anchors.length; ++i) {
+    this.scene.add(anchors[i]);
+  }
 };
 
 diem.SceneContainer.prototype.onClick = function() {
