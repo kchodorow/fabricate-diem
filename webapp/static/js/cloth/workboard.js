@@ -27,10 +27,13 @@ diem.cloth.Workboard = function() {
 diem.cloth.Workboard.prototype.initMeshes_ = function() {
   this.shape_ = new THREE.Shape();
   this.shape_.moveTo(0, 0);
-  this.shape_.bezierCurveTo(0, 0, this.w, 0, this.w, 0);
-  this.shape_.bezierCurveTo(this.w, 0, this.w, this.h, this.w, this.h);
-  this.shape_.bezierCurveTo(this.w, this.h, 0, this.h, 0, this.h);
-  this.shape_.bezierCurveTo(0, this.h, 0, 0, 0, 0);
+  for (var i = 0; i < this.corners_.length; ++i) {
+    var j = (i + 1) % this.corners_.length;
+    this.shape_.bezierCurveTo(
+      this.corners_[i].x, this.corners_[i].y,
+      this.corners_[j].x, this.corners_[j].y,
+      this.corners_[j].x, this.corners_[j].y);
+  }
 
   this.geometry_ = new THREE.ShapeGeometry(this.shape_);
 
