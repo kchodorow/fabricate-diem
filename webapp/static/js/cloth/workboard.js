@@ -49,7 +49,7 @@ diem.cloth.Workboard.prototype.initAnchors_ = function() {
   for (var i = 0; i < this.corners_.length; ++i) {
     var box = new diem.cloth.Anchor(this.corners_[i]);
     this.anchors_.push(box);
-    this.meshes_.push(box.getObject());
+    this.meshes_ = this.meshes_.concat(box.getMeshes());
   }
 };
 

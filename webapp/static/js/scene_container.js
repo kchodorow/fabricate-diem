@@ -1,3 +1,4 @@
+
 /* global THREE, requestAnimationFrame */
 goog.provide('diem.SceneContainer');
 
@@ -71,7 +72,10 @@ diem.SceneContainer.prototype.pathTool = function() {
   var anchors = this.pattern_.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
     this.eventHandler_.registerClickable(anchors[i]);
-    this.scene.add(anchors[i].getObject());
+    var meshes = anchors[i].getMeshes();
+    for (var j = 0; j < meshes.length; ++j) {
+      this.scene.add(meshes[j]);
+    }
   }
 };
 
