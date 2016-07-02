@@ -49,7 +49,6 @@ diem.cloth.Workboard.prototype.initAnchors_ = function() {
   for (var i = 0; i < this.corners_.length; ++i) {
     var box = new diem.cloth.Anchor(this.corners_[i]);
     this.anchors_.push(box);
-    this.meshes_ = this.meshes_.concat(box.getMeshes());
   }
 };
 
@@ -68,5 +67,8 @@ diem.cloth.Workboard.prototype.setPosition = function(x, y) {
   var diff = new THREE.Vector3(this.corners_[0].x - x, this.corners_[0].y - y, 0);
   for (var i = 0; i < this.meshes_.length; ++i) {
     this.meshes_[i].position.sub(diff);
+  }
+  for (var j = 0; j < this.anchors_.length; ++j) {
+    this.anchors_[j].changePosition(diff);
   }
 };
