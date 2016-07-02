@@ -22,6 +22,7 @@ diem.SceneContainer = function() {
   this.camera = new THREE.PerspectiveCamera(75, WIDTH / HEIGHT, 0.1, 50);
 
   this.renderer = new THREE.WebGLRenderer();
+  this.renderer.setClearColor( 0xf0f0f0 );
   this.renderer.setSize(WIDTH, HEIGHT);
   document.getElementById(diem.Globals.WEBGL_DIV_ID).appendChild(
     this.renderer.domElement);
@@ -30,13 +31,14 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
-  var eventHandler = new diem.EventHandler(this);
+  var eventHandler = new diem.EventHandler(this.camera);
   eventHandler.registerShortcut(
     diem.Pattern.ADD_PIECE, goog.bind(this.addPatternPiece, this),
     goog.events.KeyCodes.C);
   eventHandler.registerShortcut(
     diem.Pattern.PATH_TOOL, goog.bind(this.pathTool, this),
     goog.events.KeyCodes.A);
+  this.eventHandler_ = eventHandler;
 
   /** Pattern pieces */
   this.pattern_ = new diem.Pattern(eventHandler);
@@ -68,12 +70,9 @@ diem.SceneContainer.prototype.addPatternPiece = function() {
 diem.SceneContainer.prototype.pathTool = function() {
   var anchors = this.pattern_.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
-    this.scene.add(anchors[i]);
+    this.eventHandler_.registerClickable(anchors[i]);
+    this.scene.add(anchors[i].getObject());
   }
-};
-
-diem.SceneContainer.prototype.onClick = function() {
-  this.cloth.handleClick(this.person_.object.children[0], this.scene);
 };
 
 // TODO: move this to Cloth or Particle.
@@ -96,7 +95,6 @@ diem.SceneContainer.prototype.render = function(now) {
     // Before closure is loaded.
     diem.Globals.mouse = new THREE.Vector3();
   }
-//  this.cloth.simulate(now, this.camera, this.person_.object, diem.Globals.mouse);
 
   requestAnimationFrame(render);
   this.renderer.render(this.scene, this.camera);
