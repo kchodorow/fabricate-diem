@@ -78,13 +78,18 @@ diem.cloth.Anchor.prototype.onDrag = function() {
 
   this.updateCpLines_();
 
-  // Get the parent's shape
+  // Use the parent's shape to update the fabric's curves.
   var parent = this.box_.parent;
   diem.cloth.Anchor.updateActions(parent.shape);
   parent.geometry = parent.shape.makeGeometry();
 };
 
+/**
+ * THREE.ShapeGeometry uses the list of actions to regenerate the vertices, so
+ * update them wrt the curves.
+ */
 diem.cloth.Anchor.updateActions = function(oldShape) {
+  // Initial moveTo is required for THREE.Shape's actions to be properly formed.
   var actions = [{
     action: 'moveTo',
     args: [0, 0]

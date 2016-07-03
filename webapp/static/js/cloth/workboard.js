@@ -33,8 +33,6 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   }
 
   this.shape_ = new THREE.Shape();
-  // Initial moveTo is required for THREE.Shape's actions to be properly formed.
-  this.shape_.moveTo(0, 0);
   for (i = 0; i < this.corners_.length; ++i) {
     var startCp = this.anchors_[i].getControlPoints()[0].getObject().position;
     var j = (i + 1) % this.corners_.length;
@@ -46,14 +44,8 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
       endCp,
       this.corners_[j]);
     this.shape_.curves.push(curve);
-    this.shape_.actions.push({
-      action: 'bezierCurveTo',
-      args: [
-        this.corners_[i].x, this.corners_[i].y,
-        startCp.x, startCp.y,
-        endCp.x, endCp.y,
-        this.corners_[j].x, this.corners_[j].y]});
   }
+  diem.cloth.Anchor.updateActions(this.shape_);
 
   this.geometry_ = new THREE.ShapeGeometry(this.shape_);
 
