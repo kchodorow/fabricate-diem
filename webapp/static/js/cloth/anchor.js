@@ -39,6 +39,10 @@ diem.cloth.Anchor.prototype.getMeshes = function() {
     this.controlPoint_[1].getObject()].concat(this.cpLine_);
 };
 
+diem.cloth.Anchor.prototype.getControlPoints = function() {
+  return this.controlPoint_;
+};
+
 diem.cloth.Anchor.prototype.changePosition = function(delta) {
   this.box_.position.sub(delta);
   this.controlPoint_[0].getObject().position.sub(delta);
@@ -49,10 +53,16 @@ diem.cloth.Anchor.prototype.changePosition = function(delta) {
 diem.cloth.Anchor.prototype.onClick = function() {
 };
 
+// parent: (2, 2, 0)
+// box:    (8, 5, 0)
+// mouse:  (11, 6, 0)
+// ->      (1, -1, 0)
 diem.cloth.Anchor.prototype.onDrag = function() {
   // Get the offsets from the origin
   var offset = new THREE.Vector3();
-  offset.copy(this.box_.position).sub(diem.Globals.mouse);
+  offset.copy(diem.Globals.mouse)
+    .sub(this.box_.parent.position)
+    .sub(this.box_.position);
   var opposite = new THREE.Vector3();
   opposite.copy(offset).multiplyScalar(-1);
 
@@ -67,6 +77,37 @@ diem.cloth.Anchor.prototype.onDrag = function() {
   this.controlPoint_[1].onDrag(opposite);
 
   this.updateCpLines_();
+
+  // Get the parent's shape
+  var parent = this.box_.parent;
+  diem.cloth.Anchor.updateActions(parent.shape);
+/*  var newVertices = new THREE.ShapeGeometry(parent.shape).vertices;
+
+  for (var i = 0; i < newVertices.length; ++i) {
+    parent.geometry.vertices[i].copy(newVertices[i]);
+ }*/
+  parent.geometry = parent.shape.makeGeometry();
+  parent.geometry.verticesNeedUpdate = true;
+  parent.geometry.normalsNeedUpdate = true;
+};
+
+diem.cloth.Anchor.updateActions = function(oldShape) {
+  var actions = [{
+    action: 'moveTo',
+    args: [0, 0]
+  }];
+  for (var i = 0; i < oldShape.curves.length; ++i) {
+    var oldCurve = oldShape.curves[i];
+    actions.push({
+      action: 'bezierCurveTo',
+      args: [
+        oldCurve.v0.x, oldCurve.v0.y,
+        oldCurve.v1.x, oldCurve.v1.y,
+        oldCurve.v2.x, oldCurve.v2.y,
+        oldCurve.v3.x, oldCurve.v3.y]
+    });
+  }
+  oldShape.actions = actions;
 };
 
 diem.cloth.Anchor.prototype.updateCpLines_ = function() {

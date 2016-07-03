@@ -72,10 +72,6 @@ diem.SceneContainer.prototype.pathTool = function() {
   var anchors = this.pattern_.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
     this.eventHandler_.registerClickable(anchors[i]);
-    var meshes = anchors[i].getMeshes();
-    for (var j = 0; j < meshes.length; ++j) {
-      this.scene.add(meshes[j]);
-    }
   }
 };
 
