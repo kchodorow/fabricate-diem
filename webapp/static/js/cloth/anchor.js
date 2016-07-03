@@ -81,14 +81,7 @@ diem.cloth.Anchor.prototype.onDrag = function() {
   // Get the parent's shape
   var parent = this.box_.parent;
   diem.cloth.Anchor.updateActions(parent.shape);
-/*  var newVertices = new THREE.ShapeGeometry(parent.shape).vertices;
-
-  for (var i = 0; i < newVertices.length; ++i) {
-    parent.geometry.vertices[i].copy(newVertices[i]);
- }*/
   parent.geometry = parent.shape.makeGeometry();
-  parent.geometry.verticesNeedUpdate = true;
-  parent.geometry.normalsNeedUpdate = true;
 };
 
 diem.cloth.Anchor.updateActions = function(oldShape) {
