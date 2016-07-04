@@ -17,14 +17,8 @@ diem.cloth.Anchor = function(corner) {
 
   this.controlPoint_ = [];
   this.cpLine_ = [];
-  var lineMaterial = new THREE.LineBasicMaterial({color : color});
   for (var i = 0; i < 2; i++) {
-    var cp = new diem.cloth.Anchor.ControlPoint(this.box_.clone());
-    var lineGeometry = new THREE.Geometry();
-    lineGeometry.vertices.push(cp.getObject().position, this.box_.position);
-    var line = new THREE.Line(lineGeometry, lineMaterial);
-    this.controlPoint_.push(cp);
-    this.cpLine_.push(line);
+    this.controlPoint_.push(new diem.cloth.Anchor.ControlPoint(this.box_));
   }
 };
 
@@ -35,8 +29,9 @@ diem.cloth.Anchor.prototype.getObject = function() {
 };
 
 diem.cloth.Anchor.prototype.getMeshes = function() {
-  return [this.box_, this.controlPoint_[0].getObject(),
-    this.controlPoint_[1].getObject()].concat(this.cpLine_);
+  return [this.box_]
+    .concat(this.controlPoint_[0].getMeshes())
+    .concat(this.controlPoint_[1].getMeshes());
 };
 
 diem.cloth.Anchor.prototype.getControlPoints = function() {
@@ -76,8 +71,6 @@ diem.cloth.Anchor.prototype.onDrag = function() {
   // opposite offset.
   this.controlPoint_[1].onDrag(opposite);
 
-  this.updateCpLines_();
-
   // Use the parent's shape to update the fabric's curves.
   var parent = this.box_.parent;
   diem.cloth.Anchor.updateActions(parent.shape);
@@ -108,20 +101,25 @@ diem.cloth.Anchor.updateActions = function(oldShape) {
   oldShape.actions = actions;
 };
 
-diem.cloth.Anchor.prototype.updateCpLines_ = function() {
-  for (var i = 0; i < this.cpLine_.length; ++i) {
-    this.cpLine_[i].geometry.verticesNeedUpdate = true;
-  }
-};
-
 diem.cloth.Anchor.ControlPoint = function(mesh) {
-  this.mesh_ = mesh;
+  this.mesh_ = mesh.clone();
+
+  var lineMaterial = new THREE.LineBasicMaterial(
+    {color : this.mesh_.material.color});
+  var lineGeometry = new THREE.Geometry();
+  lineGeometry.vertices.push(mesh.position, this.mesh_.position);
+  this.line_ = new THREE.Line(lineGeometry, lineMaterial);
 };
 
 diem.cloth.Anchor.ControlPoint.prototype.getObject = function() {
   return this.mesh_;
 };
 
+diem.cloth.Anchor.ControlPoint.prototype.getMeshes = function() {
+  return [this.mesh_, this.line_];
+};
+
 diem.cloth.Anchor.ControlPoint.prototype.onDrag = function(vec) {
   this.mesh_.position.copy(vec);
+  this.line_.geometry.verticesNeedUpdate = true;
 };
