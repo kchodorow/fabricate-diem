@@ -15,11 +15,8 @@ diem.cloth.Anchor = function(corner) {
   this.box_ = new THREE.Mesh(geometry, material);
   this.box_.position.copy(this.corner_);
 
-  this.controlPoint_ = [];
-  this.cpLine_ = [];
-  for (var i = 0; i < 2; i++) {
-    this.controlPoint_.push(new diem.cloth.Anchor.ControlPoint(this.box_));
-  }
+  this.cwCp_ = new diem.cloth.Anchor.ControlPoint(this.box_);
+  this.ccwCp_ = new diem.cloth.Anchor.ControlPoint(this.box_);
 };
 
 diem.cloth.Anchor.ANCHOR_SIZE = .30;
@@ -30,19 +27,16 @@ diem.cloth.Anchor.prototype.getObject = function() {
 
 diem.cloth.Anchor.prototype.getMeshes = function() {
   return [this.box_]
-    .concat(this.controlPoint_[0].getMeshes())
-    .concat(this.controlPoint_[1].getMeshes());
+    .concat(this.cwCp_.getMeshes())
+    .concat(this.ccwCp_.getMeshes());
 };
 
-diem.cloth.Anchor.prototype.getControlPoints = function() {
-  return this.controlPoint_;
+diem.cloth.Anchor.prototype.getClockwiseCp = function() {
+  return this.cwCp_;
 };
 
-diem.cloth.Anchor.prototype.changePosition = function(delta) {
-  this.box_.position.sub(delta);
-  this.controlPoint_[0].getObject().position.sub(delta);
-  this.controlPoint_[1].getObject().position.sub(delta);
-  this.updateCpLines_();
+diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
+  return this.ccwCp_;
 };
 
 diem.cloth.Anchor.prototype.onClick = function() {
@@ -66,10 +60,10 @@ diem.cloth.Anchor.prototype.onDrag = function() {
   opposite.add(this.box_.position);
 
   // normal offset.
-  this.controlPoint_[0].onDrag(offset);
+  this.cwCp_.onDrag(offset);
 
   // opposite offset.
-  this.controlPoint_[1].onDrag(opposite);
+  this.ccwCp_.onDrag(opposite);
 
   // Use the parent's shape to update the fabric's curves.
   var parent = this.box_.parent;
@@ -85,17 +79,16 @@ diem.cloth.Anchor.updateActions = function(oldShape) {
   // Initial moveTo is required for THREE.Shape's actions to be properly formed.
   var actions = [{
     action: 'moveTo',
-    args: [0, 0]
+    args: [oldShape.curves[0].v0.x, oldShape.curves[0].v0.y]
   }];
   for (var i = 0; i < oldShape.curves.length; ++i) {
     var oldCurve = oldShape.curves[i];
     actions.push({
       action: 'bezierCurveTo',
       args: [
-        oldCurve.v0.x, oldCurve.v0.y,
         oldCurve.v1.x, oldCurve.v1.y,
         oldCurve.v2.x, oldCurve.v2.y,
-        oldCurve.v3.x, oldCurve.v3.y]
+        oldCurve.v3.x, oldCurve.v3.y] // Doubles as v0 for the next point.
     });
   }
   oldShape.actions = actions;

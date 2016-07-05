@@ -34,9 +34,9 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
 
   this.shape_ = new THREE.Shape();
   for (i = 0; i < this.corners_.length; ++i) {
-    var startCp = this.anchors_[i].getControlPoints()[0].getObject().position;
+    var startCp = this.anchors_[i].getClockwiseCp().getObject().position;
     var j = (i + 1) % this.corners_.length;
-    var endCp = this.anchors_[j].getControlPoints()[1].getObject().position;
+    var endCp = this.anchors_[j].getCounterClockwiseCp().getObject().position;
 
     var curve = new THREE.CubicBezierCurve(
       this.corners_[i],

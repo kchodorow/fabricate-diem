@@ -66,13 +66,13 @@ diem.SceneContainer.prototype.initModels_ = function() {
 diem.SceneContainer.prototype.addPatternPiece = function() {
   var piece = this.pattern_.addPiece();
   this.scene.add(piece);
-};
-
-diem.SceneContainer.prototype.pathTool = function() {
   var anchors = this.pattern_.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
     this.eventHandler_.registerClickable(anchors[i]);
   }
+};
+
+diem.SceneContainer.prototype.pathTool = function() {
 };
 
 // TODO: move this to Cloth or Particle.
