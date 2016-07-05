@@ -42,33 +42,12 @@ diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
 diem.cloth.Anchor.prototype.onClick = function() {
 };
 
-// parent: (2, 2, 0)
-// box:    (8, 5, 0)
-// mouse:  (11, 6, 0)
-// ->      (1, -1, 0)
 diem.cloth.Anchor.prototype.onDrag = function() {
-  // Get the offsets from the origin
-  var offset = new THREE.Vector3();
-  offset.copy(diem.Globals.mouse)
-    .sub(this.box_.parent.position)
-    .sub(this.box_.position);
-  var opposite = new THREE.Vector3();
-  opposite.copy(offset).multiplyScalar(-1);
+  this.cwCp_.onDragImpl_();
+  this.ccwCp_.onDragImpl_(-1);
 
-  // Remap to the anchor point.
-  offset.add(this.box_.position);
-  opposite.add(this.box_.position);
-
-  // normal offset.
-  this.cwCp_.onDrag(offset);
-
-  // opposite offset.
-  this.ccwCp_.onDrag(opposite);
-
-  // Use the parent's shape to update the fabric's curves.
-  var parent = this.box_.parent;
-  diem.cloth.Anchor.updateActions(parent.shape);
-  parent.geometry = parent.shape.makeGeometry();
+  diem.cloth.Anchor.updateActions(this.box_.parent.shape);
+  this.box_.parent.geometry = this.box_.parent.shape.makeGeometry();
 };
 
 /**
@@ -96,12 +75,17 @@ diem.cloth.Anchor.updateActions = function(oldShape) {
 
 diem.cloth.Anchor.ControlPoint = function(mesh) {
   this.mesh_ = mesh.clone();
+  this.anchor_ = mesh;
 
   var lineMaterial = new THREE.LineBasicMaterial(
     {color : this.mesh_.material.color});
   var lineGeometry = new THREE.Geometry();
   lineGeometry.vertices.push(mesh.position, this.mesh_.position);
   this.line_ = new THREE.Line(lineGeometry, lineMaterial);
+
+  // The initial drag is handled by the anchor point, since both control points
+  // move.
+  this.firstDrag_ = true;
 };
 
 diem.cloth.Anchor.ControlPoint.prototype.getObject = function() {
@@ -112,7 +96,33 @@ diem.cloth.Anchor.ControlPoint.prototype.getMeshes = function() {
   return [this.mesh_, this.line_];
 };
 
-diem.cloth.Anchor.ControlPoint.prototype.onDrag = function(vec) {
-  this.mesh_.position.copy(vec);
+// pattern: (2, 2, 0)
+// cp:      (8, 5, 0)
+// mouse:   (11, 6, 0)
+// ->       (1, -1, 0)
+diem.cloth.Anchor.ControlPoint.prototype.onDrag = function() {
+  if (this.firstDrag_) {
+    return;
+  }
+  this.onDragImpl_();
+
+  // Use the parent's shape to update the fabric's curves.
+  diem.cloth.Anchor.updateActions(this.mesh_.parent.shape);
+  this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
+};
+
+diem.cloth.Anchor.ControlPoint.prototype.onDragImpl_ = function(opt_multiplier) {
+  opt_multiplier = opt_multiplier || 1;
+  var patternPiece = this.mesh_.parent;
+  // Get the offsets from the origin
+  var offset = new THREE.Vector3();
+  offset.copy(diem.Globals.mouse)
+    .sub(patternPiece.position)
+    .sub(this.anchor_.position);
+  offset.multiplyScalar(opt_multiplier);
+
+  // Remap to the anchor point.
+  offset.add(this.anchor_.position);
+  this.mesh_.position.copy(offset);
   this.line_.geometry.verticesNeedUpdate = true;
 };

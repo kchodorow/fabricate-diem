@@ -68,7 +68,7 @@ diem.SceneContainer.prototype.addPatternPiece = function() {
   this.scene.add(piece);
   var anchors = this.pattern_.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
-    this.eventHandler_.registerClickable(anchors[i]);
+    this.eventHandler_.registerDraggable(anchors[i]);
   }
 };
 

@@ -19,6 +19,9 @@ goog.require('goog.ui.KeyboardShortcutHandler');
  * @constructor
  */
 diem.EventHandler = function(camera) {
+  this.camera_ = camera;
+  this.raycaster_ = new THREE.Raycaster();
+  this.activeTool = null;
   this.funcMap_ = {};
   this.shortcuts = new goog.ui.KeyboardShortcutHandler(document);
   goog.events.listen(
@@ -28,23 +31,18 @@ diem.EventHandler = function(camera) {
     false,
     this);
 
-  this.activeTool = null;
-
-  // Objects in the scene that can be clicked.
-  this.clickable_ = [];
-  // A mapping between THREE objects and their backing objects.
-  this.clickMap_ = {};
-  document.addEventListener('mousedown', goog.bind(this.onClick, this), false);
-  document.addEventListener('touchstart', goog.bind(this.onClick, this), false);
-  this.raycaster_ = new THREE.Raycaster();
-  this.camera_ = camera;
-
-  // And dragged.
   this.dragger_ = new goog.fx.Dragger(
     document.getElementById(diem.Globals.WEBGL_DIV_ID));
   this.dragger_.defaultAction = goog.bind(this.dragAction, this);
-  this.plane_ = new THREE.Plane();
-  this.offset_ = new THREE.Vector3();
+  this.dragger_.addEventListener(
+    goog.fx.Dragger.EventType.END,
+    goog.bind(this.dragEnd, this));
+  // Objects in the scene that can be dragged.
+  this.draggable_ = [];
+  // A mapping between THREE objects and their backing objects.
+  this.dragMap_ = {};
+  // The current thing being dragged.
+  this.clicked_ = null;
 };
 
 diem.EventHandler.prototype.registerShortcut = function(id, func, keycode) {
@@ -52,11 +50,11 @@ diem.EventHandler.prototype.registerShortcut = function(id, func, keycode) {
   this.funcMap_[id] = func;
 };
 
-diem.EventHandler.prototype.registerClickable = function(clickable) {
-  goog.asserts.assert(clickable.onClick != null, 'onClick handler must be set');
-  var object = clickable.getObject();
-  this.clickable_.push(object);
-  this.clickMap_[object.uuid] = clickable;
+diem.EventHandler.prototype.registerDraggable = function(draggable) {
+  goog.asserts.assert(draggable.onDrag != null, 'onDrag handler must be set');
+  var object = draggable.getObject();
+  this.draggable_.push(object);
+  this.dragMap_[object.uuid] = draggable;
 };
 
 diem.EventHandler.SCISSORS_TOOL = "SCISSORS_TOOL";
@@ -74,13 +72,13 @@ diem.EventHandler.prototype.handleKeypress = function(event) {
 /**
  * Raycaster coordinates (between 0 & 1, I think).
  */
-diem.EventHandler.prototype.getRaycasterCoordinates = function(x, y) {
+diem.EventHandler.getRaycasterCoordinates_ = function(x, y) {
   return {
     x: (x / diem.Globals.WIDTH) * 2 - 1,
     y: -(y / diem.Globals.HEIGHT) * 2 + 1};
 };
 
-diem.EventHandler.prototype.getMouseCoordinates = function(x, y) {
+diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   var vector = new THREE.Vector3();
   vector.set((x / diem.Globals.WIDTH) * 2 - 1, -(y / diem.Globals.HEIGHT) * 2 + 1, 0.5);
   vector.unproject(this.camera_);
@@ -90,36 +88,23 @@ diem.EventHandler.prototype.getMouseCoordinates = function(x, y) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
 };
 
-diem.EventHandler.prototype.onClick = function(event) {
-  event.preventDefault();
-  this.getMouseCoordinates(event.clientX, event.clientY);
-  this.raycaster_.setFromCamera(
-    this.getRaycasterCoordinates(event.clientX, event.clientY), this.camera_);
-
-  var intersects = this.raycaster_.intersectObjects(this.clickable_);
-  if (intersects.length > 0) {
-    var object = intersects[0].object;
-    var backer = this.clickMap_[object.uuid];
-    backer.onClick();
-    var intersection = new THREE.Vector3();
-    if (this.raycaster_.ray.intersectPlane(this.plane_, intersection)) {
-      this.offset_.copy(intersection).sub(object.position);
-    }
-    if ('onDrag' in backer) {
-      this.clicked_ = backer;
-    }
-  }
-};
-
 diem.EventHandler.prototype.dragAction = function() {
   var x = this.dragger_.clientX;
   var y = this.dragger_.clientY;
-  this.getMouseCoordinates(x, y);
-  if (this.clicked_ != null) {
-    var intersection = new THREE.Vector3();
-    this.raycaster_.setFromCamera(this.getRaycasterCoordinates(x, y), this.camera_);
-    if (this.raycaster_.ray.intersectPlane(this.plane_, intersection)) {
-      this.clicked_.onDrag(intersection.sub(this.offset_));
+  this.updateMouseCoordinates_(x, y);
+  if (this.clicked_ == null) {
+    this.raycaster_.setFromCamera(
+      diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
+    var intersects = this.raycaster_.intersectObjects(this.draggable_);
+    if (intersects.length == 0) {
+      return;
     }
+    var object = intersects[0].object;
+    this.clicked_ = this.dragMap_[object.uuid];
   }
+  this.clicked_.onDrag();
+};
+
+diem.EventHandler.prototype.dragEnd = function() {
+  this.clicked_ = null;
 };
