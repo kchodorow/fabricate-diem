@@ -35,6 +35,9 @@ diem.EventHandler = function(camera) {
     document.getElementById(diem.Globals.WEBGL_DIV_ID));
   this.dragger_.defaultAction = goog.bind(this.dragAction, this);
   this.dragger_.addEventListener(
+    goog.fx.Dragger.EventType.START,
+    goog.bind(this.dragStart, this));
+  this.dragger_.addEventListener(
     goog.fx.Dragger.EventType.END,
     goog.bind(this.dragEnd, this));
   // Objects in the scene that can be dragged.
@@ -88,23 +91,35 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
 };
 
-diem.EventHandler.prototype.dragAction = function() {
-  var x = this.dragger_.clientX;
-  var y = this.dragger_.clientY;
+diem.EventHandler.prototype.dragStart = function(dragEvent) {
+  var x = dragEvent.clientX;
+  var y = dragEvent.clientY;
   this.updateMouseCoordinates_(x, y);
-  if (this.clicked_ == null) {
-    this.raycaster_.setFromCamera(
-      diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
-    var intersects = this.raycaster_.intersectObjects(this.draggable_);
-    if (intersects.length == 0) {
-      return;
-    }
-    var object = intersects[0].object;
-    this.clicked_ = this.dragMap_[object.uuid];
+  this.raycaster_.setFromCamera(
+    diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
+  var intersects = this.raycaster_.intersectObjects(this.draggable_);
+  if (intersects.length == 0) {
+    return;
   }
-  this.clicked_.onDrag();
+  var object = intersects[0].object;
+  this.clicked_ = this.dragMap_[object.uuid];
+  if (this.clicked_.onDragStart) {
+    this.clicked_.onDragStart();
+  }
+};
+
+diem.EventHandler.prototype.dragAction = function() {
+  if (this.clicked_ != null) {
+    var x = this.dragger_.clientX;
+    var y = this.dragger_.clientY;
+    this.updateMouseCoordinates_(x, y);
+    this.clicked_.onDrag();
+  }
 };
 
 diem.EventHandler.prototype.dragEnd = function() {
+  if (this.clicked_ != null && this.clicked_.onDragEnd) {
+    this.clicked_.onDragEnd();
+  }
   this.clicked_ = null;
 };

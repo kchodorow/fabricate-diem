@@ -13,7 +13,7 @@ diem.cloth.Anchor = function(corner) {
     0);
   var material = new THREE.MeshBasicMaterial({color : color});
   this.box_ = new THREE.Mesh(geometry, material);
-  this.box_.position.copy(this.corner_);
+  Object.defineProperty(this.box_, 'position', {value : this.corner_});
 
   this.cwCp_ = new diem.cloth.Anchor.ControlPoint(this.box_);
   this.ccwCp_ = new diem.cloth.Anchor.ControlPoint(this.box_);
@@ -26,9 +26,9 @@ diem.cloth.Anchor.prototype.getObject = function() {
 };
 
 diem.cloth.Anchor.prototype.getMeshes = function() {
-  return [this.box_]
-    .concat(this.cwCp_.getMeshes())
-    .concat(this.ccwCp_.getMeshes());
+  return this.cwCp_.getMeshes()
+    .concat(this.ccwCp_.getMeshes())
+    .concat(this.box_);
 };
 
 diem.cloth.Anchor.prototype.getClockwiseCp = function() {
@@ -42,12 +42,31 @@ diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
 diem.cloth.Anchor.prototype.onClick = function() {
 };
 
+diem.cloth.Anchor.prototype.onDragStart = function() {
+  if (this.controlPointsAtOrigin_()) {
+    this.dragAllCp_ = true;
+  } else {
+    this.dragAllCp_ = false;
+  }
+};
+
 diem.cloth.Anchor.prototype.onDrag = function() {
-  this.cwCp_.onDragImpl_();
-  this.ccwCp_.onDragImpl_(-1);
+  if (this.dragAllCp_) {
+    // When the anchor points and control points are in the same position,
+    // dragging moves both control points.
+    this.cwCp_.onDragImpl_();
+    this.ccwCp_.onDragImpl_(-1);
+  } else {
+    this.box_.position.copy(diem.Globals.mouse).sub(this.box_.parent.position);
+  }
 
   diem.cloth.Anchor.updateActions(this.box_.parent.shape);
   this.box_.parent.geometry = this.box_.parent.shape.makeGeometry();
+};
+
+diem.cloth.Anchor.prototype.controlPointsAtOrigin_ = function() {
+  return this.box_.position.equals(this.cwCp_.getObject().position)
+    && this.box_.position.equals(this.ccwCp_.getObject().position);
 };
 
 /**
