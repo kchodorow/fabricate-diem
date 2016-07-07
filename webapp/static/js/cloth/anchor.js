@@ -58,6 +58,8 @@ diem.cloth.Anchor.prototype.onDrag = function() {
     this.ccwCp_.onDragImpl_(-1);
   } else {
     this.box_.position.copy(diem.Globals.mouse).sub(this.box_.parent.position);
+    this.cwCp_.updateLine();
+    this.ccwCp_.updateLine();
   }
 
   diem.cloth.Anchor.updateActions(this.box_.parent.shape);
@@ -143,5 +145,9 @@ diem.cloth.Anchor.ControlPoint.prototype.onDragImpl_ = function(opt_multiplier) 
   // Remap to the anchor point.
   offset.add(this.anchor_.position);
   this.mesh_.position.copy(offset);
+  this.updateLine();
+};
+
+diem.cloth.Anchor.ControlPoint.prototype.updateLine = function() {
   this.line_.geometry.verticesNeedUpdate = true;
 };
