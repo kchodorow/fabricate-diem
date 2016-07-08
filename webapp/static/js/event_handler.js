@@ -21,8 +21,15 @@ goog.require('goog.ui.KeyboardShortcutHandler');
 diem.EventHandler = function(camera) {
   this.camera_ = camera;
   this.raycaster_ = new THREE.Raycaster();
+  this.setupShortcuts_();
+  this.setupOnClick_();
+  this.setupDraggable_();
+
   this.activeTool = null;
   this.funcMap_ = {};
+};
+
+diem.EventHandler.prototype.setupShortcuts_ = function() {
   this.shortcuts = new goog.ui.KeyboardShortcutHandler(document);
   goog.events.listen(
     this.shortcuts,
@@ -30,7 +37,20 @@ diem.EventHandler = function(camera) {
     this.handleKeypress,
     false,
     this);
+};
 
+diem.EventHandler.prototype.setupOnClick_ = function() {
+  goog.events.listen(
+    document,
+    goog.events.EventType.CLICK,
+    this.handleClick,
+    false,
+    this);
+  this.clickable_ = [];
+  this.clickMap_ = {};
+};
+
+diem.EventHandler.prototype.setupDraggable_ = function() {
   this.dragger_ = new goog.fx.Dragger(
     document.getElementById(diem.Globals.WEBGL_DIV_ID));
   this.dragger_.defaultAction = goog.bind(this.dragAction, this);
@@ -53,6 +73,13 @@ diem.EventHandler.prototype.registerShortcut = function(id, func, keycode) {
   this.funcMap_[id] = func;
 };
 
+diem.EventHandler.prototype.registerClickable = function(clickable) {
+  goog.asserts.assert(clickable.onClick != null, 'onClick handler must be set');
+  var object = clickable.getObject();
+  this.clickable_.push(object);
+  this.clickMap_[object.uuid] = clickable;
+};
+
 diem.EventHandler.prototype.registerDraggable = function(draggable) {
   goog.asserts.assert(draggable.onDrag != null, 'onDrag handler must be set');
   var object = draggable.getObject();
@@ -62,6 +89,7 @@ diem.EventHandler.prototype.registerDraggable = function(draggable) {
 
 diem.EventHandler.SCISSORS_TOOL = "SCISSORS_TOOL";
 diem.EventHandler.HEM_TOOL = "HEM_TOOL";
+diem.EventHandler.RM_ANCHOR_POINT = "RM_ANCHOR_POINT";
 
 diem.EventHandler.prototype.handleKeypress = function(event) {
   if (!(event.identifier in this.funcMap_)) {
@@ -122,4 +150,18 @@ diem.EventHandler.prototype.dragEnd = function() {
     this.clicked_.onDragEnd();
   }
   this.clicked_ = null;
+};
+
+diem.EventHandler.prototype.handleClick = function(event) {
+  var x = event.clientX;
+  var y = event.clientY;
+  this.updateMouseCoordinates_(x, y);
+  this.raycaster_.setFromCamera(
+    diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
+  var intersects = this.raycaster_.intersectObjects(this.clickable_);
+  if (intersects.length == 0) {
+    return;
+  }
+  var object = intersects[0].object;
+  this.clickMap_[object.uuid].onClick();
 };

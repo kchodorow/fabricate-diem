@@ -32,17 +32,16 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
-  var eventHandler = new diem.EventHandler(this.camera);
-  eventHandler.registerShortcut(
+  this.eventHandler_ = new diem.EventHandler(this.camera);
+  this.eventHandler_.registerShortcut(
     diem.Pattern.ADD_PIECE, goog.bind(this.addPatternPiece, this),
     goog.events.KeyCodes.C);
-  eventHandler.registerShortcut(
-    diem.Pattern.PATH_TOOL, goog.bind(this.pathTool, this),
-    goog.events.KeyCodes.A);
-  this.eventHandler_ = eventHandler;
+  this.eventHandler_.registerShortcut(
+    diem.EventHandler.RM_ANCHOR_POINT, this.removeAnchorPoint,
+    goog.events.KeyCodes.DASH);
 
   /** Pattern pieces */
-  this.pattern_ = new diem.Pattern(eventHandler);
+  this.pattern_ = new diem.Pattern();
   this.initLights_();
   this.initModels_();
 };
@@ -69,10 +68,12 @@ diem.SceneContainer.prototype.addPatternPiece = function() {
   var anchors = this.pattern_.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
     this.eventHandler_.registerDraggable(anchors[i]);
+    this.eventHandler_.registerClickable(anchors[i]);
   }
 };
 
-diem.SceneContainer.prototype.pathTool = function() {
+diem.SceneContainer.prototype.removeAnchorPoint = function() {
+  diem.cloth.Anchor.onClick = diem.cloth.Anchor.removeAnchorPoint;
 };
 
 // TODO: move this to Cloth or Particle.

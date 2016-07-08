@@ -4,12 +4,10 @@ goog.provide('diem.Pattern');
 
 goog.require('diem.cloth.Workboard');
 
-goog.require('goog.events.KeyCodes');
-
 /**
  * @constructor
  */
-diem.Pattern = function(eventHandler) {
+diem.Pattern = function() {
   this.pieces_ = [];
 };
 

@@ -40,7 +40,31 @@ diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
   return this.ccwCp_;
 };
 
+diem.cloth.Anchor.onClick = function() {};
+
 diem.cloth.Anchor.prototype.onClick = function() {
+  goog.bind(diem.cloth.Anchor.onClick, this).call();
+};
+
+// Bound to onClick, takes an Anchor instance as this.
+diem.cloth.Anchor.removeAnchorPoint = function() {
+  // Find curve.
+  var curves = this.box_.parent.shape.curves;
+  for (var i = 0; i < curves.length; ++i) {
+    if (curves[i].v3 != this.box_.position) {
+      continue;
+    }
+    var firstCurve = curves[i];
+    var secondCurve = curves[(i + 1) % curves.length];
+    // Splice the curves together.
+    curves.splice(i, 2, new THREE.CubicBezierCurve(
+      firstCurve.v0,
+      firstCurve.v1,
+      secondCurve.v2,
+      secondCurve.v3));
+    this.dirtyParent_();
+    return;
+  }
 };
 
 diem.cloth.Anchor.prototype.onDragStart = function() {
@@ -62,7 +86,10 @@ diem.cloth.Anchor.prototype.onDrag = function() {
     this.cwCp_.updateLine();
     this.ccwCp_.updateLine();
   }
+  this.dirtyParent_();
+};
 
+diem.cloth.Anchor.prototype.dirtyParent_ = function() {
   diem.cloth.ControlPoint.updateActions(this.box_.parent.shape);
   this.box_.parent.geometry = this.box_.parent.shape.makeGeometry();
 };
