@@ -4,6 +4,7 @@ goog.provide('diem.cloth.Workboard');
 
 goog.require('diem.Fabric');
 goog.require('diem.cloth.Anchor');
+goog.require('diem.cloth.ControlPoint');
 
 /**
  * @constructor
@@ -45,7 +46,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
       this.corners_[j]);
     this.shape_.curves.push(curve);
   }
-  diem.cloth.Anchor.updateActions(this.shape_);
+  diem.cloth.ControlPoint.updateActions(this.shape_);
 
   this.geometry_ = new THREE.ShapeGeometry(this.shape_);
 
