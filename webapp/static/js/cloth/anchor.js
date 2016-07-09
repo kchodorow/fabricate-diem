@@ -6,7 +6,6 @@ goog.require('diem.Fabric');
 goog.require('diem.cloth.ControlPoint');
 
 diem.cloth.Anchor = function(corner) {
-  this.corner_ = corner;
   var color = diem.Fabric.getRandomColor();
   var geometry = new THREE.BoxGeometry(
     diem.cloth.Anchor.ANCHOR_SIZE,
@@ -14,7 +13,7 @@ diem.cloth.Anchor = function(corner) {
     0);
   var material = new THREE.MeshBasicMaterial({color : color});
   this.box_ = new THREE.Mesh(geometry, material);
-  Object.defineProperty(this.box_, 'position', {value : this.corner_});
+  this.box_.position.copy(corner);
 
   this.cwCp_ = new diem.cloth.ControlPoint(this.box_);
   this.ccwCp_ = new diem.cloth.ControlPoint(this.box_);

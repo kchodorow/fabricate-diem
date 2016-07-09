@@ -1,5 +1,9 @@
+/* global THREE */
 goog.provide('diem.cloth.ControlPoint');
 
+/**
+ * @constructor
+ */
 diem.cloth.ControlPoint = function(mesh) {
   this.mesh_ = mesh.clone();
   this.anchor_ = mesh;
