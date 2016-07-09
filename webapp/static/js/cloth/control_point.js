@@ -16,7 +16,7 @@ diem.cloth.ControlPoint = function(mesh) {
 
   // The initial drag is handled by the anchor point, since both control points
   // move.
-  this.firstDrag_ = true;
+  this.independentlyDraggable_ = true;
 };
 
 diem.cloth.ControlPoint.prototype.getObject = function() {
@@ -31,12 +31,16 @@ diem.cloth.ControlPoint.prototype.getMeshes = function() {
   return [this.mesh_, this.line_];
 };
 
+diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable) {
+  this.independentlyDraggable = draggable;
+};
+
 // pattern: (2, 2, 0)
 // cp:      (8, 5, 0)
 // mouse:   (11, 6, 0)
 // ->       (1, -1, 0)
 diem.cloth.ControlPoint.prototype.onDrag = function() {
-  if (this.firstDrag_) {
+  if (!this.independentlyDraggable_) {
     return;
   }
   this.onDragImpl_();

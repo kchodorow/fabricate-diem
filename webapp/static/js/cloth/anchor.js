@@ -74,11 +74,7 @@ diem.cloth.Anchor.removeAnchorPoint = function() {
 };
 
 diem.cloth.Anchor.prototype.onDragStart = function() {
-  if (this.controlPointsAtOrigin_()) {
-    this.dragAllCp_ = true;
-  } else {
-    this.dragAllCp_ = false;
-  }
+  this.dragAllCp_ = this.controlPointsAtOrigin_();
 };
 
 diem.cloth.Anchor.prototype.onDrag = function() {
@@ -93,6 +89,12 @@ diem.cloth.Anchor.prototype.onDrag = function() {
     this.ccwCp_.updateLine();
   }
   this.dirtyParent_();
+};
+
+diem.cloth.Anchor.prototype.onDragEnd = function() {
+  var freeCps = !this.controlPointsAtOrigin_();
+  this.cwCp_.setIndependentlyDraggable(freeCps);
+  this.ccwCp_.setIndependentlyDraggable(freeCps);
 };
 
 diem.cloth.Anchor.prototype.dirtyParent_ = function() {
