@@ -8,6 +8,7 @@ goog.require('diem.Globals');
 goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
+goog.require('diem.cloth.Workboard');
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -37,8 +38,14 @@ diem.SceneContainer = function() {
     diem.Pattern.ADD_PIECE, goog.bind(this.addPatternPiece, this),
     goog.events.KeyCodes.C);
   this.eventHandler_.registerShortcut(
+    diem.EventHandler.ANCHOR_POINT_TOOL, this.anchorPointTool,
+    goog.events.KeyCodes.A);
+  this.eventHandler_.registerShortcut(
     diem.EventHandler.RM_ANCHOR_POINT, this.removeAnchorPoint,
     goog.events.KeyCodes.DASH);
+  this.eventHandler_.registerShortcut(
+    diem.EventHandler.ADD_ANCHOR_POINT, this.addAnchorPoint,
+    goog.events.KeyCodes.EQUALS, goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT);
 
   /** Pattern pieces */
   this.pattern_ = new diem.Pattern();
@@ -64,12 +71,23 @@ diem.SceneContainer.prototype.initModels_ = function() {
 
 diem.SceneContainer.prototype.addPatternPiece = function() {
   var piece = this.pattern_.addPiece();
-  this.scene.add(piece);
-  var anchors = this.pattern_.getAnchors();
+  this.scene.add(piece.getObject());
+  this.eventHandler_.registerClickable(piece);
+  var anchors = piece.getAnchors();
   for (var i = 0; i < anchors.length; ++i) {
     this.eventHandler_.registerDraggable(anchors[i]);
     this.eventHandler_.registerClickable(anchors[i]);
+    this.eventHandler_.registerDraggable(anchors[i].getClockwiseCp());
+    this.eventHandler_.registerDraggable(anchors[i].getCounterClockwiseCp());
   }
+};
+
+diem.SceneContainer.prototype.anchorPointTool = function() {
+  diem.cloth.Anchor.onClick = function() {};
+};
+
+diem.SceneContainer.prototype.addAnchorPoint = function() {
+  diem.cloth.Workboard.onClick = diem.cloth.Workboard.addAnchorPoint;
 };
 
 diem.SceneContainer.prototype.removeAnchorPoint = function() {

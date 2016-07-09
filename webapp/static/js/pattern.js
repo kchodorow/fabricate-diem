@@ -26,13 +26,5 @@ diem.Pattern.prototype.addPiece = function() {
     diem.Pattern.CLOTH_OFFSET_X,
     diem.Pattern.CLOTH_OFFSET_Y * this.pieces_.length);
   this.pieces_.push(cloth);
-  return cloth.getMesh();
-};
-
-diem.Pattern.prototype.getAnchors = function() {
-  var anchors = [];
-  for (var i = 0; i < this.pieces_.length; ++i) {
-    anchors = anchors.concat(this.pieces_[i].getAnchors());
-  }
-  return anchors;
+  return cloth;
 };

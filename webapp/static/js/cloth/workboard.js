@@ -65,12 +65,26 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   }
 };
 
+diem.cloth.Workboard.prototype.getObject = function() {
+  return this.mesh_;
+};
+
 diem.cloth.Workboard.prototype.getAnchors = function() {
   return this.anchors_;
 };
 
-diem.cloth.Workboard.prototype.getMesh = function() {
-  return this.mesh_;
+diem.cloth.Workboard.onClick = function() {};
+
+diem.cloth.Workboard.prototype.onClick = function() {
+  goog.bind(diem.cloth.Workboard.onClick, this).call();
+};
+
+/**
+ * Looks static, but called with an instance of Workboard as this.
+ */
+diem.cloth.Workboard.addAnchorPoint = function() {
+  console.log("mouse: " + diem.Globals.mouse.x + "," + diem.Globals.mouse.y);
+  console.log("this: " + this.mesh_.position.x + "," + this.mesh_.position.y);
 };
 
 /**

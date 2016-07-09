@@ -68,8 +68,23 @@ diem.EventHandler.prototype.setupDraggable_ = function() {
   this.clicked_ = null;
 };
 
-diem.EventHandler.prototype.registerShortcut = function(id, func, keycode) {
-  this.shortcuts.registerShortcut(id, keycode);
+/**
+ * arguments[2...] are key codes (e.g.,
+ * diem.EventHandler.ADD_ANCHOR_POINT,
+ * goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT)
+ */
+diem.EventHandler.prototype.registerShortcut = function(id, func) {
+  switch (arguments.length) {
+  case 3:
+    this.shortcuts.registerShortcut(id, arguments[2]);
+    break;
+  case 4:
+    console.log("adding shortcut for " + arguments);
+    this.shortcuts.registerShortcut(id, arguments[2], arguments[3]);
+    break;
+  default:
+    goog.asserts.fail("Wrong number of keys");
+  }
   this.funcMap_[id] = func;
 };
 
@@ -89,6 +104,8 @@ diem.EventHandler.prototype.registerDraggable = function(draggable) {
 
 diem.EventHandler.SCISSORS_TOOL = "SCISSORS_TOOL";
 diem.EventHandler.HEM_TOOL = "HEM_TOOL";
+diem.EventHandler.ANCHOR_POINT_TOOL = "ANCHOR_POINT_TOOL";
+diem.EventHandler.ADD_ANCHOR_POINT = "ADD_ANCHOR_POINT";
 diem.EventHandler.RM_ANCHOR_POINT = "RM_ANCHOR_POINT";
 
 diem.EventHandler.prototype.handleKeypress = function(event) {
