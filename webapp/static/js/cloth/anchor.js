@@ -61,7 +61,14 @@ diem.cloth.Anchor.removeAnchorPoint = function() {
       firstCurve.v1,
       secondCurve.v2,
       secondCurve.v3));
+
+    // Dirty parent before removing its children.
     this.dirtyParent_();
+    this.box_.parent.remove(this.cwCp_.getObject());
+    this.box_.parent.remove(this.cwCp_.getLine());
+    this.box_.parent.remove(this.ccwCp_.getObject());
+    this.box_.parent.remove(this.ccwCp_.getLine());
+    this.box_.parent.remove(this.box_);
     return;
   }
 };

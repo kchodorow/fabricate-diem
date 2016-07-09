@@ -23,6 +23,10 @@ diem.cloth.ControlPoint.prototype.getObject = function() {
   return this.mesh_;
 };
 
+diem.cloth.ControlPoint.prototype.getLine = function() {
+  return this.line_;
+};
+
 diem.cloth.ControlPoint.prototype.getMeshes = function() {
   return [this.mesh_, this.line_];
 };
