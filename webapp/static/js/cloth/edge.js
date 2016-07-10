@@ -48,17 +48,30 @@ diem.cloth.Edge.prototype.generateAction = function() {
   };
 };
 
-// For now, add point only.
+diem.cloth.Edge.onClick = function() {};
+
 diem.cloth.Edge.prototype.onClick = function() {
+  goog.bind(diem.cloth.Edge.onClick, this).call();
+};
+
+diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
   var oldEndAnchor = this.endAnchor_;
-  this.endAnchor_ = new diem.cloth.Anchor(diem.Globals.mouse);
-
-  // Modify the end point.
-  this.curve_.v2 = this.endAnchor_.getCounterClockwiseCp().getObject().position;
-  this.curve_.v3 = this.endAnchor_.getObject().position;
+  this.replaceEndAnchor(new diem.cloth.Anchor(diem.Globals.mouse));
 
   // Create a new bezier curve for mouse -> end of line.
   var newEdge = new diem.cloth.Edge(this.endAnchor_, oldEndAnchor);
   this.parent.add(newEdge);
+};
+
+diem.cloth.Edge.prototype.getEndAnchor = function() {
+  return this.endAnchor_;
+};
+
+diem.cloth.Edge.prototype.replaceEndAnchor = function(newAnchorPoint) {
+  this.endAnchor_ = newAnchorPoint;
+
+  // Modify the end point.
+  this.curve_.v2 = this.endAnchor_.getCounterClockwiseCp().getObject().position;
+  this.curve_.v3 = this.endAnchor_.getObject().position;
 };

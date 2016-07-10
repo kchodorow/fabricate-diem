@@ -9,6 +9,9 @@ goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
 goog.require('diem.cloth.Workboard');
+goog.require('diem.tools.AddPiece');
+goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.RemoveAnchorPoint');
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -34,18 +37,10 @@ diem.SceneContainer = function() {
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
   this.eventHandler_ = new diem.EventHandler(this.camera);
-  this.eventHandler_.registerShortcut(
-    diem.Pattern.ADD_PIECE, goog.bind(this.addPatternPiece, this),
-    goog.events.KeyCodes.C);
-  this.eventHandler_.registerShortcut(
-    diem.EventHandler.ANCHOR_POINT_TOOL, this.anchorPointTool,
-    goog.events.KeyCodes.A);
-  this.eventHandler_.registerShortcut(
-    diem.EventHandler.RM_ANCHOR_POINT, this.removeAnchorPoint,
-    goog.events.KeyCodes.DASH);
-  this.eventHandler_.registerShortcut(
-    diem.EventHandler.ADD_ANCHOR_POINT, this.addAnchorPoint,
-    goog.events.KeyCodes.EQUALS, goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT);
+  this.eventHandler_.registerTool(new diem.tools.AddAnchorPoint());
+  this.eventHandler_.registerTool(new diem.tools.AddPiece(
+    goog.bind(this.addPatternPiece, this)));
+  this.eventHandler_.registerTool(new diem.tools.RemoveAnchorPoint());
 
   /** Pattern pieces */
   this.pattern_ = new diem.Pattern();
@@ -93,10 +88,6 @@ diem.SceneContainer.prototype.anchorPointTool = function() {
 
 diem.SceneContainer.prototype.addAnchorPoint = function() {
   diem.cloth.Workboard.onClick = diem.cloth.Workboard.addAnchorPoint;
-};
-
-diem.SceneContainer.prototype.removeAnchorPoint = function() {
-  diem.cloth.Anchor.onClick = diem.cloth.Anchor.removeAnchorPoint;
 };
 
 // TODO: move this to Cloth or Particle.

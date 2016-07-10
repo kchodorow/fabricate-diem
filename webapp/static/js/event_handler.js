@@ -27,8 +27,8 @@ diem.EventHandler = function(camera) {
   this.setupOnClick_();
   this.setupDraggable_();
 
-  this.activeTool = null;
-  this.funcMap_ = {};
+  this.activeTool_ = null;
+  this.toolMap_ = {};
 };
 
 diem.EventHandler.prototype.setupShortcuts_ = function() {
@@ -70,24 +70,20 @@ diem.EventHandler.prototype.setupDraggable_ = function() {
   this.clicked_ = null;
 };
 
-/**
- * arguments[2...] are key codes (e.g.,
- * diem.EventHandler.ADD_ANCHOR_POINT,
- * goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT)
- */
-diem.EventHandler.prototype.registerShortcut = function(id, func) {
-  switch (arguments.length) {
-  case 3:
-    this.shortcuts.registerShortcut(id, arguments[2]);
+diem.EventHandler.prototype.registerTool = function(tool) {
+  var id = tool.getName();
+  var keys = tool.getKeys();
+  switch (keys.length) {
+  case 1:
+    this.shortcuts.registerShortcut(id, keys[0]);
     break;
-  case 4:
-    console.log("adding shortcut for " + arguments);
-    this.shortcuts.registerShortcut(id, arguments[2], arguments[3]);
+  case 2:
+    this.shortcuts.registerShortcut(id, keys[0], keys[1]);
     break;
   default:
     goog.asserts.fail("Wrong number of keys");
   }
-  this.funcMap_[id] = func;
+  this.toolMap_[id] = tool;
 };
 
 /**
@@ -109,19 +105,21 @@ diem.EventHandler.prototype.registerDraggable = function(draggable) {
   this.dragMap_[object.uuid] = draggable;
 };
 
-diem.EventHandler.SCISSORS_TOOL = "SCISSORS_TOOL";
-diem.EventHandler.HEM_TOOL = "HEM_TOOL";
-diem.EventHandler.ANCHOR_POINT_TOOL = "ANCHOR_POINT_TOOL";
-diem.EventHandler.ADD_ANCHOR_POINT = "ADD_ANCHOR_POINT";
-diem.EventHandler.RM_ANCHOR_POINT = "RM_ANCHOR_POINT";
-
 diem.EventHandler.prototype.handleKeypress = function(event) {
-  if (!(event.identifier in this.funcMap_)) {
-    console.log('no tool selected');
-    this.activeTool = null;
+  if (!(event.identifier in this.toolMap_)) {
+    console.log('no tool matches ' + event.identifier);
+    this.activeTool_ = null;
     return;
   }
-  this.funcMap_[event.identifier].call(event);
+  var newTool = this.toolMap_[event.identifier];
+  // Note that this fires even if newTool == activeTool (for creating new
+  // pattern pieces).
+  // TODO: should there be a separate registration for non-stateful tools?
+  if (this.activeTool_ != null) {
+    this.activeTool_.onDeselect(newTool);
+  }
+  newTool.onSelect(this.activeTool_);
+  this.activeTool_ = newTool;
 };
 
 /**
@@ -143,12 +141,26 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
 };
 
+diem.EventHandler.updateIntersectable = function(list) {
+  var i = 0;
+  while (i < list.length) {
+    if (list[i].parent == null) {
+      list.splice(i, 1);
+      // Restart loop.
+      i = 0;
+    } else {
+      ++i;
+    }
+  };
+};
+
 diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var x = dragEvent.clientX;
   var y = dragEvent.clientY;
   this.updateMouseCoordinates_(x, y);
   this.raycaster_.setFromCamera(
     diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
+  diem.EventHandler.updateIntersectable(this.draggable_);
   var intersects = this.raycaster_.intersectObjects(this.draggable_);
   if (intersects.length == 0) {
     return;
@@ -180,6 +192,7 @@ diem.EventHandler.prototype.handleClick = function(event) {
   var x = event.clientX;
   var y = event.clientY;
   this.updateMouseCoordinates_(x, y);
+  diem.EventHandler.updateIntersectable(this.clickable_);
   this.raycaster_.setFromCamera(
     diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
   var intersects = this.raycaster_.intersectObjects(this.clickable_);

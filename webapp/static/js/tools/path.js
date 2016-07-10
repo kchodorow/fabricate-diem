@@ -11,6 +11,5 @@ diem.tools.Path = function() {
 
 goog.inherits(diem.tools.Path, diem.tools.Tool);
 
-diem.tools.Scissors.prototype.onDrag = function(mouseVec3) {
-  this.cloth.removeNearestParticle(mouseVec3);
+diem.tools.Path.prototype.onDrag = function(mouseVec3) {
 };
