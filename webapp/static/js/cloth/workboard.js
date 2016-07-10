@@ -5,6 +5,7 @@ goog.provide('diem.cloth.Workboard');
 goog.require('diem.Fabric');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
+goog.require('diem.cloth.Edge');
 
 /**
  * @constructor
@@ -35,19 +36,15 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   }
 
   this.shape_ = new THREE.Shape();
+  this.shape_.edges_ = [];
   for (i = 0; i < corners.length; ++i) {
-    var startAnchor = this.anchors_[i].getObject().position;
-    var startCp = this.anchors_[i].getClockwiseCp().getObject().position;
+    var startAnchor = this.anchors_[i];
     var j = (i + 1) % corners.length;
-    var endCp = this.anchors_[j].getCounterClockwiseCp().getObject().position;
-    var endAnchor = this.anchors_[j].getObject().position;
+    var endAnchor = this.anchors_[j];
 
-    var curve = new THREE.CubicBezierCurve(
-      startAnchor,
-      startCp,
-      endCp,
-      endAnchor);
-    this.shape_.curves.push(curve);
+    var curve = new diem.cloth.Edge(startAnchor, endAnchor);
+    this.shape_.curves.push(curve.getBezierCurve());
+    this.shape_.edges_.push(curve);
   }
   diem.cloth.ControlPoint.updateActions(this.shape_);
 
@@ -62,11 +59,17 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
     for (j = 0; j < meshes.length; ++j) {
      this.mesh_.add(meshes[j]);
     }
+    // Thanks to geometry, # of corners == # of edges, so add the edges here, too.
+    this.mesh_.add(this.shape_.edges_[i].getObject());
   }
 };
 
 diem.cloth.Workboard.prototype.getObject = function() {
   return this.mesh_;
+};
+
+diem.cloth.Workboard.prototype.getEdges = function() {
+  return this.shape_.edges_;
 };
 
 diem.cloth.Workboard.prototype.getAnchors = function() {

@@ -5,6 +5,9 @@ goog.provide('diem.cloth.Anchor');
 goog.require('diem.Fabric');
 goog.require('diem.cloth.ControlPoint');
 
+/**
+ * @constructor
+ */
 diem.cloth.Anchor = function(corner) {
   var color = diem.Fabric.getRandomColor();
   var geometry = new THREE.BoxGeometry(

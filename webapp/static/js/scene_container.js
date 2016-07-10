@@ -72,9 +72,14 @@ diem.SceneContainer.prototype.initModels_ = function() {
 diem.SceneContainer.prototype.addPatternPiece = function() {
   var piece = this.pattern_.addPiece();
   this.scene.add(piece.getObject());
-  this.eventHandler_.registerClickable(piece);
+
+  var edges = piece.getEdges();
+  for (var i = 0; i < edges.length; ++i) {
+    this.eventHandler_.registerClickable(edges[i]);
+  }
+
   var anchors = piece.getAnchors();
-  for (var i = 0; i < anchors.length; ++i) {
+  for (i = 0; i < anchors.length; ++i) {
     this.eventHandler_.registerDraggable(anchors[i]);
     this.eventHandler_.registerClickable(anchors[i]);
     this.eventHandler_.registerDraggable(anchors[i].getClockwiseCp());

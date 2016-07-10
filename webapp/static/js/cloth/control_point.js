@@ -78,17 +78,13 @@ diem.cloth.ControlPoint.updateActions = function(oldShape) {
   // Initial moveTo is required for THREE.Shape's actions to be properly formed.
   var actions = [{
     action: 'moveTo',
-    args: [oldShape.curves[0].v0.x, oldShape.curves[0].v0.y]
+    args: [
+      oldShape.edges_[0].getBezierCurve().v0.x,
+      oldShape.edges_[0].getBezierCurve().v0.y
+    ]
   }];
-  for (var i = 0; i < oldShape.curves.length; ++i) {
-    var oldCurve = oldShape.curves[i];
-    actions.push({
-      action: 'bezierCurveTo',
-      args: [
-        oldCurve.v1.x, oldCurve.v1.y,
-        oldCurve.v2.x, oldCurve.v2.y,
-        oldCurve.v3.x, oldCurve.v3.y] // Doubles as v0 for the next point.
-    });
+  for (var i = 0; i < oldShape.edges_.length; ++i) {
+    actions.push(oldShape.edges_[i].generateAction());
   }
   oldShape.actions = actions;
 };

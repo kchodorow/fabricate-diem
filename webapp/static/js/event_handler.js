@@ -21,6 +21,8 @@ goog.require('goog.ui.KeyboardShortcutHandler');
 diem.EventHandler = function(camera) {
   this.camera_ = camera;
   this.raycaster_ = new THREE.Raycaster();
+  this.raycaster_.linePrecision = 3;
+
   this.setupShortcuts_();
   this.setupOnClick_();
   this.setupDraggable_();
@@ -88,9 +90,14 @@ diem.EventHandler.prototype.registerShortcut = function(id, func) {
   this.funcMap_[id] = func;
 };
 
-diem.EventHandler.prototype.registerClickable = function(clickable) {
+/**
+ * @param clickable An instance of a class with an onClick method.
+ * @param opt_mesh The mesh to use for the click. Defaults to clickable.getObject().
+ */
+diem.EventHandler.prototype.registerClickable = function(clickable, opt_mesh) {
   goog.asserts.assert(clickable.onClick != null, 'onClick handler must be set');
-  var object = clickable.getObject();
+  var mesh = opt_mesh || clickable.getObject();
+  var object = mesh;
   this.clickable_.push(object);
   this.clickMap_[object.uuid] = clickable;
 };
