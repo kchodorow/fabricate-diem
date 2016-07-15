@@ -19,14 +19,17 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   var endAnchorCp = endAnchor.getCounterClockwiseCp().getObject().position;
   var endAnchorPos = endAnchor.getObject().position;
 
-  this.curve_ = new THREE.CubicBezierCurve(
+  this.curve_ = new THREE.CubicBezierCurve3(
     startAnchorPos,
     startAnchorCp,
     endAnchorCp,
     endAnchorPos);
 
   var geometry = new THREE.Geometry();
-  geometry.vertices.concat(this.curve_.getPoints());
+  var points = this.curve_.getPoints();
+  for (var i = 0; i < points.length; ++i) {
+    geometry.vertices.push(points[i]);
+  }
   var material = new THREE.LineBasicMaterial(
     {color : diem.Fabric.getRandomColor()});
   this.mesh_ = new THREE.Line(geometry, material);
@@ -40,7 +43,7 @@ diem.cloth.Edge.prototype.getObject = function() {
 };
 
 /**
- * @returns {THREE.CubicBezierCurve}
+ * @returns {THREE.CubicBezierCurve3}
  */
 diem.cloth.Edge.prototype.getBezierCurve = function() {
   return this.curve_;
@@ -83,7 +86,7 @@ diem.cloth.Edge.addAnchorPoint = function() {
 
   // Create a new bezier curve for mouse -> end of line.
   var newEdge = new diem.cloth.Edge(this.endAnchor_, oldEndAnchor);
-  this.parent.add(newEdge);
+  this.parent.add(newEdge.getObject());
 };
 
 /**
