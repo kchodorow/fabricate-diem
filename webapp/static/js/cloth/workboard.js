@@ -58,12 +58,9 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   this.meshes_.push(this.mesh_);
 
   for (i = 0; i < corners.length; ++i) {
-    var meshes = this.anchors_[i].getMeshes();
-    for (j = 0; j < meshes.length; ++j) {
-     this.mesh_.add(meshes[j]);
-    }
+    this.anchors_[i].addToParent(this.mesh_);
     // Thanks to geometry, # of corners == # of edges, so add the edges here, too.
-    this.mesh_.add(this.shape_.edges_[i].getObject());
+    this.shape_.edges_[i].addToParent(this.mesh_);
   }
 };
 

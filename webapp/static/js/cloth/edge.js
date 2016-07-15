@@ -35,6 +35,14 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   this.mesh_ = new THREE.Line(geometry, material);
 };
 
+diem.cloth.Edge.prototype.addToParent = function(parent) {
+  parent.add(this.mesh_);
+};
+
+diem.cloth.Edge.prototype.addToEventHandler = function(handler) {
+  handler.registerClickable(this);
+};
+
 /**
  * @returns {THREE.Line}
  */
@@ -82,11 +90,15 @@ diem.cloth.Edge.prototype.onClick = function() {
 diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
   var oldEndAnchor = this.endAnchor_;
-  this.replaceEndAnchor(new diem.cloth.Anchor(diem.Globals.mouse));
+  var offsetPosition = new THREE.Vector3();
+  offsetPosition.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
+  var newAnchor = new diem.cloth.Anchor(offsetPosition);
+  this.replaceEndAnchor(newAnchor);
+  newAnchor.addToParent(this.mesh_.parent);
 
   // Create a new bezier curve for mouse -> end of line.
   var newEdge = new diem.cloth.Edge(this.endAnchor_, oldEndAnchor);
-  this.parent.add(newEdge.getObject());
+  newEdge.addToParent(this.mesh_.parent);
 };
 
 /**

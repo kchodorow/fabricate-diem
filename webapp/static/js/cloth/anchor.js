@@ -26,23 +26,31 @@ diem.cloth.Anchor = function(corner) {
 
 diem.cloth.Anchor.ANCHOR_SIZE = .30;
 
+diem.cloth.Anchor.prototype.addToParent = function(parent) {
+  var meshes = this.cwCp_.getMeshes();
+  for (var i = 0; i < meshes.length; ++i) {
+    parent.add(meshes[i]);
+  }
+  meshes = this.ccwCp_.getMeshes();
+  for (var i = 0; i < meshes.length; ++i) {
+    parent.add(meshes[i]);
+  }
+  parent.add(this.box_);
+};
+
+diem.cloth.Anchor.prototype.addToEventHandler = function(handler) {
+  handler.registerDraggable(this);
+  handler.registerClickable(this);
+  handler.registerDraggable(this.cwCp_);
+  handler.registerDraggable(this.ccwCp_);
+};
+
 /**
  * Returns the mesh for the anchor point.
  * @returns {THREE.Mesh}
  */
 diem.cloth.Anchor.prototype.getObject = function() {
   return this.box_;
-};
-
-/**
- * Returns the mesh for the anchor point, control points, and lines from anchor
- * to control points.
- * @returns {array}
- */
-diem.cloth.Anchor.prototype.getMeshes = function() {
-  return this.cwCp_.getMeshes()
-    .concat(this.ccwCp_.getMeshes())
-    .concat(this.box_);
 };
 
 /**
