@@ -21,7 +21,10 @@ diem.cloth.Workboard = function() {
   this.initMeshes_();
 };
 
-// Initial square of cloth.
+/**
+ * Initial square of cloth.
+ * @private
+ */
 diem.cloth.Workboard.prototype.initMeshes_ = function() {
   var corners = [
     new THREE.Vector3(0, 0, 0),
@@ -64,20 +67,31 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   }
 };
 
+/**
+ * Returns the mesh.
+ */
 diem.cloth.Workboard.prototype.getObject = function() {
   return this.mesh_;
 };
 
+/**
+ * Returns the edges for the piece.
+ */
 diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_.edges_;
 };
 
+/**
+ * Returns the anchor points for the piece.
+ */
 diem.cloth.Workboard.prototype.getAnchors = function() {
   return this.anchors_;
 };
 
 /**
  * Sets the position of the cloth.
+ * @param {number} x offset from (0,0)
+ * @param {number} y offset from (0,0)
  */
 diem.cloth.Workboard.prototype.setPosition = function(x, y) {
   var anchor = this.anchors_[0].getObject();

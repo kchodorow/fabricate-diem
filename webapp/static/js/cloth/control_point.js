@@ -3,6 +3,7 @@ goog.provide('diem.cloth.ControlPoint');
 
 /**
  * @constructor
+ * @param {THREE.Mesh} mesh the anchor point's mesh.
  */
 diem.cloth.ControlPoint = function(mesh) {
   this.mesh_ = mesh.clone();
@@ -19,26 +20,45 @@ diem.cloth.ControlPoint = function(mesh) {
   this.independentlyDraggable_ = true;
 };
 
+/**
+ * Returns the control point box's mesh.
+ * @returns {THREE.Mesh}
+ */
 diem.cloth.ControlPoint.prototype.getObject = function() {
   return this.mesh_;
 };
 
+/**
+ * Returns the line mesh from the anchor to this control point.
+ * @returns {THREE.Line}
+ */
 diem.cloth.ControlPoint.prototype.getLine = function() {
   return this.line_;
 };
 
+/**
+ * Returns the line and box mesh.
+ * @returns {Array}
+ */
 diem.cloth.ControlPoint.prototype.getMeshes = function() {
   return [this.mesh_, this.line_];
 };
 
+/**
+ * Change the state so this can/can't be modified by dragging the anchor point.
+ * @param {boolean} draggable
+ */
 diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable) {
   this.independentlyDraggable = draggable;
 };
 
-// pattern: (2, 2, 0)
-// cp:      (8, 5, 0)
-// mouse:   (11, 6, 0)
-// ->       (1, -1, 0)
+/**
+ * Update the position of the control point and update the underlying shape.
+ * pattern: (2, 2, 0)
+ * cp:      (8, 5, 0)
+ * mouse:   (11, 6, 0)
+ * ->       (1, -1, 0)
+ */
 diem.cloth.ControlPoint.prototype.onDrag = function() {
   if (!this.independentlyDraggable_) {
     return;
@@ -50,7 +70,10 @@ diem.cloth.ControlPoint.prototype.onDrag = function() {
   this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
 };
 
-diem.cloth.ControlPoint.prototype.onDragImpl_ = function(opt_multiplier) {
+/**
+ * @param {number} [opt_multiplier]
+ */
+diem.cloth.ControlPoint.prototype.onDragImpl = function(opt_multiplier) {
   opt_multiplier = opt_multiplier || 1;
   var patternPiece = this.mesh_.parent;
   // Get the offsets from the origin
@@ -66,6 +89,9 @@ diem.cloth.ControlPoint.prototype.onDragImpl_ = function(opt_multiplier) {
   this.updateLine();
 };
 
+/**
+ * Mark the line as needing to be redrawn.
+ */
 diem.cloth.ControlPoint.prototype.updateLine = function() {
   this.line_.geometry.verticesNeedUpdate = true;
 };
@@ -73,6 +99,8 @@ diem.cloth.ControlPoint.prototype.updateLine = function() {
 /**
  * THREE.ShapeGeometry uses the list of actions to regenerate the vertices, so
  * update them wrt the curves.
+ * @param {THREE.Shape} oldShape the Shape used to create a pattern piece's
+ *     geometry.
  */
 diem.cloth.ControlPoint.updateActions = function(oldShape) {
   // Initial moveTo is required for THREE.Shape's actions to be properly formed.

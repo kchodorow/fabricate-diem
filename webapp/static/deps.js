@@ -5,7 +5,7 @@ goog.addDependency('../../../../js/cloth/anchor.js', ['diem.cloth.Anchor'], ['di
 goog.addDependency('../../../../js/cloth/control_point.js', ['diem.cloth.ControlPoint'], [], false);
 goog.addDependency('../../../../js/cloth/edge.js', ['diem.cloth.Edge'], ['diem.Fabric', 'diem.cloth.Anchor'], false);
 goog.addDependency('../../../../js/cloth/workboard.js', ['diem.cloth.Workboard'], ['diem.Fabric', 'diem.cloth.Anchor', 'diem.cloth.ControlPoint', 'diem.cloth.Edge'], false);
-goog.addDependency('../../../../js/event_handler.js', ['diem.EventHandler'], ['diem.Globals', 'diem.tools.Scissors', 'goog.asserts', 'goog.events', 'goog.events.EventType', 'goog.events.KeyCodes', 'goog.fx.Dragger', 'goog.ui.KeyboardShortcutHandler'], false);
+goog.addDependency('../../../../js/event_handler.js', ['diem.EventHandler'], ['diem.Globals', 'goog.asserts', 'goog.events', 'goog.events.EventType', 'goog.fx.Dragger', 'goog.ui.KeyboardShortcutHandler'], false);
 goog.addDependency('../../../../js/fabric.js', ['diem.Fabric'], [], false);
 goog.addDependency('../../../../js/globals.js', ['diem.Globals'], [], false);
 goog.addDependency('../../../../js/part.js', ['diem.Part'], [], false);
@@ -14,11 +14,9 @@ goog.addDependency('../../../../js/pattern.js', ['diem.Pattern'], ['diem.cloth.W
 goog.addDependency('../../../../js/person.js', ['diem.Person'], [], false);
 goog.addDependency('../../../../js/pin.js', ['diem.Pin'], ['goog.asserts'], false);
 goog.addDependency('../../../../js/ruler.js', ['diem.Ruler'], [], false);
-goog.addDependency('../../../../js/scene_container.js', ['diem.SceneContainer'], ['diem.Cloth', 'diem.EventHandler', 'diem.Globals', 'diem.Pattern', 'diem.Person', 'diem.Ruler', 'diem.cloth.Workboard', 'diem.tools.AddPiece', 'diem.tools.RemoveAnchorPoint'], false);
+goog.addDependency('../../../../js/scene_container.js', ['diem.SceneContainer'], ['diem.Cloth', 'diem.EventHandler', 'diem.Globals', 'diem.Pattern', 'diem.Person', 'diem.Ruler', 'diem.cloth.Workboard', 'diem.tools.AddAnchorPoint', 'diem.tools.AddPiece', 'diem.tools.AnchorPoint', 'diem.tools.RemoveAnchorPoint'], false);
 goog.addDependency('../../../../js/tools/add_anchor_pt.js', ['diem.tools.AddAnchorPoint'], ['diem.cloth.Edge', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/add_piece.js', ['diem.tools.AddPiece'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
-goog.addDependency('../../../../js/tools/drag.js', ['diem.tools.Drag'], ['diem.tools.Tool'], false);
-goog.addDependency('../../../../js/tools/path.js', ['diem.tools.Path'], ['diem.tools.Tool'], false);
+goog.addDependency('../../../../js/tools/anchor_pt.js', ['diem.tools.AnchorPoint'], ['diem.cloth.Anchor', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/rm_anchor_pt.js', ['diem.tools.RemoveAnchorPoint'], ['diem.cloth.Anchor', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
-goog.addDependency('../../../../js/tools/scissors.js', ['diem.tools.Scissors'], ['diem.tools.Tool'], false);
 goog.addDependency('../../../../js/tools/tool.js', ['diem.tools.Tool'], [], false);

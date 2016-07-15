@@ -1,11 +1,14 @@
-load("@io_bazel_rules_closure//closure:defs.bzl",
-    "closure_js_binary", "closure_js_library")
+load(
+    "@io_bazel_rules_closure//closure:defs.bzl",
+    "closure_js_binary",
+    "closure_js_library",
+)
 
 filegroup(
     name = "js",
     srcs = [
-        "three.js",
         "renderers/CanvasRenderer.js",
+        "three.js",
         ":lib.js",
     ],
     visibility = ["//webapp/static:__pkg__"],
@@ -14,8 +17,8 @@ filegroup(
 closure_js_binary(
     name = "lib",
     deps = [
-        ":scene",
         ":externs",
+        ":scene",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -23,6 +26,7 @@ closure_js_binary(
 closure_js_library(
     name = "externs",
     externs = ["extern.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
 )
 
 closure_js_library(
@@ -33,10 +37,18 @@ closure_js_library(
     ],
     deps = [
         ":cloth",
+        ":pattern",
         ":person",
         ":util",
+        "//webapp/static/js/cloth",
         "//webapp/static/js/tools",
     ],
+)
+
+closure_js_library(
+    name = "pattern",
+    srcs = ["pattern.js"],
+    deps = ["//webapp/static/js/cloth"],
 )
 
 closure_js_library(
@@ -51,11 +63,20 @@ closure_js_library(
     name = "cloth",
     srcs = [
         "cloth.js",
-        "fabric.js",
         "part.js",
         "particle.js",
     ],
-    deps = [":util"],
+    deps = [
+        ":fabric",
+        ":util",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "fabric",
+    srcs = ["fabric.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
 )
 
 closure_js_library(
@@ -65,6 +86,10 @@ closure_js_library(
         "globals.js",
         "pin.js",
         "ruler.js",
-        "workboard.js",
     ],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        "@io_bazel_rules_closure//closure/library",
+        ":externs",  
+    ], 
 )

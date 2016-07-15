@@ -1,12 +1,13 @@
 goog.provide('diem.tools.RemoveAnchorPoint');
 
-goog.require('diem.tools.Tool');
 goog.require('diem.cloth.Anchor');
+goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
 
 /**
  * @constructor
+ * @extends {diem.tools.Tool}
  */
 diem.tools.RemoveAnchorPoint = function() {
   goog.base(this);

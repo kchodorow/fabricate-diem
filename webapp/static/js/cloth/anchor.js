@@ -7,6 +7,8 @@ goog.require('diem.cloth.ControlPoint');
 
 /**
  * @constructor
+ * @param {THREE.Vector3} corner the position of this anchor point relative to
+ *     its parent pattern piece.
  */
 diem.cloth.Anchor = function(corner) {
   var color = diem.Fabric.getRandomColor();
@@ -24,31 +26,57 @@ diem.cloth.Anchor = function(corner) {
 
 diem.cloth.Anchor.ANCHOR_SIZE = .30;
 
+/**
+ * Returns the mesh for the anchor point.
+ * @returns {THREE.Mesh}
+ */
 diem.cloth.Anchor.prototype.getObject = function() {
   return this.box_;
 };
 
+/**
+ * Returns the mesh for the anchor point, control points, and lines from anchor
+ * to control points.
+ * @returns {array}
+ */
 diem.cloth.Anchor.prototype.getMeshes = function() {
   return this.cwCp_.getMeshes()
     .concat(this.ccwCp_.getMeshes())
     .concat(this.box_);
 };
 
+/**
+ * Returns the "next" diem.cloth.ControlPoint.
+ * @returns {diem.cloth.ControlPoint}
+ */
 diem.cloth.Anchor.prototype.getClockwiseCp = function() {
   return this.cwCp_;
 };
 
+/**
+ * Returns the "previous" diem.cloth.ControlPoint.
+ * @returns {diem.cloth.ControlPoint}
+ */
 diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
   return this.ccwCp_;
 };
 
+/**
+ * Bound to various instances of diem.cloth.Anchor by tools.
+ */
 diem.cloth.Anchor.onClick = function() {};
 
+/**
+ * Called when a click happens after a tool has bound this to onClick.
+ */
 diem.cloth.Anchor.prototype.onClick = function() {
   goog.bind(diem.cloth.Anchor.onClick, this).call();
 };
 
-// Bound to onClick, takes an Anchor instance as this.
+/**
+ * Bound to onClick, takes an Anchor instance as this.
+ * @this {diem.cloth.Anchor}
+ */
 diem.cloth.Anchor.removeAnchorPoint = function() {
   // Find curve.
   var edges = this.box_.parent.shape.edges_;
@@ -74,16 +102,23 @@ diem.cloth.Anchor.removeAnchorPoint = function() {
   }
 };
 
+/**
+ * Determines if the drag should mirror the control points or move the anchor
+ * point.
+ */
 diem.cloth.Anchor.prototype.onDragStart = function() {
   this.dragAllCp_ = this.controlPointsAtOrigin_();
 };
 
+/**
+ * Actually performs the drag.
+ */
 diem.cloth.Anchor.prototype.onDrag = function() {
   if (this.dragAllCp_) {
     // When the anchor points and control points are in the same position,
     // dragging moves both control points.
-    this.cwCp_.onDragImpl_();
-    this.ccwCp_.onDragImpl_(-1);
+    this.cwCp_.onDragImpl();
+    this.ccwCp_.onDragImpl(-1);
   } else {
     this.box_.position.copy(diem.Globals.mouse).sub(this.box_.parent.position);
     this.cwCp_.updateLine();
@@ -92,17 +127,26 @@ diem.cloth.Anchor.prototype.onDrag = function() {
   this.dirtyParent_();
 };
 
+/**
+ * Resets the control points' drag behavior, depending on the drag result.
+ */
 diem.cloth.Anchor.prototype.onDragEnd = function() {
   var freeCps = !this.controlPointsAtOrigin_();
   this.cwCp_.setIndependentlyDraggable(freeCps);
   this.ccwCp_.setIndependentlyDraggable(freeCps);
 };
 
+/**
+ * @private
+ */
 diem.cloth.Anchor.prototype.dirtyParent_ = function() {
   diem.cloth.ControlPoint.updateActions(this.box_.parent.shape);
   this.box_.parent.geometry = this.box_.parent.shape.makeGeometry();
 };
 
+/**
+ * @private
+ */
 diem.cloth.Anchor.prototype.controlPointsAtOrigin_ = function() {
   return this.box_.position.equals(this.cwCp_.getObject().position)
     && this.box_.position.equals(this.ccwCp_.getObject().position);

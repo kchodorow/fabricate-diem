@@ -6,6 +6,8 @@ goog.require('diem.cloth.Anchor');
 
 /**
  * An edge is made up of two anchor points, and described by two control points.
+ * @param {diem.cloth.Anchor} startAnchor the anchor "starting" an edge.
+ * @param {diem.cloth.Anchor} endAnchor the anchor "finishing" an edge.
  * @constructor
  */
 diem.cloth.Edge = function(startAnchor, endAnchor) {
@@ -30,14 +32,24 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   this.mesh_ = new THREE.Line(geometry, material);
 };
 
+/**
+ * @returns {THREE.Line}
+ */
 diem.cloth.Edge.prototype.getObject = function() {
   return this.mesh_;
 };
 
+/**
+ * @returns {THREE.CubicBezierCurve}
+ */
 diem.cloth.Edge.prototype.getBezierCurve = function() {
   return this.curve_;
 };
 
+/**
+ * Returns the action struct used by THREE.Geometry to create the shape.
+ * @returns {Object}
+ */
 diem.cloth.Edge.prototype.generateAction = function() {
   return {
     action: 'bezierCurveTo',
@@ -48,12 +60,22 @@ diem.cloth.Edge.prototype.generateAction = function() {
   };
 };
 
+/**
+ * Static function for tools to bind.
+ */
 diem.cloth.Edge.onClick = function() {};
 
+/**
+ * Called when a tool has swapped this in as the onClick action.
+ */
 diem.cloth.Edge.prototype.onClick = function() {
   goog.bind(diem.cloth.Edge.onClick, this).call();
 };
 
+/**
+ * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
+ * @this {diem.cloth.Edge}
+ */
 diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
   var oldEndAnchor = this.endAnchor_;
@@ -64,10 +86,18 @@ diem.cloth.Edge.addAnchorPoint = function() {
   this.parent.add(newEdge);
 };
 
+/**
+ * Returns the second anchor point in the edge.
+ * @returns {diem.cloth.Anchor}
+ */
 diem.cloth.Edge.prototype.getEndAnchor = function() {
   return this.endAnchor_;
 };
 
+/**
+ * Replaces the second anchor point with a new one.
+ * @param {diem.cloth.Anchor} newAnchorPoint the anchor point to be used.
+ */
 diem.cloth.Edge.prototype.replaceEndAnchor = function(newAnchorPoint) {
   this.endAnchor_ = newAnchorPoint;
 

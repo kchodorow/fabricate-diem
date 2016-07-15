@@ -1,12 +1,13 @@
 goog.provide('diem.tools.AddAnchorPoint');
 
-goog.require('diem.tools.Tool');
 goog.require('diem.cloth.Edge');
+goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
 
 /**
  * @constructor
+ * @extends {diem.tools.Tool}
  */
 diem.tools.AddAnchorPoint = function() {
   goog.base(this);

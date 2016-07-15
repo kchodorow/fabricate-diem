@@ -6,6 +6,8 @@ goog.require('goog.events.KeyCodes');
 
 /**
  * @constructor
+ * @param {Function} onSelectFunc
+ * @extends {diem.tools.Tool}
  */
 diem.tools.AddPiece = function(onSelectFunc) {
   goog.base(this);

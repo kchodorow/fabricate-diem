@@ -9,8 +9,9 @@ goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
 goog.require('diem.cloth.Workboard');
-goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.AddPiece');
+goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.RemoveAnchorPoint');
 
 // TODO: more dynamic.
@@ -41,6 +42,7 @@ diem.SceneContainer = function() {
   this.eventHandler_.registerTool(new diem.tools.AddPiece(
     goog.bind(this.addPatternPiece, this)));
   this.eventHandler_.registerTool(new diem.tools.RemoveAnchorPoint());
+  this.eventHandler_.registerTool(new diem.tools.AnchorPoint());
 
   /** Pattern pieces */
   this.pattern_ = new diem.Pattern();
@@ -80,29 +82,6 @@ diem.SceneContainer.prototype.addPatternPiece = function() {
     this.eventHandler_.registerDraggable(anchors[i].getClockwiseCp());
     this.eventHandler_.registerDraggable(anchors[i].getCounterClockwiseCp());
   }
-};
-
-diem.SceneContainer.prototype.anchorPointTool = function() {
-  diem.cloth.Anchor.onClick = function() {};
-};
-
-diem.SceneContainer.prototype.addAnchorPoint = function() {
-  diem.cloth.Workboard.onClick = diem.cloth.Workboard.addAnchorPoint;
-};
-
-// TODO: move this to Cloth or Particle.
-diem.SceneContainer.prototype.onMouseMove = function(event) {
-  var vector = new THREE.Vector3();
-  vector.set(
-    (event.clientX / WIDTH) * 2 - 1,
-    - (event.clientY / HEIGHT) * 2 + 1,
-    0.5);
-
-  vector.unproject(this.camera);
-  var dir = vector.sub(this.camera.position).normalize();
-  var distance = -this.camera.position.z / dir.z;
-  diem.Globals.mouse = this.camera.position.clone().add(dir.multiplyScalar(distance));
-  diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera);
 };
 
 diem.SceneContainer.prototype.render = function(now) {

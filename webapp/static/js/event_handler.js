@@ -2,12 +2,10 @@
 goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
-goog.require('diem.tools.Scissors');
 
 goog.require('goog.asserts');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
-goog.require('goog.events.KeyCodes');
 goog.require('goog.fx.Dragger');
 goog.require('goog.ui.KeyboardShortcutHandler');
 
@@ -16,6 +14,7 @@ goog.require('goog.ui.KeyboardShortcutHandler');
  * providing the function to call and the key to bind to. E.g.,
  * eventHandler.registerShortcut(
  *     'MOVE_PIECE', goog.bind(this.moveTool, this), goog.events.KeyCodes.V);
+ * @param {THREE.Camera} camera the camera to use for raycasting
  * @constructor
  */
 diem.EventHandler = function(camera) {
@@ -31,6 +30,9 @@ diem.EventHandler = function(camera) {
   this.toolMap_ = {};
 };
 
+/**
+ * @private
+ */
 diem.EventHandler.prototype.setupShortcuts_ = function() {
   this.shortcuts = new goog.ui.KeyboardShortcutHandler(document);
   goog.events.listen(
@@ -41,6 +43,9 @@ diem.EventHandler.prototype.setupShortcuts_ = function() {
     this);
 };
 
+/**
+ * @private
+ */
 diem.EventHandler.prototype.setupOnClick_ = function() {
   goog.events.listen(
     document,
@@ -52,16 +57,17 @@ diem.EventHandler.prototype.setupOnClick_ = function() {
   this.clickMap_ = {};
 };
 
+/**
+ * @private
+ */
 diem.EventHandler.prototype.setupDraggable_ = function() {
   this.dragger_ = new goog.fx.Dragger(
     document.getElementById(diem.Globals.WEBGL_DIV_ID));
   this.dragger_.defaultAction = goog.bind(this.dragAction, this);
-  this.dragger_.addEventListener(
-    goog.fx.Dragger.EventType.START,
-    goog.bind(this.dragStart, this));
-  this.dragger_.addEventListener(
-    goog.fx.Dragger.EventType.END,
-    goog.bind(this.dragEnd, this));
+  this.dragger_.listen(
+    goog.fx.Dragger.EventType.START, goog.bind(this.dragStart, this));
+  this.dragger_.listen(
+    goog.fx.Dragger.EventType.END, goog.bind(this.dragEnd, this));
   // Objects in the scene that can be dragged.
   this.draggable_ = [];
   // A mapping between THREE objects and their backing objects.
@@ -70,6 +76,9 @@ diem.EventHandler.prototype.setupDraggable_ = function() {
   this.clicked_ = null;
 };
 
+/**
+ * @param {diem.tools.Tool} tool a tool that needs to hook into event handling.
+ */
 diem.EventHandler.prototype.registerTool = function(tool) {
   var id = tool.getName();
   var keys = tool.getKeys();
@@ -88,7 +97,8 @@ diem.EventHandler.prototype.registerTool = function(tool) {
 
 /**
  * @param clickable An instance of a class with an onClick method.
- * @param opt_mesh The mesh to use for the click. Defaults to clickable.getObject().
+ * @param {THREE.Mesh} [opt_mesh] The mesh to use for the click. Defaults
+ *     to clickable.getObject().
  */
 diem.EventHandler.prototype.registerClickable = function(clickable, opt_mesh) {
   goog.asserts.assert(clickable.onClick != null, 'onClick handler must be set');
@@ -98,6 +108,9 @@ diem.EventHandler.prototype.registerClickable = function(clickable, opt_mesh) {
   this.clickMap_[object.uuid] = clickable;
 };
 
+/**
+ * @param {Object} draggable an instance of a class with an onDrag method
+ */
 diem.EventHandler.prototype.registerDraggable = function(draggable) {
   goog.asserts.assert(draggable.onDrag != null, 'onDrag handler must be set');
   var object = draggable.getObject();
@@ -105,6 +118,10 @@ diem.EventHandler.prototype.registerDraggable = function(draggable) {
   this.dragMap_[object.uuid] = draggable;
 };
 
+/**
+ * Triggered when a registered shortcut is heard.
+ * @param {goog.ui.KeyboardShortcutEvent} event the event that fired
+ */
 diem.EventHandler.prototype.handleKeypress = function(event) {
   if (!(event.identifier in this.toolMap_)) {
     console.log('no tool matches ' + event.identifier);
@@ -124,6 +141,10 @@ diem.EventHandler.prototype.handleKeypress = function(event) {
 
 /**
  * Raycaster coordinates (between 0 & 1, I think).
+ * @param {number} x the client x coordinate
+ * @param {number} y the client y coordinate
+ * @returns a struct with x & y fields
+ * @private
  */
 diem.EventHandler.getRaycasterCoordinates_ = function(x, y) {
   return {
@@ -131,6 +152,12 @@ diem.EventHandler.getRaycasterCoordinates_ = function(x, y) {
     y: -(y / diem.Globals.HEIGHT) * 2 + 1};
 };
 
+/**
+ * Updates diem.Global.mouse to current world coordinates.
+ * @param {number} x the client x coordinate
+ * @param {number} y the client y coordinate
+ * @private
+ */
 diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   var vector = new THREE.Vector3();
   vector.set((x / diem.Globals.WIDTH) * 2 - 1, -(y / diem.Globals.HEIGHT) * 2 + 1, 0.5);
@@ -141,6 +168,11 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
 };
 
+/**
+ * Removes things that have been removed from the scene from the intersectable list.
+ * @param {Array} list a list of meshes (draggable or clickable, atm)
+ * @private
+ */
 diem.EventHandler.updateIntersectable = function(list) {
   var i = 0;
   while (i < list.length) {
@@ -151,9 +183,13 @@ diem.EventHandler.updateIntersectable = function(list) {
     } else {
       ++i;
     }
-  };
+  }
 };
 
+/**
+ * Sets the object being dragged.
+ * @param {goog.fx.DragEvent} dragEvent the event
+ */
 diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var x = dragEvent.clientX;
   var y = dragEvent.clientY;
@@ -172,6 +208,9 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   }
 };
 
+/**
+ * Actually drags the object
+ */
 diem.EventHandler.prototype.dragAction = function() {
   if (this.clicked_ != null) {
     var x = this.dragger_.clientX;
@@ -181,6 +220,9 @@ diem.EventHandler.prototype.dragAction = function() {
   }
 };
 
+/**
+ * Does cleanup and unsets the dragged object.
+ */
 diem.EventHandler.prototype.dragEnd = function() {
   if (this.clicked_ != null && this.clicked_.onDragEnd) {
     this.clicked_.onDragEnd();
@@ -188,6 +230,10 @@ diem.EventHandler.prototype.dragEnd = function() {
   this.clicked_ = null;
 };
 
+/**
+ * Calls any relevant onClick handlers.
+ * @param {goog.events.BrowserEvent} event the click
+ */
 diem.EventHandler.prototype.handleClick = function(event) {
   var x = event.clientX;
   var y = event.clientY;
