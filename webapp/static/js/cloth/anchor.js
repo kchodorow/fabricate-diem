@@ -3,12 +3,14 @@
 goog.provide('diem.cloth.Anchor');
 
 goog.require('diem.Fabric');
+goog.require('diem.Globals');
 goog.require('diem.cloth.ControlPoint');
 
 /**
  * @constructor
- * @param {THREE.Vector3} corner the position of this anchor point relative to
- *     its parent pattern piece.
+ * @param {THREE.Vector3} corner the position of this anchor point in world
+ *     coordinates. It will be adjusted to relative coordinates when addToParent
+ *     is called.
  */
 diem.cloth.Anchor = function(corner) {
   var color = diem.Fabric.getRandomColor();
@@ -29,12 +31,15 @@ diem.cloth.Anchor.ANCHOR_SIZE = .30;
 diem.cloth.Anchor.prototype.addToParent = function(parent) {
   var meshes = this.cwCp_.getMeshes();
   for (var i = 0; i < meshes.length; ++i) {
+    diem.Globals.worldToParent(meshes[i], parent);
     parent.add(meshes[i]);
   }
   meshes = this.ccwCp_.getMeshes();
   for (var i = 0; i < meshes.length; ++i) {
+    diem.Globals.worldToParent(meshes[i], parent);
     parent.add(meshes[i]);
   }
+  diem.Globals.worldToParent(this.box_, parent);
   parent.add(this.box_);
 };
 

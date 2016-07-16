@@ -90,9 +90,7 @@ diem.cloth.Edge.prototype.onClick = function() {
 diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
   var oldEndAnchor = this.endAnchor_;
-  var offsetPosition = new THREE.Vector3();
-  offsetPosition.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
-  var newAnchor = new diem.cloth.Anchor(offsetPosition);
+  var newAnchor = new diem.cloth.Anchor(diem.Globals.mouse);
   this.replaceEndAnchor(newAnchor);
   newAnchor.addToParent(this.mesh_.parent);
 
@@ -119,4 +117,13 @@ diem.cloth.Edge.prototype.replaceEndAnchor = function(newAnchorPoint) {
   // Modify the end point.
   this.curve_.v2 = this.endAnchor_.getCounterClockwiseCp().getObject().position;
   this.curve_.v3 = this.endAnchor_.getObject().position;
+  this.generateGeometry_();
+};
+
+diem.cloth.Edge.prototype.generateGeometry_ = function() {
+  var points = this.curve_.getPoints();
+  for (var i = 0; i < points.length; ++i) {
+    this.mesh_.geometry.vertices[i].copy(points[i]);
+  }
+  this.mesh_.geometry.verticesNeedUpdate = true;
 };

@@ -63,7 +63,7 @@ diem.cloth.ControlPoint.prototype.onDrag = function() {
   if (!this.independentlyDraggable_) {
     return;
   }
-  this.onDragImpl_();
+  this.onDragImpl();
 
   // Use the parent's shape to update the fabric's curves.
   diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
