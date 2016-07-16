@@ -96,7 +96,7 @@ diem.EventHandler.prototype.registerTool = function(tool) {
 };
 
 /**
- * @param clickable An instance of a class with an onClick method.
+ * @param {Object} clickable An instance of a class with an onClick method.
  * @param {THREE.Mesh} [opt_mesh] The mesh to use for the click. Defaults
  *     to clickable.getObject().
  */
@@ -143,7 +143,7 @@ diem.EventHandler.prototype.handleKeypress = function(event) {
  * Raycaster coordinates (between 0 & 1, I think).
  * @param {number} x the client x coordinate
  * @param {number} y the client y coordinate
- * @returns a struct with x & y fields
+ * @returns {Object} a struct with x & y fields
  * @private
  */
 diem.EventHandler.getRaycasterCoordinates_ = function(x, y) {

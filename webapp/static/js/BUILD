@@ -17,14 +17,15 @@ filegroup(
 closure_js_binary(
     name = "lib",
     deps = [
-        ":externs",
+        ":globals",
         ":scene",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
 
 closure_js_library(
-    name = "externs",
+    name = "globals",
+    srcs = ["globals.js"],
     externs = ["extern.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
 )
@@ -83,13 +84,12 @@ closure_js_library(
     name = "util",
     srcs = [
         "event_handler.js",
-        "globals.js",
         "pin.js",
         "ruler.js",
     ],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
+        ":globals",
         "@io_bazel_rules_closure//closure/library",
-        ":externs",  
-    ], 
+    ],
 )
