@@ -41,28 +41,28 @@ diem.cloth.Anchor.ANCHOR_SIZE = .30;
  * @override
  */
 diem.cloth.Anchor.prototype.addToParent = function(parent) {
-  var meshes = this.cwCp_.getMeshes();
-  for (var i = 0; i < meshes.length; ++i) {
-    diem.Globals.worldToParent(meshes[i], parent);
-    parent.add(meshes[i]);
-  }
-  meshes = this.ccwCp_.getMeshes();
-  for (var i = 0; i < meshes.length; ++i) {
-    diem.Globals.worldToParent(meshes[i], parent);
-    parent.add(meshes[i]);
-  }
   diem.Globals.worldToParent(this.mesh_, parent);
   parent.add(this.mesh_);
+
+  // The anchor points/cps should be adjusted relative to the parent,
+  // but the lines use the anchor points'/cps' position, so they don't
+  // need to be readjusted.
+  diem.Globals.worldToParent(this.cwCp_.getObject(), parent);
+  diem.Globals.worldToParent(this.ccwCp_.getObject(), parent);
+
+  var meshes = this.cwCp_.getMeshes().concat(this.ccwCp_.getMeshes());
+  for (var i = 0; i < meshes.length; ++i) {
+    parent.add(meshes[i]);
+  }
 };
 
 /**
  * @override
  */
 diem.cloth.Anchor.prototype.addToEventHandler = function(handler) {
-  handler.registerDraggable(this);
-  handler.registerClickable(this);
-  handler.registerDraggable(this.cwCp_);
-  handler.registerDraggable(this.ccwCp_);
+  handler.register(this);
+  handler.register(this.cwCp_);
+  handler.register(this.ccwCp_);
 };
 
 /**

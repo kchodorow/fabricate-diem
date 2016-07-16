@@ -19,6 +19,7 @@ diem.tools.Tool = function() {
  * This function can be used to unset onSelect/onDeselect behavior.
  */
 diem.tools.Tool.NO_OP = function() {
+  return [];
 };
 
 /**

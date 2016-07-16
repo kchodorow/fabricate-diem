@@ -1,11 +1,16 @@
 /* global THREE */
 goog.provide('diem.cloth.ControlPoint');
 
+goog.require('diem.events.Draggable');
+
 /**
  * @constructor
  * @param {THREE.Mesh} mesh the anchor point's mesh.
  */
 diem.cloth.ControlPoint = function(mesh) {
+  goog.base(this);
+  diem.events.Draggable.register(this);
+
   this.mesh_ = mesh.clone();
   this.anchor_ = mesh;
 
@@ -20,13 +25,7 @@ diem.cloth.ControlPoint = function(mesh) {
   this.independentlyDraggable_ = true;
 };
 
-/**
- * Returns the control point box's mesh.
- * @returns {THREE.Mesh}
- */
-diem.cloth.ControlPoint.prototype.getObject = function() {
-  return this.mesh_;
-};
+goog.inherits(diem.cloth.ControlPoint, diem.MeshWrapper);
 
 /**
  * Returns the line mesh from the anchor to this control point.

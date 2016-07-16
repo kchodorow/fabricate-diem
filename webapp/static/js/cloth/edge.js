@@ -66,7 +66,9 @@ diem.cloth.Edge.prototype.generateAction = function() {
 /**
  * Static function for tools to bind.
  */
-diem.cloth.Edge.onClick = function() {};
+diem.cloth.Edge.onClick = function() {
+  return [];
+};
 
 /**
  * Called when a tool has swapped this in as the onClick action.
