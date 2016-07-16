@@ -2,6 +2,8 @@
 goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
+goog.require('diem.events.Clickable');
+goog.require('diem.events.Draggable');
 
 goog.require('goog.asserts');
 goog.require('goog.events');
@@ -93,6 +95,19 @@ diem.EventHandler.prototype.registerTool = function(tool) {
     goog.asserts.fail("Wrong number of keys");
   }
   this.toolMap_[id] = tool;
+};
+
+/**
+ * @param {diem.MeshWrapper} obj
+ * @param {THREE.Mesh} [mesh] optional mesh to use for the click
+ */
+diem.EventHandler.prototype.register = function(obj, opt_mesh) {
+  if (diem.events.Clickable.isClickable(obj)) {
+    this.registerClickable(obj, opt_mesh);
+  }
+  if (diem.events.Draggable.isDraggable(obj)) {
+    this.registerDraggable(obj);
+  }
 };
 
 /**
@@ -246,5 +261,8 @@ diem.EventHandler.prototype.handleClick = function(event) {
     return;
   }
   var object = intersects[0].object;
-  this.clickMap_[object.uuid].onClick();
+  var newInteractables = this.clickMap_[object.uuid].onClick();
+  for (var i = 0; i < newInteractables.length; ++i) {
+    this.register(newInteractables[i]);
+  }
 };

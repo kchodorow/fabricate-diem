@@ -2,6 +2,7 @@
 goog.provide('diem.cloth.Edge');
 
 goog.require('diem.Fabric');
+goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 
 /**
@@ -9,8 +10,12 @@ goog.require('diem.cloth.Anchor');
  * @param {diem.cloth.Anchor} startAnchor the anchor "starting" an edge.
  * @param {diem.cloth.Anchor} endAnchor the anchor "finishing" an edge.
  * @constructor
+ * @extends {diem.events.Clickable}
  */
 diem.cloth.Edge = function(startAnchor, endAnchor) {
+  goog.base(this);
+  diem.events.Clickable.register(this);
+
   this.startAnchor_ = startAnchor;
   this.endAnchor_ = endAnchor;
 
@@ -35,20 +40,7 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   this.mesh_ = new THREE.Line(geometry, material);
 };
 
-diem.cloth.Edge.prototype.addToParent = function(parent) {
-  parent.add(this.mesh_);
-};
-
-diem.cloth.Edge.prototype.addToEventHandler = function(handler) {
-  handler.registerClickable(this);
-};
-
-/**
- * @returns {THREE.Line}
- */
-diem.cloth.Edge.prototype.getObject = function() {
-  return this.mesh_;
-};
+goog.inherits(diem.cloth.Edge, diem.MeshWrapper);
 
 /**
  * @returns {THREE.CubicBezierCurve3}
@@ -78,14 +70,16 @@ diem.cloth.Edge.onClick = function() {};
 
 /**
  * Called when a tool has swapped this in as the onClick action.
+ * @override
  */
 diem.cloth.Edge.prototype.onClick = function() {
-  goog.bind(diem.cloth.Edge.onClick, this).call();
+  return goog.bind(diem.cloth.Edge.onClick, this).call();
 };
 
 /**
  * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
  * @this {diem.cloth.Edge}
+ * @returns {diem.events.EventResponse}
  */
 diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
@@ -97,6 +91,7 @@ diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new bezier curve for mouse -> end of line.
   var newEdge = new diem.cloth.Edge(this.endAnchor_, oldEndAnchor);
   newEdge.addToParent(this.mesh_.parent);
+  return [newAnchor, newEdge];
 };
 
 /**
