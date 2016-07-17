@@ -81,7 +81,7 @@ diem.cloth.Edge.prototype.onClick = function() {
 /**
  * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
  * @this {diem.cloth.Edge}
- * @returns {diem.events.EventResponse}
+ * @returns {Array}
  */
 diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.

@@ -28,3 +28,7 @@ diem.MeshWrapper.prototype.addToParent = function(parent) {
 diem.MeshWrapper.prototype.addToEventHandler = function(eventHandler) {
   eventHandler.register(this);
 };
+
+diem.MeshWrapper.prototype.isDirty = function() {
+  return this.mesh_.geometry.verticesNeedUpdate;
+};

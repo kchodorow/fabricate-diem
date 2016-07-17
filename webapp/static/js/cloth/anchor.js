@@ -41,9 +41,6 @@ diem.cloth.Anchor.ANCHOR_SIZE = .30;
  * @override
  */
 diem.cloth.Anchor.prototype.addToParent = function(parent) {
-  diem.Globals.worldToParent(this.mesh_, parent);
-  parent.add(this.mesh_);
-
   // The anchor points/cps should be adjusted relative to the parent,
   // but the lines use the anchor points'/cps' position, so they don't
   // need to be readjusted.
@@ -54,6 +51,10 @@ diem.cloth.Anchor.prototype.addToParent = function(parent) {
   for (var i = 0; i < meshes.length; ++i) {
     parent.add(meshes[i]);
   }
+
+  diem.Globals.worldToParent(this.mesh_, parent);
+  parent.add(this.mesh_);
+  this.dirtyParent_();
 };
 
 /**
