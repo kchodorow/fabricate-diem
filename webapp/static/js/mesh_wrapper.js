@@ -1,5 +1,8 @@
 goog.provide('diem.MeshWrapper');
 
+/**
+ * @constructor
+ */
 diem.MeshWrapper = function() {
   this.mesh_ = null;
   // "Parent" classes.
@@ -29,6 +32,9 @@ diem.MeshWrapper.prototype.addToEventHandler = function(eventHandler) {
   eventHandler.register(this);
 };
 
+/**
+ * @returns {boolean}
+ */
 diem.MeshWrapper.prototype.isDirty = function() {
   return this.mesh_.geometry.verticesNeedUpdate;
 };

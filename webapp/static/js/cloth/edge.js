@@ -4,6 +4,7 @@ goog.provide('diem.cloth.Edge');
 goog.require('diem.Fabric');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
+goog.require('diem.events.Clickable');
 
 /**
  * An edge is made up of two anchor points, and described by two control points.
@@ -65,6 +66,7 @@ diem.cloth.Edge.prototype.generateAction = function() {
 
 /**
  * Static function for tools to bind.
+ * @returns {Array}
  */
 diem.cloth.Edge.onClick = function() {
   return [];
@@ -117,6 +119,9 @@ diem.cloth.Edge.prototype.replaceEndAnchor = function(newAnchorPoint) {
   this.generateGeometry_();
 };
 
+/**
+ * @private
+ */
 diem.cloth.Edge.prototype.generateGeometry_ = function() {
   var points = this.curve_.getPoints();
   for (var i = 0; i < points.length; ++i) {

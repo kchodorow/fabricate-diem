@@ -20,7 +20,9 @@ closure_js_library(
     ],
     visibility = ["//webapp/static/js/tools:__pkg__"],
     deps = [
-        "//webapp/static/js:globals",
         "//webapp/static/js:fabric",
+        "//webapp/static/js:globals",
+        "//webapp/static/js:mesh-wrapper",
+        "//webapp/static/js/events",
     ],
 )

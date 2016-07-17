@@ -175,6 +175,7 @@ diem.cloth.Anchor.prototype.dirtyParent_ = function() {
 
 /**
  * @private
+ * @returns {boolean}
  */
 diem.cloth.Anchor.prototype.controlPointsAtOrigin_ = function() {
   return this.mesh_.position.equals(this.cwCp_.getObject().position)

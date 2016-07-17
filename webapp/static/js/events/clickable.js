@@ -10,6 +10,9 @@ diem.events.Clickable.register = function(object) {
   object.mixins_[diem.events.Clickable.ID] = true;
 };
 
+/**
+ * @returns {boolean}
+ */
 diem.events.Clickable.isClickable = function(object) {
   goog.asserts.assert(object instanceof diem.MeshWrapper);
   return object.mixins_[diem.events.Clickable.ID];
