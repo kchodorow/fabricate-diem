@@ -90,6 +90,7 @@ closure_js_library(
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":globals",
+        "//webapp/static/js/events",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -98,4 +99,8 @@ closure_js_library(
     name = "mesh-wrapper",
     srcs = ["mesh_wrapper.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":globals",
+        ":util",
+    ],
 )

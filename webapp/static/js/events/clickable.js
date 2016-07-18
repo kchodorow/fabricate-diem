@@ -3,7 +3,7 @@ goog.provide('diem.events.Clickable');
 diem.events.Clickable.ID = "clickable";
 
 /**
- * @param {diem.MeshWrapper}
+ * @param {diem.MeshWrapper} object
  */
 diem.events.Clickable.register = function(object) {
   goog.asserts.assert(object instanceof diem.MeshWrapper);
@@ -11,6 +11,7 @@ diem.events.Clickable.register = function(object) {
 };
 
 /**
+ * @param {diem.MeshWrapper} object
  * @returns {boolean}
  */
 diem.events.Clickable.isClickable = function(object) {
