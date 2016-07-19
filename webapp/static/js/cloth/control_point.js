@@ -51,13 +51,6 @@ diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable
   this.independentlyDraggable = draggable;
 };
 
-diem.cloth.Workboard.dirtyAllChildren = function(mesh) {
-  var children = this.mesh_.children;
-  for (var i = 0; i < children.length; ++i) {
-    children[i].verticesNeedUpdate = true;
-  };
-};
-
 /**
  * Update the position of the control point and update the underlying shape.
  * pattern: (2, 2, 0)
@@ -74,6 +67,10 @@ diem.cloth.ControlPoint.prototype.onDrag = function() {
   // Use the parent's shape to update the fabric's curves.
   diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
   this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
+  // Update edges.
+  for (var i = 0; i < this.mesh_.parent.children.length; ++i) {
+    this.mesh_.parent.children[i].geometry.verticesNeedUpdate = true;
+  }
 };
 
 /**
@@ -119,6 +116,7 @@ diem.cloth.ControlPoint.updateActions = function(oldShape) {
   }];
   for (var i = 0; i < oldShape.edges_.length; ++i) {
     actions.push(oldShape.edges_[i].generateAction());
+    oldShape.edges_[i].updateGeometry();
   }
   oldShape.actions = actions;
 };

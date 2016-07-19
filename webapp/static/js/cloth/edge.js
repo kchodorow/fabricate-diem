@@ -33,7 +33,7 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
     endAnchorPos);
 
   var geometry = new THREE.Geometry();
-  var points = this.curve_.getPoints();
+  var points = this.curve_.getPoints(diem.cloth.Edge.NUM_POINTS);
   for (var i = 0; i < points.length; ++i) {
     geometry.vertices.push(points[i]);
   }
@@ -43,6 +43,8 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
 };
 
 goog.inherits(diem.cloth.Edge, diem.MeshWrapper);
+
+diem.cloth.Edge.NUM_POINTS = 12;
 
 /**
  * @override
@@ -142,14 +144,14 @@ diem.cloth.Edge.prototype.replaceEndAnchor = function(newAnchorPoint) {
   // Modify the end point.
   this.curve_.v2 = this.endAnchor_.getCounterClockwiseCp().getObject().position;
   this.curve_.v3 = this.endAnchor_.getObject().position;
-  this.generateGeometry_();
+  this.updateGeometry();
 };
 
 /**
- * @private
+ * Refreshes the mesh's geometry.
  */
-diem.cloth.Edge.prototype.generateGeometry_ = function() {
-  var points = this.curve_.getPoints();
+diem.cloth.Edge.prototype.updateGeometry = function() {
+  var points = this.curve_.getPoints(diem.cloth.Edge.NUM_POINTS);
   for (var i = 0; i < points.length; ++i) {
     this.mesh_.geometry.vertices[i].copy(points[i]);
   }
