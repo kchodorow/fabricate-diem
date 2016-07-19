@@ -22,9 +22,10 @@ diem.Pattern.PATH_TOOL = 'PATH_TOOL';
  */
 diem.Pattern.prototype.addPiece = function() {
   var cloth = new diem.cloth.Workboard();
-  cloth.setPosition(
+  cloth.getObject().position.set(
     diem.Pattern.CLOTH_OFFSET_X,
-    diem.Pattern.CLOTH_OFFSET_Y * this.pieces_.length);
+    diem.Pattern.CLOTH_OFFSET_Y * this.pieces_.length,
+    0);
   this.pieces_.push(cloth);
   return cloth;
 };

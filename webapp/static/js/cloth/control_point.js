@@ -51,6 +51,13 @@ diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable
   this.independentlyDraggable = draggable;
 };
 
+diem.cloth.Workboard.dirtyAllChildren = function(mesh) {
+  var children = this.mesh_.children;
+  for (var i = 0; i < children.length; ++i) {
+    children[i].verticesNeedUpdate = true;
+  };
+};
+
 /**
  * Update the position of the control point and update the underlying shape.
  * pattern: (2, 2, 0)

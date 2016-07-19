@@ -99,7 +99,7 @@ diem.EventHandler.prototype.registerTool = function(tool) {
 
 /**
  * @param {diem.MeshWrapper} obj
- * @param {THREE.Mesh} [mesh] optional mesh to use for the click
+ * @param {THREE.Mesh} [opt_mesh] optional mesh to use for the click
  */
 diem.EventHandler.prototype.register = function(obj, opt_mesh) {
   if (diem.events.Clickable.isClickable(obj)) {
@@ -111,12 +111,14 @@ diem.EventHandler.prototype.register = function(obj, opt_mesh) {
 };
 
 /**
- * @param {Object} clickable An instance of a class with an onClick method.
+ * @param {diem.MeshWrapper} clickable An instance of a class with an onClick
+ *     method.
  * @param {THREE.Mesh} [opt_mesh] The mesh to use for the click. Defaults
  *     to clickable.getObject().
  */
 diem.EventHandler.prototype.registerClickable = function(clickable, opt_mesh) {
-  goog.asserts.assert(clickable.onClick != null, 'onClick handler must be set');
+  goog.asserts.assert(
+    diem.events.Clickable.isClickable(clickable), 'onDrag handler must be set');
   var mesh = opt_mesh || clickable.getObject();
   var object = mesh;
   this.clickable_.push(object);
@@ -124,10 +126,12 @@ diem.EventHandler.prototype.registerClickable = function(clickable, opt_mesh) {
 };
 
 /**
- * @param {Object} draggable an instance of a class with an onDrag method
+ * @param {diem.MeshWrapper} draggable an instance of a class with an onDrag
+ *     method
  */
 diem.EventHandler.prototype.registerDraggable = function(draggable) {
-  goog.asserts.assert(draggable.onDrag != null, 'onDrag handler must be set');
+  goog.asserts.assert(
+    diem.events.Draggable.isDraggable(draggable), 'onDrag handler must be set');
   var object = draggable.getObject();
   this.draggable_.push(object);
   this.dragMap_[object.uuid] = draggable;

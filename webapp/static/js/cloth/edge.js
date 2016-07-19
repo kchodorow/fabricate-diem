@@ -2,6 +2,7 @@
 goog.provide('diem.cloth.Edge');
 
 goog.require('diem.Fabric');
+goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.events.Clickable');
@@ -11,7 +12,7 @@ goog.require('diem.events.Clickable');
  * @param {diem.cloth.Anchor} startAnchor the anchor "starting" an edge.
  * @param {diem.cloth.Anchor} endAnchor the anchor "finishing" an edge.
  * @constructor
- * @extends {diem.events.Clickable}
+ * @extends {diem.MeshWrapper}
  */
 diem.cloth.Edge = function(startAnchor, endAnchor) {
   goog.base(this);
@@ -42,6 +43,31 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
 };
 
 goog.inherits(diem.cloth.Edge, diem.MeshWrapper);
+
+/**
+ * @override
+ */
+diem.cloth.Edge.prototype.addToParent = function(parent) {
+  // Anchor points are added directly to the piece mesh, otherwise they'd appear
+  // twice in the shape (once for each edge).
+  parent.add(this.mesh_);
+  this.dirtyParent_();
+};
+
+/**
+ * @private
+ */
+diem.cloth.Edge.prototype.dirtyParent_ = function() {
+  diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
+  this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
+};
+
+/**
+ * @override
+ */
+diem.cloth.Edge.prototype.addToEventHandler = function(handler) {
+  handler.register(this);
+};
 
 /**
  * @returns {THREE.CubicBezierCurve3}
@@ -90,7 +116,7 @@ diem.cloth.Edge.addAnchorPoint = function() {
   var oldEndAnchor = this.endAnchor_;
   var newAnchor = new diem.cloth.Anchor(diem.Globals.mouse);
   this.replaceEndAnchor(newAnchor);
-  newAnchor.addToParent(this.mesh_.parent);
+  newAnchor.addToParent(this.mesh_);
 
   // Create a new bezier curve for mouse -> end of line.
   var newEdge = new diem.cloth.Edge(this.endAnchor_, oldEndAnchor);

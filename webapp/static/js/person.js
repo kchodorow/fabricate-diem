@@ -8,6 +8,9 @@ goog.provide('diem.Person');
 diem.Person = function() {
 };
 
+/**
+ * @param {THREE.Mesh} scene
+ */
 diem.Person.prototype.load = function(scene) {
   var loader = new THREE.ObjectLoader();
   var tmp = this;

@@ -54,7 +54,6 @@ diem.cloth.Anchor.prototype.addToParent = function(parent) {
 
   diem.Globals.worldToParent(this.mesh_, parent);
   parent.add(this.mesh_);
-  this.dirtyParent_();
 };
 
 /**
@@ -121,7 +120,6 @@ diem.cloth.Anchor.removeAnchorPoint = function() {
     edges.splice(i, 1);
 
     // Dirty parent before removing its children.
-    this.dirtyParent_();
     this.mesh_.parent.remove(this.cwCp_.getObject());
     this.mesh_.parent.remove(this.cwCp_.getLine());
     this.mesh_.parent.remove(this.ccwCp_.getObject());
@@ -153,7 +151,6 @@ diem.cloth.Anchor.prototype.onDrag = function() {
     this.cwCp_.updateLine();
     this.ccwCp_.updateLine();
   }
-  this.dirtyParent_();
 };
 
 /**
@@ -163,14 +160,6 @@ diem.cloth.Anchor.prototype.onDragEnd = function() {
   var freeCps = !this.controlPointsAtOrigin_();
   this.cwCp_.setIndependentlyDraggable(freeCps);
   this.ccwCp_.setIndependentlyDraggable(freeCps);
-};
-
-/**
- * @private
- */
-diem.cloth.Anchor.prototype.dirtyParent_ = function() {
-  diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
-  this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
 };
 
 /**

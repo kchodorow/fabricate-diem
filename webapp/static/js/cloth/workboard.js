@@ -3,14 +3,17 @@
 goog.provide('diem.cloth.Workboard');
 
 goog.require('diem.Fabric');
+goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
 
 /**
  * @constructor
+ * @extends {diem.MeshWrapper}
  */
 diem.cloth.Workboard = function() {
+  goog.base(this);
   this.w = 10;
   this.h = 7;
 
@@ -20,6 +23,8 @@ diem.cloth.Workboard = function() {
   this.meshes_ = [];
   this.initMeshes_();
 };
+
+goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
 
 /**
  * Initial square of cloth.
@@ -34,8 +39,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
 
   this.anchors_ = [];
   for (var i = 0; i < corners.length; ++i) {
-    var anchor = new diem.cloth.Anchor(corners[i]);
-    this.anchors_.push(anchor);
+    this.anchors_.push(new diem.cloth.Anchor(corners[i]));
   }
 
   this.shape_ = new THREE.Shape();
@@ -55,45 +59,28 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
 
   this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
   this.mesh_.shape = this.shape_;
-  this.meshes_.push(this.mesh_);
 
-  for (i = 0; i < corners.length; ++i) {
+  for (i = 0; i < this.anchors_.length; ++i) {
     this.anchors_[i].addToParent(this.mesh_);
-    // Thanks to geometry, # of corners == # of edges, so add the edges here, too.
     this.shape_.edges_[i].addToParent(this.mesh_);
   }
 };
 
 /**
- * Returns the mesh.
+ * @override
  */
-diem.cloth.Workboard.prototype.getObject = function() {
-  return this.mesh_;
+diem.cloth.Workboard.prototype.addToEventHandler = function(handler) {
+  handler.register(this);
+  var edges = this.shape_.edges_;
+  for (var i = 0; i < edges.length; ++i) {
+    edges[i].addToEventHandler(handler);
+    this.anchors_[i].addToEventHandler(handler);
+  }
 };
 
 /**
- * Returns the edges for the piece.
+ * @returns {Array}
  */
 diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_.edges_;
-};
-
-/**
- * Returns the anchor points for the piece.
- */
-diem.cloth.Workboard.prototype.getAnchors = function() {
-  return this.anchors_;
-};
-
-/**
- * Sets the position of the cloth.
- * @param {number} x offset from (0,0)
- * @param {number} y offset from (0,0)
- */
-diem.cloth.Workboard.prototype.setPosition = function(x, y) {
-  var anchor = this.anchors_[0].getObject();
-  var diff = new THREE.Vector3(anchor.position.x - x, anchor.position.y - y, 0);
-  for (var i = 0; i < this.meshes_.length; ++i) {
-    this.meshes_[i].position.sub(diff);
-  }
 };

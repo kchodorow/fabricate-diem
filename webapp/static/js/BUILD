@@ -14,6 +14,13 @@ filegroup(
     visibility = ["//webapp/static:__pkg__"],
 )
 
+genrule(
+    name = "three-externs",
+    srcs = ["three.d.ts"],
+    outs = ["three.ext.js"],
+    cmd = "tsd2cee $< $@",
+)
+
 closure_js_binary(
     name = "lib",
     deps = [
@@ -26,21 +33,22 @@ closure_js_binary(
 closure_js_library(
     name = "globals",
     srcs = ["globals.js"],
-    externs = ["extern.js"],
+    externs = [":three.ext.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
 )
 
 closure_js_library(
     name = "scene",
     srcs = [
+        "ruler.js",
         "scene.js",
         "scene_container.js",
     ],
     deps = [
-        ":cloth",
+        ":event_handler",
+        ":globals",
         ":pattern",
         ":person",
-        ":util",
         "//webapp/static/js/cloth",
         "//webapp/static/js/tools",
     ],
@@ -57,21 +65,7 @@ closure_js_library(
     srcs = [
         "person.js",
     ],
-    deps = [":util"],
-)
-
-closure_js_library(
-    name = "cloth",
-    srcs = [
-        "cloth.js",
-        "part.js",
-        "particle.js",
-    ],
-    deps = [
-        ":fabric",
-        ":util",
-        "@io_bazel_rules_closure//closure/library",
-    ],
+    deps = [":event_handler"],
 )
 
 closure_js_library(
@@ -81,11 +75,9 @@ closure_js_library(
 )
 
 closure_js_library(
-    name = "util",
+    name = "event_handler",
     srcs = [
         "event_handler.js",
-        "pin.js",
-        "ruler.js",
     ],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
@@ -100,7 +92,7 @@ closure_js_library(
     srcs = ["mesh_wrapper.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
+        ":event_handler",
         ":globals",
-        ":util",
     ],
 )

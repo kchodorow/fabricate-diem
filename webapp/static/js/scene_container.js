@@ -2,13 +2,11 @@
 /* global THREE, requestAnimationFrame */
 goog.provide('diem.SceneContainer');
 
-goog.require('diem.Cloth');
 goog.require('diem.EventHandler');
 goog.require('diem.Globals');
 goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
-goog.require('diem.cloth.Workboard');
 goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
@@ -44,12 +42,14 @@ diem.SceneContainer = function() {
   this.eventHandler_.registerTool(new diem.tools.RemoveAnchorPoint());
   this.eventHandler_.registerTool(new diem.tools.AnchorPoint());
 
-  /** Pattern pieces */
   this.pattern_ = new diem.Pattern();
   this.initLights_();
   this.initModels_();
 };
 
+/**
+ * @private
+ */
 diem.SceneContainer.prototype.initLights_ = function() {
   var ambient = new THREE.AmbientLight(0x101030);
   this.scene.add(ambient);
@@ -58,6 +58,9 @@ diem.SceneContainer.prototype.initLights_ = function() {
   this.scene.add(directionalLight);
 };
 
+/**
+ * @private
+ */
 diem.SceneContainer.prototype.initModels_ = function() {
   this.person_ = new diem.Person();
   this.person_.load(this.scene);
@@ -66,21 +69,18 @@ diem.SceneContainer.prototype.initModels_ = function() {
   this.scene.add(ruler.load());
 };
 
+/**
+ * @private
+ */
 diem.SceneContainer.prototype.addPatternPiece = function() {
   var piece = this.pattern_.addPiece();
-  this.scene.add(piece.getObject());
-
-  var edges = piece.getEdges();
-  for (var i = 0; i < edges.length; ++i) {
-    edges[i].addToEventHandler(this.eventHandler_);
-  }
-
-  var anchors = piece.getAnchors();
-  for (i = 0; i < anchors.length; ++i) {
-    anchors[i].addToEventHandler(this.eventHandler_);
-  }
+  piece.addToParent(this.scene);
+  piece.addToEventHandler(this.eventHandler_);
 };
 
+/**
+ * @param {Date} now
+ */
 diem.SceneContainer.prototype.render = function(now) {
   if (diem.Globals.mouse == null) {
     // Before closure is loaded.

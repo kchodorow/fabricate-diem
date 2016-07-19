@@ -6,8 +6,10 @@ closure_js_library(
     visibility = ["//webapp/static/js:__pkg__"],
     deps = [
         ":bezier",
+        "//webapp/static/js:event_handler",
         "//webapp/static/js:fabric",
-        "//webapp/static/js:util",
+        "//webapp/static/js:globals",
+        "//webapp/static/js:mesh-wrapper",
     ],
 )
 
