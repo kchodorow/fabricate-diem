@@ -115,14 +115,24 @@ diem.cloth.Edge.prototype.onClick = function() {
  */
 diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
+  var workboardMesh = this.mesh_.parent;
   var oldEndAnchor = this.endAnchor_;
   var newAnchor = new diem.cloth.Anchor(diem.Globals.mouse);
   this.replaceEndAnchor(newAnchor);
-  newAnchor.addToParent(this.mesh_);
+  newAnchor.addToParent(workboardMesh);
 
   // Create a new bezier curve for mouse -> end of line.
-  var newEdge = new diem.cloth.Edge(this.endAnchor_, oldEndAnchor);
-  newEdge.addToParent(this.mesh_.parent);
+  var newEdge = new diem.cloth.Edge(newAnchor, oldEndAnchor);
+  // Find the old edge in the parent and push the new edge.
+  var parentEdges = workboardMesh.shape.edges_;
+  for (var i = 0; i < parentEdges.length; ++i) {
+    if (parentEdges[i].startAnchor_ == this.startAnchor_) {
+      parentEdges.splice(i + 1, 0, newEdge);
+      break;
+    }
+  }
+  newEdge.addToParent(workboardMesh);
+  diem.cloth.ControlPoint.updateWorkboardGeometry(workboardMesh);
   return [newAnchor, newEdge];
 };
 

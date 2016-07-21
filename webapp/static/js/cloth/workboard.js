@@ -49,9 +49,9 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
     var j = (i + 1) % corners.length;
     var endAnchor = this.anchors_[j];
 
-    var curve = new diem.cloth.Edge(startAnchor, endAnchor);
-    this.shape_.curves.push(curve.getBezierCurve());
-    this.shape_.edges_.push(curve);
+    var edge = new diem.cloth.Edge(startAnchor, endAnchor);
+    this.shape_.curves.push(edge.getBezierCurve());
+    this.shape_.edges_.push(edge);
   }
   diem.cloth.ControlPoint.updateActions(this.shape_);
 
