@@ -17,7 +17,10 @@ diem.Globals.mouse = new THREE.Vector3();
  * @param {THREE.Mesh} parent the parent mesh
  */
 diem.Globals.worldToParent = function(mesh, parent) {
-  mesh.position.sub(parent.position);
+  while (parent != null) {
+    mesh.position.sub(parent.position);
+    parent = parent.parent;
+  }
 };
 
 /**

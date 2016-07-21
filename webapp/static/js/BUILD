@@ -33,7 +33,7 @@ closure_js_binary(
 closure_js_library(
     name = "globals",
     srcs = ["globals.js"],
-    externs = [":three.ext.js"],
+    externs = [":extern.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
 )
 
