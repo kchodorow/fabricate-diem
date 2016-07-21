@@ -63,14 +63,6 @@ diem.cloth.ControlPoint.prototype.onDrag = function() {
     return;
   }
   this.onDragImpl();
-
-  // Use the parent's shape to update the fabric's curves.
-  diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
-  this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
-  // Update edges.
-  for (var i = 0; i < this.mesh_.parent.children.length; ++i) {
-    this.mesh_.parent.children[i].geometry.verticesNeedUpdate = true;
-  }
 };
 
 /**
@@ -90,6 +82,14 @@ diem.cloth.ControlPoint.prototype.onDragImpl = function(opt_multiplier) {
   offset.add(this.anchor_.position);
   this.mesh_.position.copy(offset);
   this.updateLine();
+
+  // Use the parent's shape to update the fabric's curves.
+  diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
+  this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
+  // Update edges.
+  for (var i = 0; i < this.mesh_.parent.children.length; ++i) {
+    this.mesh_.parent.children[i].geometry.verticesNeedUpdate = true;
+  }
 };
 
 /**
