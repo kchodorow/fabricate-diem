@@ -78,22 +78,11 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
 };
 
-/**
- * Removes things that have been removed from the scene from the intersectable list.
- * @param {Array} list a list of meshes (draggable or clickable, atm)
- * @private
- */
-diem.EventHandler.updateIntersectable = function(list) {
-  var i = 0;
-  while (i < list.length) {
-    if (list[i].parent == null) {
-      list.splice(i, 1);
-      // Restart loop.
-      i = 0;
-    } else {
-      ++i;
-    }
-  }
+diem.EventHandler.prototype.getIntersections_ = function(x, y, intersectables) {
+  this.updateMouseCoordinates_(x, y);
+  this.raycaster_.setFromCamera(
+    diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
+  return this.raycaster_.intersectObjects(intersectables);
 };
 
 /**
@@ -101,20 +90,14 @@ diem.EventHandler.updateIntersectable = function(list) {
  * @param {goog.fx.DragEvent} dragEvent the event
  */
 diem.EventHandler.prototype.dragStart = function(dragEvent) {
-  var x = dragEvent.clientX;
-  var y = dragEvent.clientY;
-  this.updateMouseCoordinates_(x, y);
-  this.raycaster_.setFromCamera(
-    diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
-  diem.EventHandler.updateIntersectable(
-    this.toolManager_.getTool().getDraggable());
-  var intersects = this.raycaster_.intersectObjects(
-    this.toolManager_.getTool().getDraggable());
+  var tool = this.toolManager_.getTool();
+  var intersects = this.getIntersections_(
+    dragEvent.clientX, dragEvent.clientY, tool.getDraggable());
   if (intersects.length == 0) {
     return;
   }
   var object = intersects[0].object;
-  this.clicked_ = this.toolManager_.getTool().getMeshWrapper(object);
+  this.clicked_ = tool.getMeshWrapper(object);
   if (this.clicked_.onDragStart) {
     this.clicked_.onDragStart();
   }
@@ -147,21 +130,15 @@ diem.EventHandler.prototype.dragEnd = function() {
  * @param {goog.events.BrowserEvent} event the click
  */
 diem.EventHandler.prototype.handleClick = function(event) {
-  var x = event.clientX;
-  var y = event.clientY;
-  this.updateMouseCoordinates_(x, y);
-  diem.EventHandler.updateIntersectable(
-    this.toolManager_.getTool().getClickable());
-  this.raycaster_.setFromCamera(
-    diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
-  var intersects = this.raycaster_.intersectObjects(
-    this.toolManager_.getTool().getClickable());
+  var tool = this.toolManager_.getTool();
+  var intersects = this.getIntersections_(
+    event.clientX, event.clientY, tool.getClickable());
   if (intersects.length == 0) {
     return;
   }
   var object = intersects[0].object;
   // Not persisted.
-  var clicked = this.toolManager_.getTool().getMeshWrapper(object);
+  var clicked = tool.getMeshWrapper(object);
   var newInteractables = clicked.onClick();
   this.toolManager_.handleIntersectables(newInteractables);
 };

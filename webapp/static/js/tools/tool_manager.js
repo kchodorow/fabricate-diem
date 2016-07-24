@@ -94,7 +94,7 @@ diem.tools.ToolManager.prototype.getTool = function() {
 };
 
 /**
- *
+ * Adds new intersectables to tools and removes old ones.
  */
 diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   for (var i = 0; i < responses.length; ++i) {
@@ -105,5 +105,28 @@ diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
       this.toolMap_[response.getToolId()].addDraggable(response.getMeshWrapper());
     }
   }
-  // TODO: update intersectables (for all tools)
+
+  for (i in this.toolMap_) {
+    var tool = this.toolMap_[i];
+    diem.tools.ToolManager.updateIntersectable_(tool.getClickable());
+    diem.tools.ToolManager.updateIntersectable_(tool.getDraggable());
+  }
+};
+
+/**
+ * Removes things that have been removed from the scene from the intersectable list.
+ * @param {Array} list a list of meshes (draggable or clickable, atm)
+ * @private
+ */
+diem.tools.ToolManager.updateIntersectable_ = function(list) {
+  var i = 0;
+  while (i < list.length) {
+    if (list[i].parent == null) {
+      list.splice(i, 1);
+      // Restart loop.
+      i = 0;
+    } else {
+      ++i;
+    }
+  }
 };

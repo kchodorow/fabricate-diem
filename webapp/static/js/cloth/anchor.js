@@ -114,19 +114,25 @@ diem.cloth.Anchor.prototype.onClick = function() {
     if (edges[i].endAnchor_ != this) {
       continue;
     }
+    // 3
     var firstCurve = edges[i];
-    var secondCurve = edges[(i + 1) % edges.length];
+    // 0
+    var idxToRemove = (i + 1) % edges.length;
+    var secondCurve = edges[idxToRemove];
     // Create a new curve from the first curve's start point to the second
     // curve's end point.
     firstCurve.replaceEndAnchor(secondCurve.getEndAnchor());
-    edges.splice(i, 1);
+    edges.splice(idxToRemove, 1);
+    diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
 
     // Dirty parent before removing its children.
     this.mesh_.parent.remove(this.cwCp_.getObject());
     this.mesh_.parent.remove(this.cwCp_.getLine());
     this.mesh_.parent.remove(this.ccwCp_.getObject());
     this.mesh_.parent.remove(this.ccwCp_.getLine());
+    this.mesh_.parent.remove(secondCurve.getObject());
     this.mesh_.parent.remove(this.mesh_);
+
     return [];
   }
 };
