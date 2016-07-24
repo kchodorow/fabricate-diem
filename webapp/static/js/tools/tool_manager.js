@@ -1,4 +1,4 @@
-goog.provide('diem.events.ToolManager');
+goog.provide('diem.tools.ToolManager');
 
 goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
@@ -15,20 +15,20 @@ goog.require('goog.events.EventType');
  *     'MOVE_PIECE', goog.bind(this.moveTool, this), goog.events.KeyCodes.V);
  * @constructor
  */
-diem.events.ToolManager = function(scene) {
-  this.activeTool_ = diem.events.ToolManager.BASE_TOOL;
+diem.tools.ToolManager = function(scene) {
+  this.activeTool_ = diem.tools.ToolManager.BASE_TOOL;
   this.toolMap_ = {};
   this.shortcuts_ = new goog.ui.KeyboardShortcutHandler(document);
 
   this.setupShortcuts_(scene);
 };
 
-diem.events.ToolManager.BASE_TOOL = new diem.tools.Tool();
+diem.tools.ToolManager.BASE_TOOL = new diem.tools.Tool();
 
 /**
  * @param {diem.tools.Tool} tool a tool that needs to hook into event handling.
  */
-diem.events.ToolManager.prototype.registerTool_ = function(tool) {
+diem.tools.ToolManager.prototype.registerTool_ = function(tool) {
   var id = tool.getName();
   var keys = tool.getKeys();
   switch (keys.length) {
@@ -47,7 +47,7 @@ diem.events.ToolManager.prototype.registerTool_ = function(tool) {
 /**
  * @private
  */
-diem.events.ToolManager.prototype.setupShortcuts_ = function(scene) {
+diem.tools.ToolManager.prototype.setupShortcuts_ = function(scene) {
   goog.events.listen(
     this.shortcuts_,
     goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED,
@@ -61,7 +61,7 @@ diem.events.ToolManager.prototype.setupShortcuts_ = function(scene) {
   this.registerTool_(new diem.tools.AnchorPoint());
 };
 
-diem.events.ToolManager.prototype.getTool = function() {
+diem.tools.ToolManager.prototype.getTool = function() {
   return this.tool_;
 };
 
@@ -69,10 +69,10 @@ diem.events.ToolManager.prototype.getTool = function() {
  * Triggered when a registered shortcut is heard.
  * @param {goog.ui.KeyboardShortcutEvent} event the event that fired
  */
-diem.events.ToolManager.prototype.handleKeypress = function(event) {
+diem.tools.ToolManager.prototype.handleKeypress = function(event) {
   if (!(event.identifier in this.toolMap_)) {
     console.log('no tool matches ' + event.identifier);
-    this.activeTool_ = diem.events.ToolManager.BASE_TOOL;
+    this.activeTool_ = diem.tools.ToolManager.BASE_TOOL;
     return;
   }
   var newTool = this.toolMap_[event.identifier];
@@ -87,14 +87,14 @@ diem.events.ToolManager.prototype.handleKeypress = function(event) {
   this.activeTool_ = newTool;
 };
 
-diem.events.ToolManager.prototype.getTool = function() {
+diem.tools.ToolManager.prototype.getTool = function() {
   return this.activeTool_;
 };
 
 /**
  *
  */
-diem.events.ToolManager.prototype.handleIntersectables = function(responses) {
+diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   for (var i = 0; i < responses.length; ++i) {
     var response = responses[i];
     if (response.isClickable()) {

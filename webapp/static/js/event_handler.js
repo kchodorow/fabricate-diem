@@ -4,7 +4,7 @@ goog.provide('diem.EventHandler');
 goog.require('diem.Globals');
 goog.require('diem.events.Clickable');
 goog.require('diem.events.Draggable');
-goog.require('diem.events.ToolManager');
+goog.require('diem.tools.ToolManager');
 
 goog.require('goog.asserts');
 goog.require('goog.events');
@@ -20,7 +20,7 @@ diem.EventHandler = function(camera, scene) {
   this.camera_ = camera;
   this.raycaster_ = new THREE.Raycaster();
   this.raycaster_.linePrecision = 1;
-  this.toolManager_ = new diem.events.ToolManager(scene);
+  this.toolManager_ = new diem.tools.ToolManager(scene);
 
   this.setupOnClick_();
   this.setupDraggable_();
