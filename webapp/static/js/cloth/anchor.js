@@ -158,6 +158,7 @@ diem.cloth.Anchor.prototype.onDrag = function() {
     this.mesh_.position.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
     this.cwCp_.updateLine();
     this.ccwCp_.updateLine();
+    diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
   }
 };
 
