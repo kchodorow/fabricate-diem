@@ -143,6 +143,7 @@ diem.cloth.Anchor.prototype.onClick = function() {
  */
 diem.cloth.Anchor.prototype.onDragStart = function() {
   this.dragAllCp_ = this.controlPointsAtOrigin_();
+  return [];
 };
 
 /**

@@ -14,6 +14,7 @@ goog.require('diem.cloth.Edge');
  */
 diem.cloth.Workboard = function() {
   goog.base(this);
+  diem.events.Draggable.register(this);
   this.w = 10;
   this.h = 7;
 
@@ -70,13 +71,13 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
  * @override
  */
 diem.cloth.Workboard.prototype.getIntersectables = function() {
-  var intersects = [];
+  var intersects = [diem.tools.DragPiece.createIntersectable(
+      diem.events.Draggable.ID, this)];
   for (var i = 0; i < this.anchors_.length; ++i) {
     intersects = intersects
       .concat(this.anchors_[i].getIntersectables())
       .concat(this.shape_.edges_[i].getIntersectables());
   }
-  // TODO: add DragPiece tool.
   return intersects;
 };
 
@@ -97,4 +98,10 @@ diem.cloth.Workboard.prototype.addToEventHandler = function(handler) {
  */
 diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_.edges_;
+};
+
+diem.cloth.Workboard.prototype.onDragStart = function() {
+  var physicalPiece = new diem.cloth.PhysicalPiece(this);
+  physicalPiece.addToParent(this.parent);
+  return physicalPiece.getIntersectables();
 };

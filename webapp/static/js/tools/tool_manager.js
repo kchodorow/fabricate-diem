@@ -3,6 +3,7 @@ goog.provide('diem.tools.ToolManager');
 goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
+goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.RemoveAnchorPoint');
 
 goog.require('goog.asserts');
@@ -59,8 +60,9 @@ diem.tools.ToolManager.prototype.setupShortcuts_ = function(scene) {
 
   this.registerTool_(new diem.tools.AddPiece(scene));
   this.registerTool_(new diem.tools.AddAnchorPoint());
-  this.registerTool_(new diem.tools.RemoveAnchorPoint());
   this.registerTool_(new diem.tools.AnchorPoint());
+  this.registerTool_(new diem.tools.DragPiece());
+  this.registerTool_(new diem.tools.RemoveAnchorPoint());
 };
 
 diem.tools.ToolManager.prototype.getTool = function() {

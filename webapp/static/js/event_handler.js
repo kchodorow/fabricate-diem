@@ -99,7 +99,8 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var object = intersects[0].object;
   this.clicked_ = tool.getMeshWrapper(object);
   if (this.clicked_.onDragStart) {
-    this.clicked_.onDragStart();
+    var intersectables = this.clicked_.onDragStart();
+    this.toolManager_.handleIntersectables(intersectables);
   }
 };
 
