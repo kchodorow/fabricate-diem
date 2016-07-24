@@ -16,18 +16,13 @@ diem.tools.AnchorPoint = function() {
 
 goog.inherits(diem.tools.AnchorPoint, diem.tools.Tool);
 
-/**
- * @override
- */
-diem.tools.AnchorPoint.prototype.onSelect = function() {
-  diem.cloth.Anchor.onClick = diem.tools.Tool.NO_OP;
-};
+diem.tools.AnchorPoint.NAME = 'ANCHOR_PT';
 
 /**
  * @override
  */
 diem.tools.AnchorPoint.prototype.getName = function() {
-  return 'ANCHOR_PT';
+  return diem.tools.AnchorPoint.NAME;
 };
 
 /**
@@ -35,4 +30,9 @@ diem.tools.AnchorPoint.prototype.getName = function() {
  */
 diem.tools.AnchorPoint.prototype.getKeys = function() {
   return [goog.events.KeyCodes.A];
+};
+
+diem.tools.AnchorPoint.createIntersectable = function(action, meshWrapper) {
+  return diem.tools.Tool.createIntersectable(
+    diem.tools.AnchorPoint.NAME, action, meshWrapper);
 };

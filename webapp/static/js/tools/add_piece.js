@@ -9,9 +9,11 @@ goog.require('goog.events.KeyCodes');
  * @param {Function} onSelectFunc
  * @extends {diem.tools.Tool}
  */
-diem.tools.AddPiece = function(onSelectFunc) {
+diem.tools.AddPiece = function(scene) {
   goog.base(this);
-  this.onSelectFunc_ = onSelectFunc;
+
+  this.scene_ = scene;
+  this.pattern_ = new diem.Pattern();
 };
 
 goog.inherits(diem.tools.AddPiece, diem.tools.Tool);
@@ -20,14 +22,18 @@ goog.inherits(diem.tools.AddPiece, diem.tools.Tool);
  * @override
  */
 diem.tools.AddPiece.prototype.onSelect = function() {
-  this.onSelectFunc_();
+  var piece = this.pattern_.addPiece();
+  piece.addToParent(this.scene_);
+  return piece.getIntersectables();
 };
+
+diem.tools.AddPiece.NAME = 'ADD_PIECE';
 
 /**
  * @override
  */
 diem.tools.AddPiece.prototype.getName = function() {
-  return 'ADD_PIECE';
+  return diem.tools.AddPiece.NAME;
 };
 
 /**
@@ -35,4 +41,9 @@ diem.tools.AddPiece.prototype.getName = function() {
  */
 diem.tools.AddPiece.prototype.getKeys = function() {
   return [goog.events.KeyCodes.C];
+};
+
+diem.tools.AddPiece.createIntersectable = function(action, meshWrapper) {
+  return diem.tool.Tool.createIntersectable(
+    diem.tools.AddPiece.NAME, action, meshWrapper);
 };

@@ -17,19 +17,19 @@ diem.MeshWrapper.prototype.getObject = function() {
 };
 
 /**
+ * @returns {Array} diem.events.Intersectables that should be added to their
+ *     respective tools.
+ */
+diem.MeshWrapper.prototype.getIntersectables = function() {
+  return [];
+};
+
+/**
  * Adds the mesh to the given parent.
  * @param {THREE.Mesh} parent
  */
 diem.MeshWrapper.prototype.addToParent = function(parent) {
   parent.add(this.mesh_);
-};
-
-/**
- * Adds this to the given event handler.
- * @param {diem.EventHandler} eventHandler
- */
-diem.MeshWrapper.prototype.addToEventHandler = function(eventHandler) {
-  eventHandler.register(this);
 };
 
 /**

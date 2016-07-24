@@ -7,10 +7,6 @@ goog.require('diem.Globals');
 goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
-goog.require('diem.tools.AddAnchorPoint');
-goog.require('diem.tools.AddPiece');
-goog.require('diem.tools.AnchorPoint');
-goog.require('diem.tools.RemoveAnchorPoint');
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -35,14 +31,8 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
-  this.eventHandler_ = new diem.EventHandler(this.camera);
-  this.eventHandler_.registerTool(new diem.tools.AddAnchorPoint());
-  this.eventHandler_.registerTool(new diem.tools.AddPiece(
-    goog.bind(this.addPatternPiece, this)));
-  this.eventHandler_.registerTool(new diem.tools.RemoveAnchorPoint());
-  this.eventHandler_.registerTool(new diem.tools.AnchorPoint());
+  this.eventHandler_ = new diem.EventHandler(this.camera, this.scene);
 
-  this.pattern_ = new diem.Pattern();
   this.initLights_();
   this.initModels_();
 };
@@ -67,15 +57,6 @@ diem.SceneContainer.prototype.initModels_ = function() {
 
   var ruler = new diem.Ruler();
   this.scene.add(ruler.load());
-};
-
-/**
- * @private
- */
-diem.SceneContainer.prototype.addPatternPiece = function() {
-  var piece = this.pattern_.addPiece();
-  piece.addToParent(this.scene);
-  piece.addToEventHandler(this.eventHandler_);
 };
 
 /**

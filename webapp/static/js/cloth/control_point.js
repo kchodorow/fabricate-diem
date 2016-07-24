@@ -44,6 +44,14 @@ diem.cloth.ControlPoint.prototype.getMeshes = function() {
 };
 
 /**
+ * @override
+ */
+diem.cloth.ControlPoint.prototype.getIntersectables = function() {
+  return [diem.tools.AnchorPoint.createIntersectable(
+    diem.events.Draggable.ID, this)];
+};
+
+/**
  * Change the state so this can/can't be modified by dragging the anchor point.
  * @param {boolean} draggable
  */

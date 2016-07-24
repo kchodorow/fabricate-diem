@@ -8,6 +8,8 @@ goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events.Clickable');
 goog.require('diem.events.Draggable');
+goog.require('diem.tools.AnchorPoint');
+goog.require('diem.tools.RemoveAnchorPoint');
 
 /**
  * @constructor
@@ -36,6 +38,19 @@ diem.cloth.Anchor = function(corner) {
 goog.inherits(diem.cloth.Anchor, diem.MeshWrapper);
 
 diem.cloth.Anchor.ANCHOR_SIZE = .30;
+
+/**
+ * @override
+ */
+diem.cloth.Anchor.prototype.getIntersectables = function() {
+  return [
+    diem.tools.RemoveAnchorPoint.createIntersectable(
+      diem.events.Clickable.ID, this),
+    diem.tools.AnchorPoint.createIntersectable(
+      diem.events.Draggable.ID, this)]
+    .concat(this.cwCp_.getIntersectables())
+    .concat(this.ccwCp_.getIntersectables());
+};
 
 /**
  * @override
@@ -90,26 +105,13 @@ diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
 };
 
 /**
- * Bound to various instances of diem.cloth.Anchor by tools.
- */
-diem.cloth.Anchor.onClick = function() {};
-
-/**
- * Called when a click happens after a tool has bound this to onClick.
+ * Removes an anchor point.
  */
 diem.cloth.Anchor.prototype.onClick = function() {
-  goog.bind(diem.cloth.Anchor.onClick, this).call();
-};
-
-/**
- * Bound to onClick, takes an Anchor instance as this.
- * @this {diem.cloth.Anchor}
- */
-diem.cloth.Anchor.removeAnchorPoint = function() {
   // Find curve.
   var edges = this.mesh_.parent.shape.edges_;
   for (var i = 0; i < edges.length; ++i) {
-    if (edges[i].getBezierCurve().v3 != this.mesh_.position) {
+    if (edges[i].endAnchor_ != this) {
       continue;
     }
     var firstCurve = edges[i];
@@ -125,7 +127,7 @@ diem.cloth.Anchor.removeAnchorPoint = function() {
     this.mesh_.parent.remove(this.ccwCp_.getObject());
     this.mesh_.parent.remove(this.ccwCp_.getLine());
     this.mesh_.parent.remove(this.mesh_);
-    return;
+    return [];
   }
 };
 

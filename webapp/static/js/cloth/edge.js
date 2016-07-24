@@ -57,18 +57,19 @@ diem.cloth.Edge.prototype.addToParent = function(parent) {
 };
 
 /**
+ * @override
+ */
+diem.cloth.Edge.prototype.getIntersectables = function() {
+  return [diem.tools.AddAnchorPoint.createIntersectable(
+    diem.events.Clickable.ID, this)];
+};
+
+/**
  * @private
  */
 diem.cloth.Edge.prototype.dirtyParent_ = function() {
   diem.cloth.ControlPoint.updateActions(this.mesh_.parent.shape);
   this.mesh_.parent.geometry = this.mesh_.parent.shape.makeGeometry();
-};
-
-/**
- * @override
- */
-diem.cloth.Edge.prototype.addToEventHandler = function(handler) {
-  handler.register(this);
 };
 
 /**
@@ -93,27 +94,10 @@ diem.cloth.Edge.prototype.generateAction = function() {
 };
 
 /**
- * Static function for tools to bind.
+ * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
  * @returns {Array}
- */
-diem.cloth.Edge.onClick = function() {
-  return [];
-};
-
-/**
- * Called when a tool has swapped this in as the onClick action.
- * @override
  */
 diem.cloth.Edge.prototype.onClick = function() {
-  return goog.bind(diem.cloth.Edge.onClick, this).call();
-};
-
-/**
- * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
- * @this {diem.cloth.Edge}
- * @returns {Array}
- */
-diem.cloth.Edge.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
   var workboardMesh = this.mesh_.parent;
   var oldEndAnchor = this.endAnchor_;
@@ -133,7 +117,7 @@ diem.cloth.Edge.addAnchorPoint = function() {
   }
   newEdge.addToParent(workboardMesh);
   diem.cloth.ControlPoint.updateWorkboardGeometry(workboardMesh);
-  return [newAnchor, newEdge];
+  return newEdge.getIntersectables().concat(newAnchor.getIntersectables());
 };
 
 /**

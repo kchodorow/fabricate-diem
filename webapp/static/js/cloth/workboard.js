@@ -69,6 +69,20 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
 /**
  * @override
  */
+diem.cloth.Workboard.prototype.getIntersectables = function() {
+  var intersects = [];
+  for (var i = 0; i < this.anchors_.length; ++i) {
+    intersects = intersects
+      .concat(this.anchors_[i].getIntersectables())
+      .concat(this.shape_.edges_[i].getIntersectables());
+  }
+  // TODO: add DragPiece tool.
+  return intersects;
+};
+
+/**
+ * @override
+ */
 diem.cloth.Workboard.prototype.addToEventHandler = function(handler) {
   handler.register(this);
   var edges = this.shape_.edges_;
