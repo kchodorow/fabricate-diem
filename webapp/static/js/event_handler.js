@@ -2,15 +2,11 @@
 goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
-goog.require('diem.events.Clickable');
-goog.require('diem.events.Draggable');
 goog.require('diem.tools.ToolManager');
 
-goog.require('goog.asserts');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.fx.Dragger');
-goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
  * @param {THREE.Camera} camera the camera to use for raycasting

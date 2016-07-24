@@ -5,8 +5,10 @@ goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.RemoveAnchorPoint');
 
+goog.require('goog.asserts');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
+goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
  * Any class that wants a keyboard shortcut should call registerShortcut,
