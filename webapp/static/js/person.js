@@ -3,6 +3,7 @@
 goog.provide('diem.Person');
 
 goog.require('diem.MeshWrapper');
+goog.require('diem.Pin');
 goog.require('diem.events.Clickable');
 
 /**
@@ -37,12 +38,7 @@ diem.Person.prototype.getIntersectables = function() {
 diem.Person.PINS = 0;
 
 diem.Person.prototype.onClick = function(intersection) {
-  var geometry = new THREE.BoxGeometry(.5, .5, 0);
-  var material = new THREE.MeshBasicMaterial({color : 0x000000});
-  var pinMesh = new THREE.Mesh(geometry, material);
-  var point = intersection.point;
-  pinMesh.position.set(point.x, point.y, point.z + 1);
-  this.mesh_.parent.add(pinMesh);
-  pinMesh.name = "pin" + diem.Person.PINS++;
+  var pin = new diem.Pin(intersection.point);
+  pin.addToParent(this.mesh_.parent);
   return [];
 };

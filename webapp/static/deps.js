@@ -16,8 +16,8 @@ goog.addDependency('../../../../js/mesh_wrapper.js', ['diem.MeshWrapper'], [], f
 goog.addDependency('../../../../js/part.js', ['diem.Part'], [], false);
 goog.addDependency('../../../../js/particle.js', ['diem.Particle'], ['diem.Fabric'], false);
 goog.addDependency('../../../../js/pattern.js', ['diem.Pattern'], ['diem.cloth.Workboard'], false);
-goog.addDependency('../../../../js/person.js', ['diem.Person'], ['diem.MeshWrapper', 'diem.events.Clickable'], false);
-goog.addDependency('../../../../js/pin.js', ['diem.Pin'], ['goog.asserts'], false);
+goog.addDependency('../../../../js/person.js', ['diem.Person'], ['diem.MeshWrapper', 'diem.Pin', 'diem.events.Clickable'], false);
+goog.addDependency('../../../../js/pin.js', ['diem.Pin'], ['diem.MeshWrapper', 'goog.asserts'], false);
 goog.addDependency('../../../../js/ruler.js', ['diem.Ruler'], [], false);
 goog.addDependency('../../../../js/scene_container.js', ['diem.SceneContainer'], ['diem.EventHandler', 'diem.Globals', 'diem.Pattern', 'diem.Person', 'diem.Ruler'], false);
 goog.addDependency('../../../../js/tools/add_anchor_pt.js', ['diem.tools.AddAnchorPoint'], ['diem.cloth.Edge', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
