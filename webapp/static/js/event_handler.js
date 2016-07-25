@@ -100,7 +100,7 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   this.clicked_ = tool.getMeshWrapper(object);
   if (this.clicked_.onDragStart) {
     var intersectables = this.clicked_.onDragStart();
-    this.toolManager_.handleIntersectables(intersectables);
+    this.handleIntersectables(intersectables);
   }
 };
 
@@ -140,6 +140,10 @@ diem.EventHandler.prototype.handleClick = function(event) {
   var object = intersects[0].object;
   // Not persisted.
   var clicked = tool.getMeshWrapper(object);
-  var newInteractables = clicked.onClick();
-  this.toolManager_.handleIntersectables(newInteractables);
+  var newInteractables = clicked.onClick(intersects[0]);
+  this.handleIntersectables(newInteractables);
+};
+
+diem.EventHandler.prototype.handleIntersectables = function(intersectables) {
+  this.toolManager_.handleIntersectables(intersectables);
 };

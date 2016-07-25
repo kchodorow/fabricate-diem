@@ -100,7 +100,7 @@ diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_.edges_;
 };
 
-diem.cloth.Workboard.prototype.onDragStart = function() {
+diem.cloth.Workboard.prototype.onClick = function() {
   var physicalPiece = new diem.cloth.PhysicalPiece(this);
   physicalPiece.addToParent(this.parent);
   return physicalPiece.getIntersectables();

@@ -4,7 +4,7 @@ goog.addDependency('../../../../js/cloth.js', ['diem.Cloth'], ['diem.Fabric', 'd
 goog.addDependency('../../../../js/cloth/anchor.js', ['diem.cloth.Anchor'], ['diem.Fabric', 'diem.Globals', 'diem.MeshWrapper', 'diem.cloth.ControlPoint', 'diem.events.Clickable', 'diem.events.Draggable', 'diem.tools.AnchorPoint', 'diem.tools.RemoveAnchorPoint'], false);
 goog.addDependency('../../../../js/cloth/control_point.js', ['diem.cloth.ControlPoint'], ['diem.events.Draggable'], false);
 goog.addDependency('../../../../js/cloth/edge.js', ['diem.cloth.Edge'], ['diem.Fabric', 'diem.Globals', 'diem.MeshWrapper', 'diem.cloth.Anchor', 'diem.events.Clickable'], false);
-goog.addDependency('../../../../js/cloth/physical_piece.js', ['diem.cloth.PhysicalPiece'], [], false);
+goog.addDependency('../../../../js/cloth/physical_piece.js', ['diem.cloth.PhysicalPiece'], ['diem.MeshWrapper'], false);
 goog.addDependency('../../../../js/cloth/workboard.js', ['diem.cloth.Workboard'], ['diem.Fabric', 'diem.MeshWrapper', 'diem.cloth.Anchor', 'diem.cloth.ControlPoint', 'diem.cloth.Edge'], false);
 goog.addDependency('../../../../js/event_handler.js', ['diem.EventHandler'], ['diem.Globals', 'diem.tools.ToolManager', 'goog.events', 'goog.events.EventType', 'goog.fx.Dragger'], false);
 goog.addDependency('../../../../js/events/clickable.js', ['diem.events.Clickable'], [], false);
@@ -16,7 +16,7 @@ goog.addDependency('../../../../js/mesh_wrapper.js', ['diem.MeshWrapper'], [], f
 goog.addDependency('../../../../js/part.js', ['diem.Part'], [], false);
 goog.addDependency('../../../../js/particle.js', ['diem.Particle'], ['diem.Fabric'], false);
 goog.addDependency('../../../../js/pattern.js', ['diem.Pattern'], ['diem.cloth.Workboard'], false);
-goog.addDependency('../../../../js/person.js', ['diem.Person'], [], false);
+goog.addDependency('../../../../js/person.js', ['diem.Person'], ['diem.MeshWrapper', 'diem.events.Clickable'], false);
 goog.addDependency('../../../../js/pin.js', ['diem.Pin'], ['goog.asserts'], false);
 goog.addDependency('../../../../js/ruler.js', ['diem.Ruler'], [], false);
 goog.addDependency('../../../../js/scene_container.js', ['diem.SceneContainer'], ['diem.EventHandler', 'diem.Globals', 'diem.Pattern', 'diem.Person', 'diem.Ruler'], false);
