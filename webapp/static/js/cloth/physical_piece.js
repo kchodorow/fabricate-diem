@@ -113,7 +113,7 @@ diem.cloth.PhysicalPiece.Constraint = function(aPos, bPos, opt_a, opt_b) {
  * Move the start & end points to their desired distance from each other.
  */
 diem.cloth.PhysicalPiece.Constraint.prototype.satisfy = function() {
-  diem.cloth.PhysicalPiece.DIFF.subVectors(this.line_.start, this.line_.end);
+  diem.cloth.PhysicalPiece.DIFF.subVectors(this.line_.end, this.line_.start);
   var currentDist = this.line_.distance();
   if (currentDist === 0) {
     return; // prevents division by 0
