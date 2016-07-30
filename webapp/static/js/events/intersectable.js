@@ -1,8 +1,5 @@
 goog.provide('diem.events.Intersectable');
 
-goog.require('diem.events.Clickable');
-goog.require('diem.events.Draggable');
-
 diem.events.Intersectable = function(toolId, action, mesh) {
   this.toolId_ = toolId;
   this.action_ = action;

@@ -6,8 +6,7 @@ goog.require('diem.Fabric');
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.ControlPoint');
-goog.require('diem.events.Clickable');
-goog.require('diem.events.Draggable');
+goog.require('diem.events');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.RemoveAnchorPoint');
 
@@ -19,8 +18,6 @@ goog.require('diem.tools.RemoveAnchorPoint');
  */
 diem.cloth.Anchor = function(corner) {
   goog.base(this);
-  diem.events.Clickable.register(this);
-  diem.events.Draggable.register(this);
 
   var color = diem.Fabric.getRandomColor();
   var geometry = new THREE.BoxGeometry(
@@ -45,9 +42,9 @@ diem.cloth.Anchor.ANCHOR_SIZE = .30;
 diem.cloth.Anchor.prototype.getIntersectables = function() {
   return [
     diem.tools.RemoveAnchorPoint.createIntersectable(
-      diem.events.Clickable.ID, this),
+      diem.events.CLICKABLE, this),
     diem.tools.AnchorPoint.createIntersectable(
-      diem.events.Draggable.ID, this)]
+      diem.events.DRAGGABLE, this)]
     .concat(this.cwCp_.getIntersectables())
     .concat(this.ccwCp_.getIntersectables());
 };

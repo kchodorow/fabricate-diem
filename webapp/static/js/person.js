@@ -4,15 +4,13 @@ goog.provide('diem.Person');
 
 goog.require('diem.MeshWrapper');
 goog.require('diem.Pin');
-goog.require('diem.events.Clickable');
+goog.require('diem.events');
 
 /**
  * @constructor
  */
 diem.Person = function(scene, register) {
   goog.base(this);
-
-  diem.events.Clickable.register(this);
 
   var loader = new THREE.ObjectLoader();
   var tmp = this;
@@ -32,7 +30,7 @@ goog.inherits(diem.Person, diem.MeshWrapper);
 
 diem.Person.prototype.getIntersectables = function() {
   return [diem.tools.DragPiece.createIntersectable(
-      diem.events.Clickable.ID, this)];
+      diem.events.CLICKABLE, this)];
 };
 
 diem.Person.prototype.onClick = function(intersection) {

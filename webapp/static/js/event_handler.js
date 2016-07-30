@@ -13,11 +13,11 @@ goog.require('goog.fx.Dragger');
  * @param {THREE.Camera} camera the camera to use for raycasting
  * @constructor
  */
-diem.EventHandler = function(camera, scene) {
+diem.EventHandler = function(camera, toolManager) {
   this.camera_ = camera;
   this.raycaster_ = new THREE.Raycaster();
   this.raycaster_.linePrecision = 1;
-  this.toolManager_ = new diem.tools.ToolManager(scene);
+  this.toolManager_ = toolManager;
 
   this.setupOnClick_();
   this.setupDraggable_();
@@ -94,7 +94,7 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var tool = this.toolManager_.getTool();
   var intersects = this.getIntersections_(
     dragEvent.clientX, dragEvent.clientY,
-    tool.getIntersectable(diem.events.Draggable.ID));
+    tool.getIntersectable(diem.events.DRAGGABLE));
   if (intersects.length == 0) {
     return;
   }
@@ -136,7 +136,7 @@ diem.EventHandler.prototype.handleClick = function(event) {
   var tool = this.toolManager_.getTool();
   var intersects = this.getIntersections_(
     event.clientX, event.clientY,
-    tool.getIntersectable(diem.events.Clickable.ID));
+    tool.getIntersectable(diem.events.CLICKABLE));
   if (intersects.length == 0) {
     return;
   }
@@ -149,8 +149,4 @@ diem.EventHandler.prototype.handleClick = function(event) {
 
 diem.EventHandler.prototype.handleIntersectables = function(intersectables) {
   this.toolManager_.handleIntersectables(intersectables);
-};
-
-diem.EventHandler.prototype.getSimulations = function() {
-  return this.toolManager_.getTool(diem.tools.TimeTool.NAME).getSimulations();
 };

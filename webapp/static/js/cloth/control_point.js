@@ -1,7 +1,7 @@
 /* global THREE */
 goog.provide('diem.cloth.ControlPoint');
 
-goog.require('diem.events.Draggable');
+goog.require('diem.events');
 
 /**
  * @constructor
@@ -9,7 +9,6 @@ goog.require('diem.events.Draggable');
  */
 diem.cloth.ControlPoint = function(mesh) {
   goog.base(this);
-  diem.events.Draggable.register(this);
 
   this.mesh_ = mesh.clone();
   this.anchor_ = mesh;
@@ -48,7 +47,7 @@ diem.cloth.ControlPoint.prototype.getMeshes = function() {
  */
 diem.cloth.ControlPoint.prototype.getIntersectables = function() {
   return [diem.tools.AnchorPoint.createIntersectable(
-    diem.events.Draggable.ID, this)];
+    diem.events.DRAGGABLE, this)];
 };
 
 /**

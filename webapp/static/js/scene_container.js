@@ -29,7 +29,8 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
-  this.eventHandler_ = new diem.EventHandler(this.camera, this.scene);
+  this.toolManager_ = new diem.tools.ToolManager(this.scene);
+  this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   this.drawAxes_();
   this.initLights_();
@@ -81,8 +82,9 @@ diem.SceneContainer.prototype.render = function(now) {
 
   requestAnimationFrame(render);
   this.renderer.render(this.scene, this.camera);
-  var simulations = this.eventHandler_.getSimulations();
+  var tool = this.toolManager_.getTool();
+  var simulations = tool.getIntersectable(diem.events.TIME);
   for (var i = 0; i < simulations.length; ++i) {
-    simulations[i].simulate();
+    tool.getMeshWrapper(simulations[i]).simulate();
   }
 };

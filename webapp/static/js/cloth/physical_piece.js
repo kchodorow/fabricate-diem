@@ -2,6 +2,7 @@
 goog.provide('diem.cloth.PhysicalPiece');
 
 goog.require('diem.MeshWrapper');
+goog.require('diem.events');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.
@@ -11,15 +12,14 @@ diem.cloth.PhysicalPiece = function(piece) {
   goog.base(this);
   this.constraints_ = [];
   this.previous_ = [];
-  this.mesh_ = piece.clone();
+  this.mesh_ = new THREE.Mesh(piece.geometry.clone(), piece.material);
 
-  var faces = piece.geometry.faces;
-  var vertices = piece.geometry.vertices;
-  for (var i = 0; i < faces.length; ++i) {
+  var faces = this.mesh_.geometry.faces;
+  for (i = 0; i < faces.length; ++i) {
     var face = faces[i];
-    this.addConstraint_(vertices[face.a], vertices[face.b]);
-    this.addConstraint_(vertices[face.b], vertices[face.c]);
-    this.addConstraint_(vertices[face.c], vertices[face.a]);
+    this.addConstraint_(face.a, face.b);
+    this.addConstraint_(face.b, face.c);
+    this.addConstraint_(face.c, face.a);
   }
   for (var i = 0; i < this.mesh_.geometry.vertices.length; ++i) {
     this.previous_.push(new THREE.Vector3().copy(
@@ -38,11 +38,13 @@ diem.cloth.PhysicalPiece.DRAG = 1 - diem.cloth.PhysicalPiece.DAMPING;
 diem.cloth.PhysicalPiece.DIFF = new THREE.Vector3();
 
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
-  return [diem.tools.TimeTool.createIntersectable(this)];
+  return [diem.tools.DragPiece.createIntersectable(diem.events.TIME, this)];
 };
 
 diem.cloth.PhysicalPiece.prototype.addConstraint_ = function(a, b) {
-  this.constraints_.push(new diem.cloth.PhysicalPiece.Constraint(a, b));
+  var vertices = this.mesh_.geometry.vertices;
+  this.constraints_.push(
+    new diem.cloth.PhysicalPiece.Constraint(a, b, vertices[a], vertices[b]));
 };
 
 diem.cloth.PhysicalPiece.prototype.simulate = function() {
@@ -53,6 +55,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   for (i = 0; i < this.constraints_.length; ++i) {
     this.constraints_[i].satisfy();
   }
+  this.mesh_.geometry.verticesNeedUpdate = true;
 };
 
 /**
@@ -76,8 +79,10 @@ diem.cloth.PhysicalPiece.prototype.integrate_ = function(i) {
   vertex.copy(newPos);
 };
 
-diem.cloth.PhysicalPiece.Constraint = function(a, b) {
-  this.line_ = new THREE.Line3(a, b);
+diem.cloth.PhysicalPiece.Constraint = function(a, b, aPos, bPos) {
+  this.startIdx_ = a;
+  this.endIdx_ = b;
+  this.line_ = new THREE.Line3(aPos, bPos);
   this.restDist_ = this.line_.distance();
 };
 
@@ -85,7 +90,7 @@ diem.cloth.PhysicalPiece.Constraint.prototype.satisfy = function() {
   diem.cloth.PhysicalPiece.DIFF.subVectors(this.line_.start, this.line_.end);
   var currentDist = this.line_.distance();
   if (currentDist === 0) {
-    continue; // prevents division by 0
+    return; // prevents division by 0
   }
   var correction = diem.cloth.PhysicalPiece.DIFF.multiplyScalar(
     1 - (this.restDist_ / currentDist));

@@ -16,7 +16,6 @@ goog.require('diem.tools.TimeTool');
  */
 diem.cloth.Workboard = function() {
   goog.base(this);
-  diem.events.Draggable.register(this);
   this.w = 10;
   this.h = 7;
 
@@ -76,7 +75,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
  */
 diem.cloth.Workboard.prototype.getIntersectables = function() {
   var intersects = [diem.tools.DragPiece.createIntersectable(
-      diem.events.Draggable.ID, this)];
+      diem.events.DRAGGABLE, this)];
   for (var i = 0; i < this.anchors_.length; ++i) {
     intersects = intersects
       .concat(this.anchors_[i].getIntersectables())
