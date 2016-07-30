@@ -86,6 +86,8 @@ diem.tools.Tool.prototype.getMeshWrapper = function(mesh) {
 
 /**
  * Registers a mesh wrapper for a certain action.
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
  */
 diem.tools.Tool.prototype.addAction = function(action, meshWrapper) {
   goog.asserts.assert(
@@ -102,6 +104,7 @@ diem.tools.Tool.prototype.addAction = function(action, meshWrapper) {
 };
 
 /**
+ * @param {string} action
  * @returns {Array} the list of meshes for the raycaster to intersect.
  */
 diem.tools.Tool.prototype.getIntersectable = function(action) {
@@ -142,6 +145,7 @@ diem.tools.Tool.prototype.updateIntersectable = function() {
  * @param {string} tool
  * @param {string} action
  * @param {diem.MeshWrapper} meshWrapper
+ * @returns {diem.events.Intersectable}
  */
 diem.tools.Tool.createIntersectable = function(tool, action, meshWrapper) {
   return diem.events.Intersectable.builder()

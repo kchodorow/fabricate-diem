@@ -1,3 +1,5 @@
+exports_files(["three.js"])
+
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_binary",

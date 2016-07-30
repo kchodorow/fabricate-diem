@@ -7,6 +7,10 @@ goog.require('diem.Globals');
 goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Ruler');
+goog.require('diem.tools.AddPiece');
+goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.DragPiece');
+goog.require('diem.tools.AddAnchorPoint');
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -35,14 +39,13 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.AnchorPoint());
   this.toolManager_.registerTool(new diem.tools.DragPiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
-  this.toolManager_.registerTool(new diem.tools.TimeTool());
   this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   this.drawAxes_();
   this.initLights_();
   var person = new diem.Person(
     this.scene,
-    goog.bind(this.eventHandler_.handleIntersectables, this.eventHandler_));
+    goog.bind(this.toolManager_.handleIntersectables, this.toolManager_));
 };
 
 diem.SceneContainer.prototype.drawAxes_ = function() {

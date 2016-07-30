@@ -8,6 +8,6 @@ var testSatisfyAtRest = function() {
   var end = new THREE.Vector3(10, 10, 0);
   var constraint = new diem.cloth.PhysicalPiece.Constraint(start, end);
   constraint.satisfy();
-  assertTrue(start.equals(THREE.Vector3(0, 0, 0)));
-  assertTrue(end.equals(THREE.Vector3(10, 10, 0)));
+  assertTrue(start.equals(new THREE.Vector3(0, 0, 0)));
+  assertTrue(end.equals(new THREE.Vector3(10, 10, 0)));
 };

@@ -37,6 +37,7 @@ closure_js_library(
     name = "physical_piece",
     srcs = ["physical_piece.js"],
     deps = [
+        "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js/events",
         "//webapp/static/js/tools:drag-piece",
@@ -46,6 +47,9 @@ closure_js_library(
 closure_js_test(
     name = "physical_piece_test",
     srcs = ["physical_piece_test.js"],
+    compilation_level = "WHITESPACE_ONLY",
+    data = ["//webapp/static/js:three.js"],
+    html = "testing.html",
     deps = [
         ":physical_piece",
         "@io_bazel_rules_closure//closure/library:testing",

@@ -8,7 +8,6 @@ goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
 goog.require('diem.cloth.PhysicalPiece');
-goog.require('diem.tools.TimeTool');
 
 /**
  * @constructor

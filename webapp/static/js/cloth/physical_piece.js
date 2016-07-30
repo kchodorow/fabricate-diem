@@ -10,6 +10,7 @@ goog.require('diem.tools.DragPiece');
  * This is basically a workboard piece with constraints between the nodes.
  * @param {THREE.Mesh} piece
  * @constructor
+ * @extends {diem.MeshWrapper}
  */
 diem.cloth.PhysicalPiece = function(piece) {
   goog.base(this);
@@ -18,13 +19,13 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.mesh_ = new THREE.Mesh(piece.geometry.clone(), piece.material);
 
   var faces = this.mesh_.geometry.faces;
-  for (i = 0; i < faces.length; ++i) {
+  for (var i = 0; i < faces.length; ++i) {
     var face = faces[i];
     this.addConstraint_(face.a, face.b);
     this.addConstraint_(face.b, face.c);
     this.addConstraint_(face.c, face.a);
   }
-  for (var i = 0; i < this.mesh_.geometry.vertices.length; ++i) {
+  for (i = 0; i < this.mesh_.geometry.vertices.length; ++i) {
     this.previous_.push(new THREE.Vector3().copy(
       this.mesh_.geometry.vertices[i]));
   }
