@@ -24,6 +24,11 @@ diem.tools.DragPiece.prototype.getKeys = function() {
   return [goog.events.KeyCodes.D];
 };
 
+/**
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
+ * @returns {diem.events.Intersectable}
+ */
 diem.tools.DragPiece.createIntersectable = function(action, meshWrapper) {
   return diem.tools.Tool.createIntersectable(
     diem.tools.DragPiece.NAME, action, meshWrapper);

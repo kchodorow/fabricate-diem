@@ -1,14 +1,8 @@
 goog.provide('diem.tools.ToolManager');
 
-goog.require('diem.tools.AddAnchorPoint');
-goog.require('diem.tools.AddPiece');
-goog.require('diem.tools.AnchorPoint');
-goog.require('diem.tools.DragPiece');
-goog.require('diem.tools.RemoveAnchorPoint');
+goog.require('diem.tools.Tool');
 
-goog.require('goog.asserts');
 goog.require('goog.events');
-goog.require('goog.events.EventType');
 goog.require('goog.ui.KeyboardShortcutHandler');
 
 /**
@@ -18,12 +12,12 @@ goog.require('goog.ui.KeyboardShortcutHandler');
  *     'MOVE_PIECE', goog.bind(this.moveTool, this), goog.events.KeyCodes.V);
  * @constructor
  */
-diem.tools.ToolManager = function(scene) {
+diem.tools.ToolManager = function() {
   this.activeTool_ = diem.tools.ToolManager.BASE_TOOL;
   this.toolMap_ = {};
   this.shortcuts_ = new goog.ui.KeyboardShortcutHandler(document);
 
-  this.setupShortcuts_(scene);
+  this.setupShortcuts_();
 };
 
 diem.tools.ToolManager.BASE_TOOL = new diem.tools.Tool();
@@ -31,7 +25,7 @@ diem.tools.ToolManager.BASE_TOOL = new diem.tools.Tool();
 /**
  * @param {diem.tools.Tool} tool a tool that needs to hook into event handling.
  */
-diem.tools.ToolManager.prototype.registerTool_ = function(tool) {
+diem.tools.ToolManager.prototype.registerTool = function(tool) {
   var id = tool.getName();
   var keys = tool.getKeys();
   switch (keys.length) {
@@ -48,21 +42,15 @@ diem.tools.ToolManager.prototype.registerTool_ = function(tool) {
 /**
  * @private
  */
-diem.tools.ToolManager.prototype.setupShortcuts_ = function(scene) {
+diem.tools.ToolManager.prototype.setupShortcuts_ = function() {
   goog.events.listen(
     this.shortcuts_,
     goog.ui.KeyboardShortcutHandler.EventType.SHORTCUT_TRIGGERED,
     this.handleKeypress,
     false,
     this);
-
-  this.registerTool_(new diem.tools.AddPiece(scene));
-  this.registerTool_(new diem.tools.AddAnchorPoint());
-  this.registerTool_(new diem.tools.AnchorPoint());
-  this.registerTool_(new diem.tools.DragPiece());
-  this.registerTool_(new diem.tools.RemoveAnchorPoint());
-  this.registerTool_(new diem.tools.TimeTool());
 };
+
 
 /**
  * Triggered when a registered shortcut is heard.
@@ -86,15 +74,20 @@ diem.tools.ToolManager.prototype.handleKeypress = function(event) {
   this.activeTool_ = newTool;
 };
 
-diem.tools.ToolManager.prototype.getTool = function(name) {
-  if (name == null) {
+/**
+ * @param {string} [opt_name]
+ * @returns {diem.tools.Tool}
+ */
+diem.tools.ToolManager.prototype.getTool = function(opt_name) {
+  if (opt_name == null) {
     return this.activeTool_;
   }
-  return this.toolMap_[name];
+  return this.toolMap_[opt_name];
 };
 
 /**
  * Adds new intersectables to tools and removes old ones.
+ * @param {Array} responses
  */
 diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   for (var i = 0; i < responses.length; ++i) {

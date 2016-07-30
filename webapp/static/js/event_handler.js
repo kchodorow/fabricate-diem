@@ -3,7 +3,6 @@ goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
 goog.require('diem.tools.ToolManager');
-goog.require('diem.tools.TimeTool');
 
 goog.require('goog.events');
 goog.require('goog.events.EventType');
@@ -11,6 +10,7 @@ goog.require('goog.fx.Dragger');
 
 /**
  * @param {THREE.Camera} camera the camera to use for raycasting
+ * @param {diem.tools.ToolManager} toolManager
  * @constructor
  */
 diem.EventHandler = function(camera, toolManager) {
@@ -79,6 +79,13 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
 };
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {Array} intersectables
+ * @returns {Array} 0 or more THREE.Meshes that were intersected
+ * @private
+ */
 diem.EventHandler.prototype.getIntersections_ = function(x, y, intersectables) {
   this.updateMouseCoordinates_(x, y);
   this.raycaster_.setFromCamera(
@@ -102,7 +109,7 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   this.clicked_ = tool.getMeshWrapper(object);
   if (this.clicked_.onDragStart) {
     var intersectables = this.clicked_.onDragStart();
-    this.handleIntersectables(intersectables);
+    this.toolManager_.handleIntersectables(intersectables);
   }
 };
 
@@ -144,9 +151,5 @@ diem.EventHandler.prototype.handleClick = function(event) {
   // Not persisted.
   var clicked = tool.getMeshWrapper(object);
   var newInteractables = clicked.onClick(intersects[0]);
-  this.handleIntersectables(newInteractables);
-};
-
-diem.EventHandler.prototype.handleIntersectables = function(intersectables) {
-  this.toolManager_.handleIntersectables(intersectables);
+  this.toolManager_.handleIntersectables(newInteractables);
 };

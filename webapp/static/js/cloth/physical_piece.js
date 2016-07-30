@@ -1,12 +1,15 @@
 /* global THREE */
 goog.provide('diem.cloth.PhysicalPiece');
+goog.provide('diem.cloth.PhysicalPiece.Constraint');
 
 goog.require('diem.MeshWrapper');
 goog.require('diem.events');
+goog.require('diem.tools.DragPiece');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.
  * @param {THREE.Mesh} piece
+ * @constructor
  */
 diem.cloth.PhysicalPiece = function(piece) {
   goog.base(this);
@@ -37,16 +40,27 @@ diem.cloth.PhysicalPiece.DAMPING = 0.03;
 diem.cloth.PhysicalPiece.DRAG = 1 - diem.cloth.PhysicalPiece.DAMPING;
 diem.cloth.PhysicalPiece.DIFF = new THREE.Vector3();
 
+/**
+ * @override
+ */
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
   return [diem.tools.DragPiece.createIntersectable(diem.events.TIME, this)];
 };
 
+/**
+ * @param {number} a index of start vertex
+ * @param {number} b index of end vertex
+ * @private
+ */
 diem.cloth.PhysicalPiece.prototype.addConstraint_ = function(a, b) {
   var vertices = this.mesh_.geometry.vertices;
   this.constraints_.push(
-    new diem.cloth.PhysicalPiece.Constraint(a, b, vertices[a], vertices[b]));
+    new diem.cloth.PhysicalPiece.Constraint(vertices[a], vertices[b], a, b));
 };
 
+/**
+ * Run one step of physics.
+ */
 diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var vertices = this.mesh_.geometry.vertices;
   for (var i = 0; i < vertices.length; i++) {
@@ -66,7 +80,8 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
  * prev: (0, 12)
  * pos: (0, 10)
  * newPos = (0, 2)
- *
+ * @param {number} i
+ * @private
  */
 diem.cloth.PhysicalPiece.prototype.integrate_ = function(i) {
   var vertex = this.mesh_.geometry.vertices[i];
@@ -79,13 +94,23 @@ diem.cloth.PhysicalPiece.prototype.integrate_ = function(i) {
   vertex.copy(newPos);
 };
 
-diem.cloth.PhysicalPiece.Constraint = function(a, b, aPos, bPos) {
-  this.startIdx_ = a;
-  this.endIdx_ = b;
+/**
+ * @param {THREE.Vector3} aPos
+ * @param {THREE.Vector3} bPos
+ * @param {number} [opt_a]
+ * @param {number} [opt_b]
+ * @constructor
+ */
+diem.cloth.PhysicalPiece.Constraint = function(aPos, bPos, opt_a, opt_b) {
+  this.startIdx_ = opt_a;
+  this.endIdx_ = opt_b;
   this.line_ = new THREE.Line3(aPos, bPos);
   this.restDist_ = this.line_.distance();
 };
 
+/**
+ * Move the start & end points to their desired distance from each other.
+ */
 diem.cloth.PhysicalPiece.Constraint.prototype.satisfy = function() {
   diem.cloth.PhysicalPiece.DIFF.subVectors(this.line_.start, this.line_.end);
   var currentDist = this.line_.distance();

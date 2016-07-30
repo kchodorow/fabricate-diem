@@ -6,12 +6,15 @@ load(
 
 closure_js_library(
     name = "events",
-    srcs = glob(
-        ["*.js"],
-        exclude = ["*_test.js"],
-    ),
+    srcs = ["events.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = ["@io_bazel_rules_closure//closure/library"],
+)
+
+closure_js_library(
+    name = "intersectable",
+    srcs = ["intersectable.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
 )
 
 closure_js_test(

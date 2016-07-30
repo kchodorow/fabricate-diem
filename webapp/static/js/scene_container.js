@@ -29,7 +29,13 @@ diem.SceneContainer = function() {
   this.camera.position.y = 10;
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
-  this.toolManager_ = new diem.tools.ToolManager(this.scene);
+  this.toolManager_ = new diem.tools.ToolManager();
+  this.toolManager_.registerTool(new diem.tools.AddPiece(this.scene));
+  this.toolManager_.registerTool(new diem.tools.AddAnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.AnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.DragPiece());
+  this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.TimeTool());
   this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   this.drawAxes_();

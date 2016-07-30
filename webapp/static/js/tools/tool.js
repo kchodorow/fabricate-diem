@@ -15,8 +15,10 @@ goog.require('diem.events.Intersectable');
  * @constructor
  */
 diem.tools.Tool = function() {
-  this.draggable_ = [];
-  this.clickable_ = [];
+  /**
+   *
+   */
+  this.name_ = null;
 
   // Mappings of actions to a dict of THREE.Mesh ids and their
   // diem.MeshWrappers.
@@ -69,7 +71,7 @@ diem.tools.Tool.prototype.getKeys = function() {
 };
 
 /**
- * @param {THREE.Mesh}
+ * @param {THREE.Mesh} mesh
  * @returns {diem.MeshWrapper}
  */
 diem.tools.Tool.prototype.getMeshWrapper = function(mesh) {
@@ -82,6 +84,9 @@ diem.tools.Tool.prototype.getMeshWrapper = function(mesh) {
   return null;
 };
 
+/**
+ * Registers a mesh wrapper for a certain action.
+ */
 diem.tools.Tool.prototype.addAction = function(action, meshWrapper) {
   goog.asserts.assert(
     (this.actionMap_[action] == null && this.intersectableList_[action] == null)
@@ -96,6 +101,9 @@ diem.tools.Tool.prototype.addAction = function(action, meshWrapper) {
   this.wrapperMap_[obj.uuid] = meshWrapper;
 };
 
+/**
+ * @returns {Array} the list of meshes for the raycaster to intersect.
+ */
 diem.tools.Tool.prototype.getIntersectable = function(action) {
   if (!(action in this.intersectableList_)) {
     return [];
@@ -131,10 +139,11 @@ diem.tools.Tool.prototype.updateIntersectable = function() {
 };
 
 /**
- * @static
+ * @param {string} tool
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
  */
-diem.tools.Tool.createIntersectable = function(
-  tool, action, meshWrapper) {
+diem.tools.Tool.createIntersectable = function(tool, action, meshWrapper) {
   return diem.events.Intersectable.builder()
     .setTool(tool)
     .setMethod(action)
