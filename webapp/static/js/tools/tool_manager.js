@@ -41,8 +41,6 @@ diem.tools.ToolManager.prototype.registerTool_ = function(tool) {
   case 2:
     this.shortcuts_.registerShortcut(id, keys[0], keys[1]);
     break;
-  default:
-    goog.asserts.fail("Wrong number of keys");
   }
   this.toolMap_[id] = tool;
 };
@@ -63,10 +61,7 @@ diem.tools.ToolManager.prototype.setupShortcuts_ = function(scene) {
   this.registerTool_(new diem.tools.AnchorPoint());
   this.registerTool_(new diem.tools.DragPiece());
   this.registerTool_(new diem.tools.RemoveAnchorPoint());
-};
-
-diem.tools.ToolManager.prototype.getTool = function() {
-  return this.tool_;
+  this.registerTool_(new diem.tools.TimeTool());
 };
 
 /**
@@ -91,8 +86,11 @@ diem.tools.ToolManager.prototype.handleKeypress = function(event) {
   this.activeTool_ = newTool;
 };
 
-diem.tools.ToolManager.prototype.getTool = function() {
-  return this.activeTool_;
+diem.tools.ToolManager.prototype.getTool = function(name) {
+  if (name == null) {
+    return this.activeTool_;
+  }
+  return this.toolMap_[name];
 };
 
 /**
@@ -100,35 +98,11 @@ diem.tools.ToolManager.prototype.getTool = function() {
  */
 diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   for (var i = 0; i < responses.length; ++i) {
-    var response = responses[i];
-    if (response.isClickable()) {
-      this.toolMap_[response.getToolId()].addClickable(response.getMeshWrapper());
-    } else if (response.isDraggable()) {
-      this.toolMap_[response.getToolId()].addDraggable(response.getMeshWrapper());
-    }
+    this.toolMap_[responses[i].getToolId()].addAction(
+      responses[i].getAction(), responses[i].getMeshWrapper());
   }
 
   for (i in this.toolMap_) {
-    var tool = this.toolMap_[i];
-    diem.tools.ToolManager.updateIntersectable_(tool.getClickable());
-    diem.tools.ToolManager.updateIntersectable_(tool.getDraggable());
-  }
-};
-
-/**
- * Removes things that have been removed from the scene from the intersectable list.
- * @param {Array} list a list of meshes (draggable or clickable, atm)
- * @private
- */
-diem.tools.ToolManager.updateIntersectable_ = function(list) {
-  var i = 0;
-  while (i < list.length) {
-    if (list[i].parent == null) {
-      list.splice(i, 1);
-      // Restart loop.
-      i = 0;
-    } else {
-      ++i;
-    }
+    this.toolMap_[i].updateIntersectable();
   }
 };

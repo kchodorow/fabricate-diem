@@ -11,18 +11,12 @@ goog.require('goog.events.KeyCodes');
  */
 diem.tools.RemoveAnchorPoint = function() {
   goog.base(this);
+  this.name_ = diem.tools.RemoveAnchorPoint.NAME;
 };
 
 goog.inherits(diem.tools.RemoveAnchorPoint, diem.tools.Tool);
 
 diem.tools.RemoveAnchorPoint.NAME = 'RM_ANCHOR_PT';
-
-/**
- * @override
- */
-diem.tools.RemoveAnchorPoint.prototype.getName = function() {
-  return diem.tools.RemoveAnchorPoint.NAME;
-};
 
 /**
  * @override

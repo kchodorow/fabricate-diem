@@ -10,18 +10,12 @@ goog.require('goog.events.KeyCodes');
  */
 diem.tools.DragPiece = function() {
   goog.base(this);
+  this.name_ = diem.tools.DragPiece.NAME;
 };
 
 goog.inherits(diem.tools.DragPiece, diem.tools.Tool);
 
 diem.tools.DragPiece.NAME = 'DRAG_PIECE';
-
-/**
- * @override
- */
-diem.tools.DragPiece.prototype.getName = function() {
-  return diem.tools.DragPiece.NAME;
-};
 
 /**
  * @override

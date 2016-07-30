@@ -7,6 +7,8 @@ goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
+goog.require('diem.cloth.PhysicalPiece');
+goog.require('diem.tools.TimeTool');
 
 /**
  * @constructor
@@ -20,8 +22,10 @@ diem.cloth.Workboard = function() {
 
   this.fabric_ = new diem.Fabric();
 
-  // A list of all of the things to reposition when the position changes.
-  this.meshes_ = [];
+  // A list of physical pieces of fabric of this shape.
+  this.pieces_ = [];
+  // The piece currently being dragged.
+  this.currentPiece_ = null;
   this.initMeshes_();
 };
 
@@ -100,8 +104,15 @@ diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_.edges_;
 };
 
-diem.cloth.Workboard.prototype.onClick = function() {
-  var physicalPiece = new diem.cloth.PhysicalPiece(this);
-  physicalPiece.addToParent(this.parent);
+diem.cloth.Workboard.prototype.onDragStart = function() {
+  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
+  physicalPiece.addToParent(this.mesh_.parent);
+  this.pieces_.push(physicalPiece);
+  this.currentPiece_ = physicalPiece;
   return physicalPiece.getIntersectables();
+};
+
+diem.cloth.Workboard.prototype.onDrag = function() {
+  this.currentPiece_.mesh_.position.set(
+    diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
 };

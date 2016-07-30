@@ -35,8 +35,6 @@ diem.Person.prototype.getIntersectables = function() {
       diem.events.Clickable.ID, this)];
 };
 
-diem.Person.PINS = 0;
-
 diem.Person.prototype.onClick = function(intersection) {
   var pin = new diem.Pin(intersection.point);
   pin.addToParent(this.mesh_.parent);

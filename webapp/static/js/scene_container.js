@@ -31,11 +31,14 @@ diem.SceneContainer = function() {
 
   this.eventHandler_ = new diem.EventHandler(this.camera, this.scene);
 
+  this.drawAxes_();
   this.initLights_();
   var person = new diem.Person(
     this.scene,
     goog.bind(this.eventHandler_.handleIntersectables, this.eventHandler_));
+};
 
+diem.SceneContainer.prototype.drawAxes_ = function() {
   var xm = new THREE.LineBasicMaterial({color : 0xff0000});
   var xg = new THREE.Geometry();
   xg.vertices.push(new THREE.Vector3(-10, 0, 0), new THREE.Vector3(10, 0, 0));
@@ -78,4 +81,8 @@ diem.SceneContainer.prototype.render = function(now) {
 
   requestAnimationFrame(render);
   this.renderer.render(this.scene, this.camera);
+  var simulations = this.eventHandler_.getSimulations();
+  for (var i = 0; i < simulations.length; ++i) {
+    simulations[i].simulate();
+  }
 };

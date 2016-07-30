@@ -3,6 +3,7 @@ goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
 goog.require('diem.tools.ToolManager');
+goog.require('diem.tools.TimeTool');
 
 goog.require('goog.events');
 goog.require('goog.events.EventType');
@@ -92,7 +93,8 @@ diem.EventHandler.prototype.getIntersections_ = function(x, y, intersectables) {
 diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var tool = this.toolManager_.getTool();
   var intersects = this.getIntersections_(
-    dragEvent.clientX, dragEvent.clientY, tool.getDraggable());
+    dragEvent.clientX, dragEvent.clientY,
+    tool.getIntersectable(diem.events.Draggable.ID));
   if (intersects.length == 0) {
     return;
   }
@@ -133,7 +135,8 @@ diem.EventHandler.prototype.dragEnd = function() {
 diem.EventHandler.prototype.handleClick = function(event) {
   var tool = this.toolManager_.getTool();
   var intersects = this.getIntersections_(
-    event.clientX, event.clientY, tool.getClickable());
+    event.clientX, event.clientY,
+    tool.getIntersectable(diem.events.Clickable.ID));
   if (intersects.length == 0) {
     return;
   }
@@ -146,4 +149,8 @@ diem.EventHandler.prototype.handleClick = function(event) {
 
 diem.EventHandler.prototype.handleIntersectables = function(intersectables) {
   this.toolManager_.handleIntersectables(intersectables);
+};
+
+diem.EventHandler.prototype.getSimulations = function() {
+  return this.toolManager_.getTool(diem.tools.TimeTool.NAME).getSimulations();
 };

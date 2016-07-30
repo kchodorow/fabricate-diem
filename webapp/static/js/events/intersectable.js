@@ -3,30 +3,22 @@ goog.provide('diem.events.Intersectable');
 goog.require('diem.events.Clickable');
 goog.require('diem.events.Draggable');
 
-diem.events.Intersectable = function(toolId, method, mesh) {
-  this.toolId = toolId;
-  this.method = method;
-  this.meshWrapper = mesh;
+diem.events.Intersectable = function(toolId, action, mesh) {
+  this.toolId_ = toolId;
+  this.action_ = action;
+  this.meshWrapper_ = mesh;
 };
 
 diem.events.Intersectable.prototype.getToolId = function() {
-  return this.toolId;
+  return this.toolId_;
 };
 
-diem.events.Intersectable.prototype.getMethod = function() {
-  return this.method;
+diem.events.Intersectable.prototype.getAction = function() {
+  return this.action_;
 };
 
 diem.events.Intersectable.prototype.getMeshWrapper = function() {
-  return this.meshWrapper;
-};
-
-diem.events.Intersectable.prototype.isClickable = function() {
-  return this.method == diem.events.Clickable.ID;
-};
-
-diem.events.Intersectable.prototype.isDraggable = function() {
-  return this.method == diem.events.Draggable.ID;
+  return this.meshWrapper_;
 };
 
 diem.events.Intersectable.builder = function() {

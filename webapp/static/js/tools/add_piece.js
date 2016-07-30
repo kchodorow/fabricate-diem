@@ -14,6 +14,7 @@ diem.tools.AddPiece = function(scene) {
 
   this.scene_ = scene;
   this.pattern_ = new diem.Pattern();
+  this.name_ = diem.tools.AddPiece.NAME;
 };
 
 goog.inherits(diem.tools.AddPiece, diem.tools.Tool);
@@ -28,13 +29,6 @@ diem.tools.AddPiece.prototype.onSelect = function() {
 };
 
 diem.tools.AddPiece.NAME = 'ADD_PIECE';
-
-/**
- * @override
- */
-diem.tools.AddPiece.prototype.getName = function() {
-  return diem.tools.AddPiece.NAME;
-};
 
 /**
  * @override
