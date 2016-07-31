@@ -33,9 +33,7 @@ diem.cloth.PhysicalPiece = function(piece) {
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
-diem.cloth.PhysicalPiece.TIMESTEP = 18 / 1000;
-diem.cloth.PhysicalPiece.TIMESTEP_SQ = diem.cloth.PhysicalPiece.TIMESTEP
-  * diem.cloth.PhysicalPiece.TIMESTEP;
+diem.cloth.PhysicalPiece.TIMESTEP_SQ = .9;
 diem.cloth.PhysicalPiece.GRAVITY = new THREE.Vector3(0, -.5, 0);
 diem.cloth.PhysicalPiece.DAMPING = 0.03;
 diem.cloth.PhysicalPiece.DRAG = 1 - diem.cloth.PhysicalPiece.DAMPING;
@@ -71,6 +69,11 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
     this.constraints_[i].satisfy();
   }
   this.mesh_.geometry.verticesNeedUpdate = true;
+};
+
+diem.cloth.PhysicalPiece.prototype.updateHandle = function() {
+  this.mesh_.geometry.vertices[0].set(
+    diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
 };
 
 /**

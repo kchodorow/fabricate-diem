@@ -111,6 +111,5 @@ diem.cloth.Workboard.prototype.onDragStart = function() {
 };
 
 diem.cloth.Workboard.prototype.onDrag = function() {
-  this.currentPiece_.mesh_.position.set(
-    diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
+  this.currentPiece_.updateHandle();
 };
