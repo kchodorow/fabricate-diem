@@ -103,6 +103,7 @@ diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
 
 /**
  * Removes an anchor point.
+ * @returns {Array}
  */
 diem.cloth.Anchor.prototype.onClick = function() {
   // Find curve.
@@ -137,6 +138,7 @@ diem.cloth.Anchor.prototype.onClick = function() {
 /**
  * Determines if the drag should mirror the control points or move the anchor
  * point.
+ * @returns {Array}
  */
 diem.cloth.Anchor.prototype.onDragStart = function() {
   this.dragAllCp_ = this.controlPointsAtOrigin_();

@@ -1,6 +1,5 @@
 goog.provide('diem.tools.AddAnchorPoint');
 
-goog.require('diem.cloth.Edge');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -27,6 +26,11 @@ diem.tools.AddAnchorPoint.prototype.getKeys = function() {
     goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT];
 };
 
+/**
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
+ * @returns {diem.events.Intersectable}
+ */
 diem.tools.AddAnchorPoint.createIntersectable = function(action, meshWrapper) {
   return diem.tools.Tool.createIntersectable(
     diem.tools.AddAnchorPoint.NAME, action, meshWrapper);

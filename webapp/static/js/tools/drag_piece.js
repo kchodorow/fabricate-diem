@@ -1,3 +1,4 @@
+/* global THREE */
 goog.provide('diem.tools.DragPiece');
 
 goog.require('diem.tools.Tool');

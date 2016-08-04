@@ -10,10 +10,12 @@ closure_js_library(
     visibility = ["//webapp/static/js:__pkg__"],
     deps = [
         ":bezier",
+        ":physical-piece",
         "//webapp/static/js:event_handler",
         "//webapp/static/js:fabric",
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
+        "//webapp/static/js/tools:drag-piece",
     ],
 )
 
@@ -30,11 +32,12 @@ closure_js_library(
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js/events",
+        "//webapp/static/js/tools:anchor-point",
     ],
 )
 
 closure_js_library(
-    name = "physical_piece",
+    name = "physical-piece",
     srcs = ["physical_piece.js"],
     deps = [
         "//webapp/static/js:globals",
@@ -49,9 +52,9 @@ closure_js_test(
     srcs = ["physical_piece_test.js"],
     compilation_level = "WHITESPACE_ONLY",
     data = ["//webapp/static/js:three.js"],
-    html = "testing.html",
     deps = [
-        ":physical_piece",
+        ":physical-piece",
+        "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/library:testing",
     ],
 )

@@ -53,12 +53,14 @@ closure_js_library(
         ":person",
         "//webapp/static/js/cloth",
         "//webapp/static/js/tools",
+        "//webapp/static/js/tools:tool-manager",
     ],
 )
 
 closure_js_library(
     name = "pattern",
     srcs = ["pattern.js"],
+    visibility = ["//webapp/static/js/tools:__pkg__"],
     deps = ["//webapp/static/js/cloth"],
 )
 
@@ -67,7 +69,18 @@ closure_js_library(
     srcs = [
         "person.js",
     ],
-    deps = [":event_handler"],
+    deps = [
+        ":mesh-wrapper",
+        ":pin",
+        "//webapp/static/js/events",
+        "//webapp/static/js/tools:drag-piece",
+    ],
+)
+
+closure_js_library(
+    name = "pin",
+    srcs = ["pin.js"],
+    deps = [":mesh-wrapper"],
 )
 
 closure_js_library(
@@ -85,7 +98,7 @@ closure_js_library(
     deps = [
         ":globals",
         "//webapp/static/js/events",
-        "//webapp/static/js/tools:tool_manager",
+        "//webapp/static/js/tools:tool-manager",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

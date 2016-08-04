@@ -1,11 +1,10 @@
 /* global THREE */
-
 goog.provide('diem.Pin');
 
 goog.require('diem.MeshWrapper');
-goog.require('goog.asserts');
 
 /**
+ * @param {THREE.Vector3} position
  * @constructor
  */
 diem.Pin = function(position) {

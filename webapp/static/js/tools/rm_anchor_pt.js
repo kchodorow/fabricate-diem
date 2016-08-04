@@ -1,6 +1,5 @@
 goog.provide('diem.tools.RemoveAnchorPoint');
 
-goog.require('diem.cloth.Anchor');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -25,6 +24,11 @@ diem.tools.RemoveAnchorPoint.prototype.getKeys = function() {
   return [goog.events.KeyCodes.DASH];
 };
 
+/**
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
+ * @returns {diem.events.Intersectable}
+ */
 diem.tools.RemoveAnchorPoint.createIntersectable = function(
   action, meshWrapper) {
   return diem.tools.Tool.createIntersectable(

@@ -9,8 +9,11 @@ goog.require('diem.Person');
 goog.require('diem.Ruler');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.DragPiece');
-goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.RemoveAnchorPoint');
+goog.require('diem.tools.ToolManager');
+
 
 // TODO: more dynamic.
 var WIDTH = 800;

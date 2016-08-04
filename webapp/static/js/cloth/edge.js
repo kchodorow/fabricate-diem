@@ -5,7 +5,9 @@ goog.require('diem.Fabric');
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
+goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
+goog.require('diem.tools.AddAnchorPoint');
 
 /**
  * An edge is made up of two anchor points, and described by two control points.

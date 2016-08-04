@@ -8,6 +8,7 @@ goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
 goog.require('diem.cloth.PhysicalPiece');
+goog.require('diem.tools.DragPiece');
 
 /**
  * @constructor
@@ -102,6 +103,9 @@ diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_.edges_;
 };
 
+/**
+ * @returns {Array}
+ */
 diem.cloth.Workboard.prototype.onDragStart = function() {
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
   physicalPiece.addToParent(this.mesh_.parent);
@@ -110,6 +114,9 @@ diem.cloth.Workboard.prototype.onDragStart = function() {
   return physicalPiece.getIntersectables();
 };
 
+/**
+ * Moves the fabric.
+ */
 diem.cloth.Workboard.prototype.onDrag = function() {
-  this.currentPiece_.updateHandle();
+  this.currentPiece_.onDrag();
 };

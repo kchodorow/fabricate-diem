@@ -2,6 +2,7 @@
 goog.provide('diem.cloth.ControlPoint');
 
 goog.require('diem.events');
+goog.require('diem.tools.AnchorPoint');
 
 /**
  * @constructor
@@ -93,6 +94,9 @@ diem.cloth.ControlPoint.prototype.onDragImpl = function(opt_multiplier) {
   diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
 };
 
+/**
+ * @param {THREE.Mesh} workboardMesh
+ */
 diem.cloth.ControlPoint.updateWorkboardGeometry = function(workboardMesh) {
   // Use the parent's shape to update the fabric's curves.
   diem.cloth.ControlPoint.updateActions(workboardMesh.shape);

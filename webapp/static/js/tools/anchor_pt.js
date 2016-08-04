@@ -1,6 +1,5 @@
 goog.provide('diem.tools.AnchorPoint');
 
-goog.require('diem.cloth.Anchor');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -32,6 +31,11 @@ diem.tools.AnchorPoint.prototype.getKeys = function() {
   return [goog.events.KeyCodes.A];
 };
 
+/**
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
+ * @returns {diem.events.Intersectable}
+ */
 diem.tools.AnchorPoint.createIntersectable = function(action, meshWrapper) {
   return diem.tools.Tool.createIntersectable(
     diem.tools.AnchorPoint.NAME, action, meshWrapper);
