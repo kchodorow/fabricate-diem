@@ -19,7 +19,9 @@ diem.cloth.PhysicalPiece = function(piece) {
 
   // Make a grid of vertices.
   var geometry = this.generateGrid_(piece);
-  this.mesh_ = new THREE.Mesh(geometry, piece.material);
+  var material = piece.material.clone();
+  material.wireframe = true;
+  this.mesh_ = new THREE.Mesh(geometry, material);
 
   for (var i = 0; i < this.mesh_.geometry.vertices.length; ++i) {
     this.previous_.push(new THREE.Vector3().copy(
@@ -98,9 +100,9 @@ diem.cloth._Tracker.prototype.addFaces = function(faces) {
   if (this.cols.length == 0) {
     return;
   }
-  var prevCol = this.cols[0];
   for (var i = 1; i < this.cols.length; ++i) {
-    var curCol = this.cols[i];
+    var prevCol = this.getCol_(i - 1);
+    var curCol = this.getCol_(i);
     // Handle:
     // previous col overhangs below
     while (prevCol.start < curCol.start && prevCol.hasNext()) {
@@ -122,7 +124,7 @@ diem.cloth._Tracker.prototype.addFaces = function(faces) {
       curCur = curCol.current();
       curNext = curCol.next();
       faces.push(new THREE.Face3(prevCur, prevNext, curCur));
-      faces.push(new THREE.Face3(prevCur, curCur, curNext));
+      faces.push(new THREE.Face3(curCur, prevNext, curNext));
     }
 
     // previous col overhangs top
@@ -141,9 +143,19 @@ diem.cloth._Tracker.prototype.addFaces = function(faces) {
 };
 
 /**
+ * @param {number} i
+ */
+diem.cloth._Tracker.prototype.getCol_ = function(i) {
+  var col = this.cols[i];
+  col.restart();
+  return col;
+};
+
+/**
  * @param {number} size
  */
 diem.cloth._Col = function(size) {
+  this.origStart = -1;
   this.start = -1;
   this.length = 0;
   this.y = new Array(size);
@@ -155,6 +167,7 @@ diem.cloth._Col = function(size) {
 diem.cloth._Col.prototype.add = function(i, y) {
   if (this.start == -1) {
     this.start = y;
+    this.origStart = y;
   }
   this.length++;
   this.y[y] = i;
@@ -162,6 +175,10 @@ diem.cloth._Col.prototype.add = function(i, y) {
 
 diem.cloth._Col.prototype.isEmpty = function() {
   return this.start == -1;
+};
+
+diem.cloth._Col.prototype.restart = function() {
+  this.start = this.origStart;
 };
 
 diem.cloth._Col.prototype.current = function() {

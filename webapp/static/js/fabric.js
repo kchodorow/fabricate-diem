@@ -14,8 +14,7 @@ diem.Fabric = function() {
 
   this.material_ = new THREE.MeshBasicMaterial({
     color : diem.Fabric.getRandomColor(),
-    side : THREE.DoubleSide,
-    wireframe: true
+    side : THREE.DoubleSide
   });
 };
 
