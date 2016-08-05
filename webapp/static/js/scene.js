@@ -13,6 +13,7 @@ function render() {
 
 /**
  * Initializes the scene container after Closure is loaded.
+ * @export
  */
 function init() {
   sceneContainer = new diem.SceneContainer();

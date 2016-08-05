@@ -6,3 +6,10 @@ filegroup(
     ],
     visibility = ["//:__pkg__"],
 )
+
+genrule(
+    name = "mv-html",
+    srcs = ["release.html"],
+    outs = ["index.html"],
+    cmd = "cp $< $@",
+)

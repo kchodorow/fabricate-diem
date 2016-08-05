@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>Fabricate Diem</title>
+    <style>
+      body { margin: 0; }
+      canvas { width: 100%; height: 100% }
+    </style>
+  </head>
+  <body>
+    <div id="model-box">
+    </div>
+
+    <script type="x-shader/x-fragment" id="fragmentShaderDepth">
+#include <packing>
+
+uniform sampler2D texture;
+varying vec2 vUV;
+
+void main() {
+  vec4 pixel = texture2D( texture, vUV );
+  if ( pixel.a < 0.5 ) discard;
+  gl_FragData[ 0 ] = packDepthToRGBA( gl_FragCoord.z );
+}
+    </script>
+
+    <script type="x-shader/x-vertex" id="vertexShaderDepth">
+varying vec2 vUV;
+void main() {
+  vUV = 0.75 * uv;
+  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+  gl_Position = projectionMatrix * mvPosition;
+}
+    </script>
+
+    <script src="js/three.js"></script>
+    <script src="js/renderers/CanvasRenderer.js"></script>
+
+    <script src="js/lib.js"></script>
+    <script type="text/javascript">
+      init();
+    </script>
+  </body>
+</html>
