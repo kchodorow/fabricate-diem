@@ -52,47 +52,140 @@ diem.cloth.PhysicalPiece.prototype.generateGrid_ = function(piece) {
   var max = box.max.ceil();
   // Create a grid over the bounding box.
   var constraintMap = {};
-  // Track the vertices by col.
-  var lastCol = null;
+  var cols = new diem.cloth._Tracker();
   for (var i = min.x; i < max.x; ++i) {
-    var col = {start: -1, length: 0};
+    var col = new diem.cloth._Col();
     for (var j = min.y; j < max.y; ++j) {
       // Discard grid points not in shape.
       var vertex = new THREE.Vector3(i, j, 0);
       if (!this.inShape_(piece.shape.edges_, vertex, min)) {
         continue;
       }
-      if (col.start == -1) {
-        col.start = geometry.vertices.length;
-      }
-      col.length++;
-
+      col.add(geometry.vertices.length, j);
       geometry.vertices.push(vertex);
       this.addConstraints_(vertex, constraintMap);
-
-      // Add faces.
-      if (lastCol == null) {
-        continue;
-      }
-
-      // TODO: handle overhangs.
-      var lastColIdx = lastCol.start;
-      var curVertex = geometry.vertices.length - 1;
-      if (lastColIdx < lastCol.start + lastCol.length) {
-        geometry.faces.push(
-          new THREE.Face3(lastColIdx, lastColIdx + 1, curVertex));
-      }
-      if (j > min.y) {
-        geometry.faces.push(
-          new THREE.Face3(curVertex - 1, curVertex, lastColIdx));
-      }
     }
-    if (col.start != -1) {
-      lastCol = col;
-    }
+    cols.addCol(col);
   }
+
+  cols.addFaces(geometry.faces);
   // Connect all edge points to the shape.
   return geometry;
+};
+
+/**
+ * Track the vertex indices, e.g.,
+ * .             5 -1 -1 -1
+ *   . . .  =>  -1  2  3  4
+ * .   .         0 -1  1 -1
+ * @constructor
+ */
+diem.cloth._Tracker = function() {
+  this.cols = [];
+};
+
+/**
+ * @param {diem.cloth._Col} col
+ */
+diem.cloth._Tracker.prototype.addCol = function(col) {
+  if (col.isEmpty()) {
+    return;
+  }
+  this.cols.push(col);
+};
+
+diem.cloth._Tracker.prototype.addFaces = function(faces) {
+  if (this.cols.length == 0) {
+    return;
+  }
+  var prevCol = this.cols[0];
+  for (var i = 1; i < this.cols.length; ++i) {
+    var curCol = this.cols[i];
+    // Handle:
+    // previous col overhangs below
+    while (prevCol.start < curCol.start && prevCol.hasNext()) {
+      var prevCur = prevCol.current();
+      var prevNext = prevCol.next();
+      faces.push(new THREE.Face3(prevCur, prevNext, curCol.start));
+    }
+    // this row overhangs below
+    while (prevCol.start > curCol.start && curCol.hasNext()) {
+      var curCur = curCol.current();
+      var curNext = curCol.next();
+      faces.push(new THREE.Face3(prevCol.start, curCur, curNext));
+    }
+
+    // Handle matching vertices
+    while (prevCol.hasNext() && curCol.hasNext()) {
+      prevCur = prevCol.current();
+      prevNext = prevCol.next();
+      curCur = curCol.current();
+      curNext = curCol.next();
+      faces.push(new THREE.Face3(prevCur, prevNext, curCur));
+      faces.push(new THREE.Face3(prevCur, curCur, curNext));
+    }
+
+    // previous col overhangs top
+    while (prevCol.hasNext()) {
+      prevCur = prevCol.current();
+      prevNext = prevCol.next();
+      faces.push(new THREE.Face3(prevCur, prevNext, curCol.start));
+    }
+    // this row overhangs top
+    while (curCol.hasNext()) {
+      curCur = curCol.current();
+      curNext = curCol.next();
+      faces.push(new THREE.Face3(prevCol.start, curCur, curNext));
+    }
+  }
+};
+
+/**
+ * @param {number} size
+ */
+diem.cloth._Col = function(size) {
+  this.start = -1;
+  this.length = 0;
+  this.y = new Array(size);
+  for (var i = 0; i < size; ++i) {
+    this.y[i] = -1;
+  }
+};
+
+diem.cloth._Col.prototype.add = function(i, y) {
+  if (this.start == -1) {
+    this.start = y;
+  }
+  this.length++;
+  this.y[y] = i;
+};
+
+diem.cloth._Col.prototype.isEmpty = function() {
+  return this.start == -1;
+};
+
+diem.cloth._Col.prototype.current = function() {
+  return this.y[this.start];
+};
+
+diem.cloth._Col.prototype.next = function() {
+  for (var i = this.start + 1; i < this.y.length; ++i) {
+    if (this.y[i] != -1) {
+      this.start = i;
+      return this.y[i];
+    }
+  }
+  goog.asserts.fail('Should have found a next');
+  return -1;  // unreachable.
+};
+
+diem.cloth._Col.prototype.hasNext = function() {
+  for (var i = this.start + 1; i < this.y.length; ++i) {
+    if (this.y[i] != -1) {
+      return true;
+    }
+  }
+  return false;
 };
 
 /**
