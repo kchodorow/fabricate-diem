@@ -40,6 +40,7 @@ diem.cloth.PhysicalPiece.DIFF = new THREE.Vector3();
 /**
  * Create a grid from the existing vertices.
  * @param {THREE.Mesh} piece
+ * @private
  */
 diem.cloth.PhysicalPiece.prototype.generateGrid_ = function(piece) {
   var geometry = new THREE.Geometry();
@@ -71,7 +72,8 @@ diem.cloth.PhysicalPiece.prototype.generateGrid_ = function(piece) {
   }
 
   cols.addFaces(geometry.faces);
-  // Connect all edge points to the shape.
+
+  // TODO: Connect all edge points to the shape.
   return geometry;
 };
 
@@ -96,6 +98,11 @@ diem.cloth._Tracker.prototype.addCol = function(col) {
   this.cols.push(col);
 };
 
+/**
+ * TODO: we can figure out if an edge is valid in a similar way to how inShape
+ * works. This will make the mesh correct for shapes with holes/concave bits.
+ * @param {Array} faces
+ */
 diem.cloth._Tracker.prototype.addFaces = function(faces) {
   if (this.cols.length == 0) {
     return;
@@ -144,6 +151,7 @@ diem.cloth._Tracker.prototype.addFaces = function(faces) {
 
 /**
  * @param {number} i
+ * @returns {diem.cloth._Col}
  */
 diem.cloth._Tracker.prototype.getCol_ = function(i) {
   var col = this.cols[i];
@@ -153,6 +161,7 @@ diem.cloth._Tracker.prototype.getCol_ = function(i) {
 
 /**
  * @param {number} size
+ * @constructor
  */
 diem.cloth._Col = function(size) {
   this.origStart = -1;
@@ -164,6 +173,10 @@ diem.cloth._Col = function(size) {
   }
 };
 
+/**
+ * @param {number} i the index of the vertex
+ * @param {number} y the y-coordinate of the vertex
+ */
 diem.cloth._Col.prototype.add = function(i, y) {
   if (this.start == -1) {
     this.start = y;
@@ -173,18 +186,30 @@ diem.cloth._Col.prototype.add = function(i, y) {
   this.y[y] = i;
 };
 
+/**
+ * @returns {boolean}
+ */
 diem.cloth._Col.prototype.isEmpty = function() {
   return this.start == -1;
 };
 
+/**
+ * Restarts the iterator.
+ */
 diem.cloth._Col.prototype.restart = function() {
   this.start = this.origStart;
 };
 
+/**
+ * @returns {number}
+ */
 diem.cloth._Col.prototype.current = function() {
   return this.y[this.start];
 };
 
+/**
+ * @returns {number}
+ */
 diem.cloth._Col.prototype.next = function() {
   for (var i = this.start + 1; i < this.y.length; ++i) {
     if (this.y[i] != -1) {
@@ -196,6 +221,9 @@ diem.cloth._Col.prototype.next = function() {
   return -1;  // unreachable.
 };
 
+/**
+ * @returns {boolean}
+ */
 diem.cloth._Col.prototype.hasNext = function() {
   for (var i = this.start + 1; i < this.y.length; ++i) {
     if (this.y[i] != -1) {
@@ -208,6 +236,9 @@ diem.cloth._Col.prototype.hasNext = function() {
 /**
  * @param {Array} edges
  * @param {THREE.Vector3} vertex
+ * @param {THREE.Vector3} corner the lower-left corner of the grid (by
+ *     definition, outside of the shape.
+ * @private
  */
 diem.cloth.PhysicalPiece.prototype.inShape_ = function(edges, vertex, corner) {
   var intersections = 0;
@@ -236,6 +267,8 @@ diem.cloth.PhysicalPiece.prototype.inShape_ = function(edges, vertex, corner) {
  * @param {THREE.Vector3} end1
  * @param {THREE.Vector3} start2
  * @param {THREE.Vector3} end2
+ * @returns {boolean}
+ * @private
  */
 diem.cloth.PhysicalPiece.prototype.rayCrosses_ = function(start1, end1, start2, end2) {
   var a1 = end1.y - start1.y;
@@ -266,10 +299,11 @@ diem.cloth.PhysicalPiece.prototype.rayCrosses_ = function(start1, end1, start2, 
 };
 
 /**
- * @param {Object} available a map of vertices that are available
- * @param {Object} wanted a map of vertices that are needed
- * available: {3 : {4 : [Vector3(2, 4)]}}
- * wanted: {3 : {3 : [Vector3(3, 4)], 3 : {5 : [Vector3(3, 4)], 4 : {4 : [Vector3(3, 4)]}}
+ * @param {THREE.Vector3} vertex
+ * @param {Object} map a map of vertices that are needed
+ * Structure of map is:
+ * {3 : {3 : [Vector3(3, 4)], 3 : {5 : [Vector3(3, 4)], 4 : {4 : [Vector3(3, 4)]}}
+ * @private
  */
 diem.cloth.PhysicalPiece.prototype.addConstraints_ = function(vertex, map) {
   if (!(vertex.x in map)) {

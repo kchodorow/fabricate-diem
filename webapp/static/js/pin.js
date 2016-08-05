@@ -5,6 +5,7 @@ goog.require('diem.MeshWrapper');
 
 /**
  * @param {THREE.Vector3} position
+ * @extends {diem.MeshWrapper}
  * @constructor
  */
 diem.Pin = function(position) {

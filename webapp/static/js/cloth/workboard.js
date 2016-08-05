@@ -21,8 +21,6 @@ diem.cloth.Workboard = function() {
 
   this.fabric_ = new diem.Fabric();
 
-  // A list of physical pieces of fabric of this shape.
-  this.pieces_ = [];
   // The piece currently being dragged.
   this.currentPiece_ = null;
   this.initMeshes_();
@@ -85,18 +83,6 @@ diem.cloth.Workboard.prototype.getIntersectables = function() {
 };
 
 /**
- * @override
- */
-diem.cloth.Workboard.prototype.addToEventHandler = function(handler) {
-  handler.register(this);
-  var edges = this.shape_.edges_;
-  for (var i = 0; i < edges.length; ++i) {
-    edges[i].addToEventHandler(handler);
-    this.anchors_[i].addToEventHandler(handler);
-  }
-};
-
-/**
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.getEdges = function() {
@@ -109,7 +95,6 @@ diem.cloth.Workboard.prototype.getEdges = function() {
 diem.cloth.Workboard.prototype.onDragStart = function() {
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
   physicalPiece.addToParent(this.mesh_.parent);
-  this.pieces_.push(physicalPiece);
   this.currentPiece_ = physicalPiece;
   return physicalPiece.getIntersectables();
 };
@@ -118,5 +103,7 @@ diem.cloth.Workboard.prototype.onDragStart = function() {
  * Moves the fabric.
  */
 diem.cloth.Workboard.prototype.onDrag = function() {
+  // We have to delegate this for the initial drag to work, since there's
+  // no piece to drag when the drag starts.
   this.currentPiece_.onDrag();
 };

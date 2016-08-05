@@ -4,16 +4,13 @@ goog.provide('diem.SceneContainer');
 
 goog.require('diem.EventHandler');
 goog.require('diem.Globals');
-goog.require('diem.Pattern');
 goog.require('diem.Person');
-goog.require('diem.Ruler');
-goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.RemoveAnchorPoint');
 goog.require('diem.tools.ToolManager');
-
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -51,6 +48,9 @@ diem.SceneContainer = function() {
     goog.bind(this.toolManager_.handleIntersectables, this.toolManager_));
 };
 
+/**
+ * @private
+ */
 diem.SceneContainer.prototype.drawAxes_ = function() {
   var xm = new THREE.LineBasicMaterial({color : 0xff0000});
   var xg = new THREE.Geometry();

@@ -7,7 +7,7 @@ goog.require('goog.events.KeyCodes');
 
 /**
  * @constructor
- * @param {Mesh.Scene} scene
+ * @param {THREE.Scene} scene
  * @extends {diem.tools.Tool}
  */
 diem.tools.AddPiece = function(scene) {

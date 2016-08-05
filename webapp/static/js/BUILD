@@ -42,7 +42,6 @@ closure_js_library(
 closure_js_library(
     name = "scene",
     srcs = [
-        "ruler.js",
         "scene.js",
         "scene_container.js",
     ],
