@@ -16,20 +16,10 @@ filegroup(
     visibility = ["//webapp/static:__pkg__"],
 )
 
-genrule(
-    name = "three-externs",
-    srcs = ["three.d.ts"],
-    outs = ["three.ext.js"],
-    cmd = "tsd2cee $< $@",
-)
-
 closure_js_binary(
     name = "lib",
-    deps = [
-        ":globals",
-        ":scene",
-        "@io_bazel_rules_closure//closure/library",
-    ],
+    compilation_level = "WHITESPACE_ONLY",
+    deps = [":scene"],
 )
 
 closure_js_library(
@@ -45,6 +35,7 @@ closure_js_library(
         "scene.js",
         "scene_container.js",
     ],
+    visibility = ["//webapp/static:__pkg__"],
     deps = [
         ":event_handler",
         ":globals",

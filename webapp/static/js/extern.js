@@ -3221,7 +3221,7 @@ THREE.Geometry.prototype.faces;
 
 
 /**
- * @type {Array<THREE.Vector2[][]>}
+ * @type {Array<THREE.Vector2[]>}
  */
 THREE.Geometry.prototype.faceVertexUvs;
 
@@ -5857,7 +5857,7 @@ THREE.LineBasicMaterialParameters = function() {};
 /**
  * @constructor
  * @extends {THREE.Material}
- * @param {THREE.LineBasicMaterialParameters=} opt_parameters
+ * @param {Object=} opt_parameters
  */
 THREE.LineBasicMaterial = function(opt_parameters) {};
 
@@ -12326,8 +12326,8 @@ THREE.LensFlare.prototype.copy = function(source) {};
 /**
  * @constructor
  * @extends {THREE.Object3D}
- * @param {(THREE.Geometry |THREE. BufferGeometry)=} opt_geometry
- * @param {(THREE.LineDashedMaterial |THREE. LineBasicMaterial |THREE. ShaderMaterial)=} opt_material
+ * @param {(THREE.Geometry |THREE.BufferGeometry)=} opt_geometry
+ * @param {(THREE.LineDashedMaterial |THREE.LineBasicMaterial |THREE.ShaderMaterial)=} opt_material
  * @param {number=} opt_mode
  */
 THREE.Line = function(opt_geometry, opt_material, opt_mode) {};
@@ -12380,8 +12380,8 @@ THREE.LinePieces;
 /**
  * @constructor
  * @extends {THREE.Line}
- * @param {(THREE.Geometry |THREE. BufferGeometry)=} opt_geometry
- * @param {(THREE.LineDashedMaterial |THREE. LineBasicMaterial |THREE. ShaderMaterial)=} opt_material
+ * @param {(THREE.Geometry |THREE.BufferGeometry)=} opt_geometry
+ * @param {(THREE.LineDashedMaterial |THREE.LineBasicMaterial |THREE.ShaderMaterial)=} opt_material
  * @param {number=} opt_mode
  */
 THREE.LineSegments = function(opt_geometry, opt_material, opt_mode) {};
@@ -12475,14 +12475,14 @@ THREE.Mesh.prototype.copy = function(source) {};
 /**
  * @constructor
  * @extends {THREE.Object3D}
- * @param {(THREE.Geometry |THREE. BufferGeometry)=} opt_geometry
+ * @param {(THREE.Geometry |THREE.BufferGeometry)=} opt_geometry
  * @param {THREE.Material=} opt_material
  */
 THREE.Points = function(opt_geometry, opt_material) {};
 
 
 /**
- * @type {(THREE.Geometry |THREE. BufferGeometry)}
+ * @type {(THREE.Geometry |THREE.BufferGeometry)}
  */
 THREE.Points.prototype.geometry;
 
@@ -14665,7 +14665,7 @@ THREE.TextureIdCount;
 /**
  * @constructor
  * @extends {THREE.EventDispatcher}
- * @param {(THREE.HTMLImageElement |THREE. HTMLCanvasElement |THREE. HTMLVideoElement)} image
+ * @param {(THREE.HTMLImageElement |THREE.HTMLCanvasElement |THREE.HTMLVideoElement)} image
  * @param {THREE.Mapping=} opt_mapping
  * @param {THREE.Wrapping=} opt_wrapS
  * @param {THREE.Wrapping=} opt_wrapT
@@ -14818,7 +14818,7 @@ THREE.Texture.prototype.needsUpdate;
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.Texture.prototype.onUpdate;
 
@@ -14892,7 +14892,7 @@ THREE.DepthTexture.prototype.image;
 /**
  * @constructor
  * @extends {THREE.Texture}
- * @param {(THREE.HTMLImageElement |THREE. HTMLCanvasElement |THREE. HTMLVideoElement)} canvas
+ * @param {(THREE.HTMLImageElement |THREE.HTMLCanvasElement |THREE.HTMLVideoElement)} canvas
  * @param {THREE.Mapping=} opt_mapping
  * @param {THREE.Wrapping=} opt_wrapS
  * @param {THREE.Wrapping=} opt_wrapT
@@ -14989,7 +14989,7 @@ THREE.CompressedTexture.prototype.copy = function(source) {};
 /**
  * @constructor
  * @extends {THREE.Texture}
- * @param {(THREE.ArrayBuffer |THREE. Int8Array |THREE. Uint8Array |THREE. Uint8ClampedArray |THREE. Int16Array |THREE. Uint16Array |THREE. Int32Array |THREE. Uint32Array |THREE. Float32Array |THREE. Float64Array)} data
+ * @param {(THREE.ArrayBuffer |THREE.Int8Array |THREE.Uint8Array |THREE.Uint8ClampedArray |THREE.Int16Array |THREE.Uint16Array |THREE.Int32Array |THREE.Uint32Array |THREE.Float32Array |THREE.Float64Array)} data
  * @param {number} width
  * @param {number} height
  * @param {THREE.PixelFormat} format
@@ -15111,8 +15111,8 @@ THREE.ImageUtils.crossOrigin;
 /**
  * @param {string} url
  * @param {THREE.ImageUtils.Mapping=} opt_mapping
- * @param {function(texture:THREE.ImageUtils.Texture)=} opt_onLoad
- * @param {function(message:string)=} opt_onError
+ * @param {function(THREE.ImageUtils.Texture)=} opt_onLoad
+ * @param {function(string)=} opt_onError
  * @return {THREE.ImageUtils.Texture}
  */
 THREE.ImageUtils.loadTexture = function(url, opt_mapping, opt_onLoad, opt_onError) {};
@@ -15121,8 +15121,8 @@ THREE.ImageUtils.loadTexture = function(url, opt_mapping, opt_onLoad, opt_onErro
 /**
  * @param {Array<string>} array
  * @param {THREE.ImageUtils.Mapping=} opt_mapping
- * @param {function(texture:THREE.ImageUtils.Texture)=} opt_onLoad
- * @param {function(message:string)=} opt_onError
+ * @param {function(THREE.ImageUtils.Texture)=} opt_onLoad
+ * @param {function(string)=} opt_onError
  * @return {THREE.ImageUtils.Texture}
  */
 THREE.ImageUtils.loadTextureCube = function(array, opt_mapping, opt_onLoad, opt_onError) {};
@@ -16047,14 +16047,14 @@ THREE.Shape.prototype.makeGeometry = function(opt_options) {};
 
 /**
  * @param {number} divisions
- * @return {Array<THREE.Vector2[]>}
+ * @return {Array<THREE.Vector2>}
  */
 THREE.Shape.prototype.getPointsHoles = function(divisions) {};
 
 
 /**
  * @param {number} divisions
- * @return {{shape: Array<THREE.Vector2>, holes: Array<THREE.Vector2[]>}}
+ * @return {{shape: Array<THREE.Vector2>, holes: Array<THREE.Vector2>}}
  */
 THREE.Shape.prototype.extractAllPoints = function(divisions) {};
 
@@ -16649,7 +16649,7 @@ THREE.OctahedronGeometry = function(radius, detail) {};
 /**
  * @constructor
  * @extends {THREE.Geometry}
- * @param {function(u:number,v:number):THREE.Vector3} func
+ * @param {Function} func
  * @param {number} slices
  * @param {number} stacks
  */
@@ -16657,7 +16657,7 @@ THREE.ParametricGeometry = function(func, slices, stacks) {};
 
 
 /**
- * @type {{func: function(u:number,v:number):THREE.Vector3, slices: number, stacks: number}}
+ * @type {{func: Function, slices: number, stacks: number}}
  */
 THREE.ParametricGeometry.prototype.parameters;
 
@@ -16935,7 +16935,7 @@ THREE.TorusKnotGeometry.prototype.parameters;
  * @param {number=} opt_radius
  * @param {number=} opt_radiusSegments
  * @param {boolean=} opt_closed
- * @param {function(u:number):number=} opt_taper
+ * @param {Function=} opt_taper
  */
 THREE.TubeGeometry = function(path, opt_segments, opt_radius, opt_radiusSegments, opt_closed, opt_taper) {};
 
@@ -16963,7 +16963,7 @@ THREE.TubeGeometry.FrenetFrames = function(path, segments, closed) {};
 
 
 /**
- * @type {{path: THREE.Path, segments: number, radius: number, radialSegments: number, closed: boolean, taper: function(u:number):number}}
+ * @type {{path: THREE.Path, segments: number, radius: number, radialSegments: number, closed: boolean, taper: Function}}
  */
 THREE.TubeGeometry.prototype.parameters;
 
@@ -16989,7 +16989,7 @@ THREE.TubeGeometry.prototype.binormals;
 /**
  * @constructor
  * @extends {THREE.BufferGeometry}
- * @param {(THREE.Geometry |THREE. BufferGeometry)} geometry
+ * @param {(THREE.Geometry |THREE.BufferGeometry)} geometry
  */
 THREE.WireframeGeometry = function(geometry) {};
 
