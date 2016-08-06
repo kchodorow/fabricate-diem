@@ -107,7 +107,7 @@ diem.cloth.Anchor.prototype.getCounterClockwiseCp = function() {
  */
 diem.cloth.Anchor.prototype.onClick = function() {
   // Find curve.
-  var edges = this.mesh_.parent.shape.edges_;
+  var edges = this.mesh_.parent.shape['edges_'];
   for (var i = 0; i < edges.length; ++i) {
     if (edges[i].endAnchor_ != this) {
       continue;

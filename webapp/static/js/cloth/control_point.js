@@ -125,13 +125,12 @@ diem.cloth.ControlPoint.updateActions = function(oldShape) {
   var actions = [{
     action: 'moveTo',
     args: [
-      oldShape.edges_[0].getBezierCurve().v0.x,
-      oldShape.edges_[0].getBezierCurve().v0.y
-    ]
+      oldShape['edges_'][0].getBezierCurve().v0.x,
+      oldShape['edges_'][0].getBezierCurve().v0.y]
   }];
-  for (var i = 0; i < oldShape.edges_.length; ++i) {
-    actions.push(oldShape.edges_[i].generateAction());
-    oldShape.edges_[i].updateGeometry();
+  for (var i = 0; i < oldShape['edges_'].length; ++i) {
+    actions.push(oldShape['edges_'][i].generateAction());
+    oldShape['edges_'][i].updateGeometry();
   }
   oldShape.actions = actions;
 };

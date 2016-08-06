@@ -109,7 +109,7 @@ diem.cloth.Edge.prototype.onClick = function() {
   // Create a new bezier curve for mouse -> end of line.
   var newEdge = new diem.cloth.Edge(newAnchor, oldEndAnchor);
   // Find the old edge in the parent and push the new edge.
-  var parentEdges = workboardMesh.shape.edges_;
+  var parentEdges = workboardMesh.shape['edges_'];
   for (var i = 0; i < parentEdges.length; ++i) {
     if (parentEdges[i].startAnchor_ == this.startAnchor_) {
       parentEdges.splice(i + 1, 0, newEdge);

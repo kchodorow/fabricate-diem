@@ -45,7 +45,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   }
 
   this.shape_ = new THREE.Shape();
-  this.shape_.edges_ = [];
+  this.shape_['edges_'] = [];
   for (i = 0; i < corners.length; ++i) {
     var startAnchor = this.anchors_[i];
     var j = (i + 1) % corners.length;
@@ -53,7 +53,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
 
     var edge = new diem.cloth.Edge(startAnchor, endAnchor);
     this.shape_.curves.push(edge.getBezierCurve());
-    this.shape_.edges_.push(edge);
+    this.shape_['edges_'].push(edge);
   }
   diem.cloth.ControlPoint.updateActions(this.shape_);
 
@@ -64,7 +64,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
 
   for (i = 0; i < this.anchors_.length; ++i) {
     this.anchors_[i].addToParent(this.mesh_);
-    this.shape_.edges_[i].addToParent(this.mesh_);
+    this.shape_['edges_'][i].addToParent(this.mesh_);
   }
 };
 
@@ -77,7 +77,7 @@ diem.cloth.Workboard.prototype.getIntersectables = function() {
   for (var i = 0; i < this.anchors_.length; ++i) {
     intersects = intersects
       .concat(this.anchors_[i].getIntersectables())
-      .concat(this.shape_.edges_[i].getIntersectables());
+      .concat(this.shape_['edges_'][i].getIntersectables());
   }
   return intersects;
 };
@@ -86,7 +86,7 @@ diem.cloth.Workboard.prototype.getIntersectables = function() {
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.getEdges = function() {
-  return this.shape_.edges_;
+  return this.shape_['edges_'];
 };
 
 /**

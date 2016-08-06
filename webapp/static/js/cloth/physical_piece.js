@@ -61,7 +61,7 @@ diem.cloth.PhysicalPiece.prototype.generateGrid_ = function(piece) {
     for (var j = min.y; j < max.y; ++j) {
       // Discard grid points not in shape.
       var vertex = new THREE.Vector3(i, j, 0);
-      if (!this.inShape_(piece.shape.edges_, vertex, min)) {
+      if (!this.inShape_(piece.shape['edges_'], vertex, min)) {
         continue;
       }
       col.add(geometry.vertices.length, j);
