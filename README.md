@@ -10,8 +10,11 @@ Goals:
   own models (as well as changing the dimensions of existing models) and
   fabrics, as well as creating the clothing itself.
 
-## Install
+## Building and running
 
-Right now there is no backend component. You can try out the frontend by running
-`python -m SimpleHTTPServer` in the _webapp/static_ directory and pointing a
-browser at _index.html_.
+Prerequisites:
+
+* Bazel
+
+Run `bazel run //:diem`.  This will download the AppEngine SDK and Closure, then
+build and launch a dev AppEngine instance listening on localhost:8080.
