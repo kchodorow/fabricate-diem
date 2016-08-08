@@ -1,4 +1,4 @@
-/**
+/*
  * This was generated using https://github.com/eredo/tsd2cce, but due to
  * https://github.com/eredo/tsd2cce/issues/6, I had to clone it and patch it
  * with:
@@ -2229,35 +2229,35 @@ THREE.BufferAttribute.prototype.copyArray = function(array) {};
 
 
 /**
- * @param {Array<THREE.{r:number, g:number, b:number}>} colors
+ * @param {Array<{r:number, g:number, b:number}>} colors
  * @return {THREE.BufferAttribute}
  */
 THREE.BufferAttribute.prototype.copyColorsArray = function(colors) {};
 
 
 /**
- * @param {Array<THREE.{a:number, b:number, c:number}>} indices
+ * @param {Array<{a:number, b:number, c:number}>} indices
  * @return {THREE.BufferAttribute}
  */
 THREE.BufferAttribute.prototype.copyIndicesArray = function(indices) {};
 
 
 /**
- * @param {Array<THREE.{x:number, y:number}>} vectors
+ * @param {Array<{x:number, y:number}>} vectors
  * @return {THREE.BufferAttribute}
  */
 THREE.BufferAttribute.prototype.copyVector2sArray = function(vectors) {};
 
 
 /**
- * @param {Array<THREE.{x:number, y:number, z:number}>} vectors
+ * @param {Array<{x:number, y:number, z:number}>} vectors
  * @return {THREE.BufferAttribute}
  */
 THREE.BufferAttribute.prototype.copyVector3sArray = function(vectors) {};
 
 
 /**
- * @param {Array<THREE.{x:number, y:number, z:number, w:number}>} vectors
+ * @param {Array<{x:number, y:number, z:number, w:number}>} vectors
  * @return {THREE.BufferAttribute}
  */
 THREE.BufferAttribute.prototype.copyVector4sArray = function(vectors) {};
@@ -2511,7 +2511,7 @@ THREE.BufferGeometry.prototype.morphAttributes;
 
 
 /**
- * @type {Array<THREE.{start: number, count: number, materialIndex?: number}>}
+ * @type {Array<{start: number, count: number, materialIndex: number}>}
  */
 THREE.BufferGeometry.prototype.groups;
 
@@ -2899,7 +2899,7 @@ THREE.DirectGeometry.prototype.uvs2;
 
 
 /**
- * @type {Array<THREE.{start: number, materialIndex: number}>}
+ * @type {Array<{start: number, materialIndex: number}>}
  */
 THREE.DirectGeometry.prototype.groups;
 
@@ -2997,21 +2997,21 @@ THREE.DirectGeometry.prototype.dispose = function() {};
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.DirectGeometry.prototype.addEventListener = function(type, listener) {};
 
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.DirectGeometry.prototype.hasEventListener = function(type, listener) {};
 
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.DirectGeometry.prototype.removeEventListener = function(type, listener) {};
 
@@ -3030,21 +3030,21 @@ THREE.EventDispatcher = function() {};
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.EventDispatcher.prototype.addEventListener = function(type, listener) {};
 
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.EventDispatcher.prototype.hasEventListener = function(type, listener) {};
 
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.EventDispatcher.prototype.removeEventListener = function(type, listener) {};
 
@@ -3221,7 +3221,7 @@ THREE.Geometry.prototype.faces;
 
 
 /**
- * @type {Array<THREE.Vector2[]>}
+ * @type {Array<THREE.Vector2>}
  */
 THREE.Geometry.prototype.faceVertexUvs;
 
@@ -3488,21 +3488,21 @@ THREE.Geometry.prototype.animations;
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.Geometry.prototype.addEventListener = function(type, listener) {};
 
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.Geometry.prototype.hasEventListener = function(type, listener) {};
 
 
 /**
  * @param {string} type
- * @param {function(event:THREE.Event)} listener
+ * @param {function(THREE.Event)} listener
  */
 THREE.Geometry.prototype.removeEventListener = function(type, listener) {};
 
@@ -3569,7 +3569,7 @@ THREE.InstancedBufferGeometry = function() {};
 
 
 /**
- * @type {Array<THREE.{start:number, count:number, instances:number}>}
+ * @type {Array<{start:number, count:number, instances:number}>}
  */
 THREE.InstancedBufferGeometry.prototype.groups;
 
@@ -4226,19 +4226,19 @@ THREE.Object3D.prototype.raycast = function(raycaster, intersects) {};
 
 
 /**
- * @param {function(object:THREE.Object3D):*} callback
+ * @param {function(THREE.Object3D):*} callback
  */
 THREE.Object3D.prototype.traverse = function(callback) {};
 
 
 /**
- * @param {function(object:THREE.Object3D):*} callback
+ * @param {function(THREE.Object3D):*} callback
  */
 THREE.Object3D.prototype.traverseVisible = function(callback) {};
 
 
 /**
- * @param {function(object:THREE.Object3D):*} callback
+ * @param {function(THREE.Object3D):*} callback
  */
 THREE.Object3D.prototype.traverseAncestors = function(callback) {};
 
@@ -4884,19 +4884,19 @@ THREE.Loader = function() {};
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.Loader.prototype.onLoadStart;
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.Loader.prototype.onLoadProgress;
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.Loader.prototype.onLoadComplete;
 
@@ -4990,9 +4990,9 @@ THREE.XHRLoader.prototype.withCredentials;
 
 /**
  * @param {string} url
- * @param {function(responseText:string)=} opt_onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(string)=} opt_onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  * @return {*}
  */
 THREE.XHRLoader.prototype.load = function(url, opt_onLoad, opt_onProgress, opt_onError) {};
@@ -5034,9 +5034,9 @@ THREE.FontLoader.prototype.manager;
 
 /**
  * @param {string} url
- * @param {function(responseText:string)=} opt_onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(string)=} opt_onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  */
 THREE.FontLoader.prototype.load = function(url, opt_onLoad, opt_onProgress, opt_onError) {};
 
@@ -5075,9 +5075,9 @@ THREE.ImageLoader.prototype.path;
 
 /**
  * @param {string} url
- * @param {function(image:THREE.HTMLImageElement)=} opt_onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(THREE.HTMLImageElement)=} opt_onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  * @return {THREE.HTMLImageElement}
  */
 THREE.ImageLoader.prototype.load = function(url, opt_onLoad, opt_onProgress, opt_onError) {};
@@ -5119,9 +5119,9 @@ THREE.JSONLoader.prototype.withCredentials;
 
 /**
  * @param {string} url
- * @param {function(geometry:THREE.Geometry,materials:Array<THREE.Material>)=} opt_onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(THREE.Geometry,Array<THREE.Material>)=} opt_onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  */
 THREE.JSONLoader.prototype.load = function(url, opt_onLoad, opt_onProgress, opt_onError) {};
 
@@ -5135,40 +5135,40 @@ THREE.JSONLoader.prototype.setTexturePath = function(value) {};
 /**
  * @param {*} json
  * @param {string=} opt_texturePath
- * @return {{geometry: THREE.Geometry, materials: Array<THREE.Material>=}}
+ * @return {{geometry: THREE.Geometry, materials: Array<THREE.Material>}}
  */
 THREE.JSONLoader.prototype.parse = function(json, opt_texturePath) {};
 
 
 /**
  * @constructor
- * @param {function=} opt_onLoad
- * @param {function(url:string,loaded:number,total:number)=} opt_onProgress
- * @param {function=} opt_onError
+ * @param {Function=} opt_onLoad
+ * @param {function(string,number,number)=} opt_onProgress
+ * @param {Function=} opt_onError
  */
 THREE.LoadingManager = function(opt_onLoad, opt_onProgress, opt_onError) {};
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.LoadingManager.prototype.onStart;
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.LoadingManager.prototype.onLoad;
 
 
 /**
- * @type {function(item:*,loaded:number,total:number)}
+ * @type {function(*,number,number)}
  */
 THREE.LoadingManager.prototype.onProgress;
 
 
 /**
- * @type {function}
+ * @type {Function}
  */
 THREE.LoadingManager.prototype.onError;
 
@@ -5212,9 +5212,9 @@ THREE.BufferGeometryLoader.prototype.manager;
 
 /**
  * @param {string} url
- * @param {function(bufferGeometry:THREE.BufferGeometry)} onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(THREE.BufferGeometry)} onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  */
 THREE.BufferGeometryLoader.prototype.load = function(url, onLoad, opt_onProgress, opt_onError) {};
 
@@ -5247,7 +5247,7 @@ THREE.MaterialLoader.prototype.textures;
 
 /**
  * @param {string} url
- * @param {function(material:THREE.Material)} onLoad
+ * @param {function(THREE.Material)} onLoad
  */
 THREE.MaterialLoader.prototype.load = function(url, onLoad) {};
 
@@ -5299,7 +5299,7 @@ THREE.ObjectLoader.prototype.crossOrigin;
 
 /**
  * @param {string} url
- * @param {function(object:THREE.Object3D)=} opt_onLoad
+ * @param {function(THREE.Object3D)=} opt_onLoad
  */
 THREE.ObjectLoader.prototype.load = function(url, opt_onLoad) {};
 
@@ -5318,7 +5318,7 @@ THREE.ObjectLoader.prototype.setCrossOrigin = function(crossOrigin) {};
 
 /**
  * @param {*} json
- * @param {function(object:THREE.Object3D)=} opt_onLoad
+ * @param {function(THREE.Object3D)=} opt_onLoad
  * @return {THREE.T}
  */
 THREE.ObjectLoader.prototype.parse = function(json, opt_onLoad) {};
@@ -5348,7 +5348,7 @@ THREE.ObjectLoader.prototype.parseAnimations = function(json) {};
 
 /**
  * @param {*} json
- * @param {function} onLoad
+ * @param {Function} onLoad
  * @return {Array<*>}
  */
 THREE.ObjectLoader.prototype.parseImages = function(json, onLoad) {};
@@ -5398,7 +5398,7 @@ THREE.TextureLoader.prototype.path;
 
 /**
  * @param {string} url
- * @param {function(texture:THREE.Texture)=} opt_onLoad
+ * @param {function(THREE.Texture)=} opt_onLoad
  * @return {THREE.Texture}
  */
 THREE.TextureLoader.prototype.load = function(url, opt_onLoad) {};
@@ -5445,9 +5445,9 @@ THREE.CubeTextureLoader.prototype.path;
 
 /**
  * @param {THREE.Array} urls
- * @param {function(texture:THREE.CubeTexture)=} opt_onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(THREE.CubeTexture)=} opt_onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  */
 THREE.CubeTextureLoader.prototype.load = function(urls, opt_onLoad, opt_onProgress, opt_onError) {};
 
@@ -5481,9 +5481,9 @@ THREE.BinaryTextureLoader.prototype.manager;
 
 /**
  * @param {string} url
- * @param {function(dataTexture:THREE.DataTexture)} onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(THREE.DataTexture)} onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  */
 THREE.BinaryTextureLoader.prototype.load = function(url, onLoad, opt_onProgress, opt_onError) {};
 
@@ -5516,9 +5516,9 @@ THREE.CompressedTextureLoader.prototype.path;
 
 /**
  * @param {string} url
- * @param {function(texture:THREE.CompressedTexture)} onLoad
- * @param {function(event:*)=} opt_onProgress
- * @param {function(event:*)=} opt_onError
+ * @param {function(THREE.CompressedTexture)} onLoad
+ * @param {function(*)=} opt_onProgress
+ * @param {function(*)=} opt_onError
  */
 THREE.CompressedTextureLoader.prototype.load = function(url, onLoad, opt_onProgress, opt_onError) {};
 
@@ -10499,7 +10499,7 @@ THREE.Spline.prototype.points;
 
 
 /**
- * @param {Array<THREE.number[]>} a
+ * @param {Array<number>} a
  */
 THREE.Spline.prototype.initFromArray = function(a) {};
 
@@ -10512,7 +10512,7 @@ THREE.Spline.prototype.getPoint = function(k) {};
 
 
 /**
- * @return {Array<THREE.number[]>}
+ * @return {Array<number>}
  */
 THREE.Spline.prototype.getControlPointsArray = function() {};
 
@@ -10779,14 +10779,14 @@ THREE.Vector.prototype.normalize = function() {};
 
 /**
  * @param {THREE.Vector} v
- * @return {number=}
+ * @return {number}
  */
 THREE.Vector.prototype.distanceTo = function(v) {};
 
 
 /**
  * @param {THREE.Vector} v
- * @return {number=}
+ * @return {number}
  */
 THREE.Vector.prototype.distanceToSquared = function(v) {};
 
@@ -12289,7 +12289,7 @@ THREE.LensFlare.prototype.positionScreen;
 
 
 /**
- * @type {function(object:THREE.LensFlare)}
+ * @type {function(THREE.LensFlare)}
  */
 THREE.LensFlare.prototype.customUpdateCallback;
 
@@ -12611,9 +12611,9 @@ THREE.Skeleton.prototype.clone = function() {};
 /**
  * @constructor
  * @extends {THREE.Mesh}
- * @param {(THREE.Geometry|THREE.BufferGeometry|THREE.Geometry,THREE.BufferGeometry|THREE.Geometry,THREE.BufferGeometry|THREE.Geometry,THREE.BufferGeometry|THREE.Geometry,THREE.BufferGeometry|THREE.Geometry,THREE.BufferGeometry|THREE.Geometry,THREE.BufferGeometry)=} opt_geometry
+ * @param {(THREE.Geometry|THREE.BufferGeometry)=} opt_geometry
  * @param {(THREE.MeshBasicMaterial|THREE.MeshDepthMaterial|THREE.MultiMaterial|THREE.MeshLambertMaterial|THREE.MeshNormalMaterial|THREE.MeshPhongMaterial|THREE.ShaderMaterial)=} opt_material
- * @param {(boolean|boolean|boolean|boolean|boolean|boolean|boolean)=} opt_useVertexTexture
+ * @param {(boolean)=} opt_useVertexTexture
  */
 THREE.SkinnedMesh = function(opt_geometry, opt_material, opt_useVertexTexture) {};
 
@@ -13442,7 +13442,7 @@ THREE.IUniform = function() {};
 
 
 /**
- * @type {{common: {diffuse: THREE.IUniform, opacity: THREE.IUniform, map: THREE.IUniform, offsetRepeat: THREE.IUniform, specularMap: THREE.IUniform, alphaMap: THREE.IUniform, envMap: THREE.IUniform, flipEnvMap: THREE.IUniform, reflectivity: THREE.IUniform, refractionRation: THREE.IUniform}, aomap: {aoMap: THREE.IUniform, aoMapIntensity: THREE.IUniform}, lightmap: {lightMap: THREE.IUniform, lightMapIntensity: THREE.IUniform}, emissivemap: {emissiveMap: THREE.IUniform}, bumpmap: {bumpMap: THREE.IUniform, bumpScale: THREE.IUniform}, normalmap: {normalMap: THREE.IUniform, normalScale: THREE.IUniform}, displacementmap: {displacementMap: THREE.IUniform, displacementScale: THREE.IUniform, displacementBias: THREE.IUniform}, roughnessmap: {roughnessMap: THREE.IUniform}, metalnessmap: {metalnessMap: THREE.IUniform}, fog: {fogDensity: THREE.IUniform, fogNear: THREE.IUniform, fogFar: THREE.IUniform, fogColor: THREE.IUniform}, lights: {ambientLightColor: THREE.IUniform, directionalLights: {value: Array<*>, properties: {direction: THREE.{}, color: THREE.{}, shadow: THREE.{}, shadowBias: THREE.{}, shadowRadius: THREE.{}, shadowMapSize: THREE.{}}}, directionalShadowMap: THREE.IUniform, directionalShadowMatrix: THREE.IUniform, spotLights: {value: Array<*>, properties: {color: THREE.{}, position: THREE.{}, direction: THREE.{}, distance: THREE.{}, coneCos: THREE.{}, penumbraCos: THREE.{}, decay: THREE.{}, shadow: THREE.{}, shadowBias: THREE.{}, shadowRadius: THREE.{}, shadowMapSize: THREE.{}}}, spotShadowMap: THREE.IUniform, spotShadowMatrix: THREE.IUniform, pointLights: {value: Array<*>, properties: {color: THREE.{}, position: THREE.{}, decay: THREE.{}, distance: THREE.{}, shadow: THREE.{}, shadowBias: THREE.{}, shadowRadius: THREE.{}, shadowMapSize: THREE.{}}}, pointShadowMap: THREE.IUniform, pointShadowMatrix: THREE.IUniform, hemisphereLigtts: {value: Array<*>, properties: {direction: THREE.{}, skycolor: THREE.{}, groundColor: THREE.{}}}}, points: {diffuse: THREE.IUniform, opacity: THREE.IUniform, size: THREE.IUniform, scale: THREE.IUniform, map: THREE.IUniform, offsetRepeat: THREE.IUniform}}}
+ * @type {{common: {diffuse: THREE.IUniform, opacity: THREE.IUniform, map: THREE.IUniform, offsetRepeat: THREE.IUniform, specularMap: THREE.IUniform, alphaMap: THREE.IUniform, envMap: THREE.IUniform, flipEnvMap: THREE.IUniform, reflectivity: THREE.IUniform, refractionRation: THREE.IUniform}, aomap: {aoMap: THREE.IUniform, aoMapIntensity: THREE.IUniform}, lightmap: {lightMap: THREE.IUniform, lightMapIntensity: THREE.IUniform}, emissivemap: {emissiveMap: THREE.IUniform}, bumpmap: {bumpMap: THREE.IUniform, bumpScale: THREE.IUniform}, normalmap: {normalMap: THREE.IUniform, normalScale: THREE.IUniform}, displacementmap: {displacementMap: THREE.IUniform, displacementScale: THREE.IUniform, displacementBias: THREE.IUniform}, roughnessmap: {roughnessMap: THREE.IUniform}, metalnessmap: {metalnessMap: THREE.IUniform}, fog: {fogDensity: THREE.IUniform, fogNear: THREE.IUniform, fogFar: THREE.IUniform, fogColor: THREE.IUniform}, lights: {ambientLightColor: THREE.IUniform, directionalLights: {value: Array, properties: {direction: Object, color: Object, shadow: Object, shadowBias: Object, shadowRadius: Object, shadowMapSize: Object}}, directionalShadowMap: THREE.IUniform, directionalShadowMatrix: THREE.IUniform, spotLights: {value: Array, properties: {color: Object, position: Object, direction: Object, distance: Object, coneCos: Object, penumbraCos: Object, decay: Object, shadow: Object, shadowBias: Object, shadowRadius: Object, shadowMapSize: Object}}, spotShadowMap: THREE.IUniform, spotShadowMatrix: THREE.IUniform, pointLights: {value: Array, properties: {color: Object, position: Object, decay: Object, distance: Object, shadow: Object, shadowBias: Object, shadowRadius: Object, shadowMapSize: Object}}, pointShadowMap: THREE.IUniform, pointShadowMatrix: THREE.IUniform, hemisphereLigtts: {value: Array, properties: {direction: Object, skycolor: Object, groundColor: Object}}}, points: {diffuse: THREE.IUniform, opacity: THREE.IUniform, size: THREE.IUniform, scale: THREE.IUniform, map: THREE.IUniform, offsetRepeat: THREE.IUniform}}}
  */
 THREE.UniformsLib;
 
