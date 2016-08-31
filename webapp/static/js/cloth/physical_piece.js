@@ -19,6 +19,8 @@ diem.cloth.PhysicalPiece = function(piece) {
   goog.base(this);
   this.constraints_ = [];
   this.previous_ = [];
+  // Array of indexes of pinned vertices.
+  this.pinned_ = [];
 
   // Make a grid of vertices.
   var grid = diem.cloth.physics.Grid.generate(piece);
@@ -64,6 +66,11 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   for (i = 0; i < this.constraints_.length; ++i) {
     this.constraints_[i].satisfy();
   }
+  for (i = 0; i < this.pinned_.length; ++i) {
+    var index = this.pinned_[i];
+    this.mesh_.geometry.vertices[index].copy(this.previous_[i]);
+  }
+
   this.mesh_.geometry.verticesNeedUpdate = true;
 };
 
@@ -74,6 +81,16 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
 diem.cloth.PhysicalPiece.prototype.onDrag = function() {
   this.mesh_.geometry.vertices[0].set(
     diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
+  return [];
+};
+
+/**
+ * @returns {Array}
+ */
+diem.cloth.PhysicalPiece.prototype.onDragEnd = function() {
+  this.mesh_.geometry.vertices[0].set(
+    diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
+  this.pinned_.push(0);
   return [];
 };
 

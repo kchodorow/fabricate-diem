@@ -109,3 +109,10 @@ diem.cloth.Workboard.prototype.onDrag = function() {
   // no piece to drag when the drag starts.
   this.currentPiece_.onDrag();
 };
+
+/**
+ * @returns {Array}
+ */
+diem.cloth.Workboard.prototype.onDragEnd = function() {
+  return this.currentPiece_.onDragEnd();
+};
