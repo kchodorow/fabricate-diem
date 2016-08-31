@@ -21,7 +21,7 @@ diem.Pattern.PATH_TOOL = 'PATH_TOOL';
  * Create a new piece of cloth, adds it to the array of pieces, and returns it.
  */
 diem.Pattern.prototype.addPiece = function() {
-  var cloth = new diem.cloth.Workboard();
+  var cloth = new diem.cloth.Workboard(7, 10);
   cloth.getObject().position.set(
     diem.Pattern.CLOTH_OFFSET_X,
     diem.Pattern.CLOTH_OFFSET_Y * this.pieces_.length,

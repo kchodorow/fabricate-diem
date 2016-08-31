@@ -11,13 +11,15 @@ goog.require('diem.cloth.PhysicalPiece');
 goog.require('diem.tools.DragPiece');
 
 /**
+ * @param {number} w
+ * @param {number} h
  * @constructor
  * @extends {diem.MeshWrapper}
  */
-diem.cloth.Workboard = function() {
+diem.cloth.Workboard = function(w, h) {
   goog.base(this);
-  this.w = 10;
-  this.h = 7;
+  this.w = w;
+  this.h = h;
 
   this.fabric_ = new diem.Fabric();
 

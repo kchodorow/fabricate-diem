@@ -6,8 +6,17 @@ load(
 
 closure_js_library(
     name = "cloth",
-    srcs = ["workboard.js"],
     visibility = ["//webapp/static/js:__pkg__"],
+    exports = [
+        ":bezier",
+        ":physical-piece",
+        ":workboard",
+    ],
+)
+
+closure_js_library(
+    name = "workboard",
+    srcs = ["workboard.js"],
     deps = [
         ":bezier",
         ":physical-piece",
@@ -42,6 +51,7 @@ closure_js_library(
     deps = [
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
+        "//webapp/static/js/cloth/physics",
         "//webapp/static/js/events",
         "//webapp/static/js/tools:drag-piece",
     ],
@@ -52,8 +62,11 @@ closure_js_test(
     srcs = ["physical_piece_test.js"],
     compilation_level = "WHITESPACE_ONLY",
     data = ["//webapp/static/js:three.js"],
+    html = ":testing.html",
+    suppress = ["JSC_MISSING_JSDOC"],
     deps = [
-        ":physical-piece",
+        ":cloth",
+        "//webapp/static/js/cloth/physics",
         "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/library:testing",
     ],
