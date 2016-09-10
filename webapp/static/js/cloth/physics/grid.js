@@ -53,9 +53,9 @@ diem.cloth.physics.Grid.prototype.generate_ = function(piece) {
     for (var j = min.y; j < max.y; ++j) {
       // Discard grid points not in shape.
       var vertex = new THREE.Vector3(i, j, jitter);
-      if (!this.inShape_(piece.shape['edges_'], vertex, min)) {
-        continue;
-      }
+      //if (!this.inShape_(piece.shape['edges_'], vertex, min)) {
+      //  continue;
+      //}
       jitter = -jitter;
       col.add(this.geometry_.vertices.length, j);
       this.geometry_.vertices.push(vertex);

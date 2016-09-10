@@ -34,12 +34,14 @@ diem.cloth.PhysicalPiece = function(piece) {
     this.previous_.push(new THREE.Vector3().copy(
       this.mesh_.geometry.vertices[i]));
   }
+
+  this.handle_ = 0;
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 diem.cloth.PhysicalPiece.TIMESTEP_SQ = .9;
-diem.cloth.PhysicalPiece.GRAVITY = new THREE.Vector3(0, -.01, 0);
+diem.cloth.PhysicalPiece.GRAVITY = new THREE.Vector3(0, -.001, 0);
 diem.cloth.PhysicalPiece.DAMPING = 0.03;
 diem.cloth.PhysicalPiece.DRAG = 1 - diem.cloth.PhysicalPiece.DAMPING;
 diem.cloth.PhysicalPiece.DIFF = new THREE.Vector3();
@@ -74,12 +76,27 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   this.mesh_.geometry.verticesNeedUpdate = true;
 };
 
+diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
+  this.handle_ = 0;
+  var minDistance = Number.MAX_VALUE;
+  for (var i = 1; i < this.mesh_.geometry.vertices.length; ++i) {
+    var testHandle = this.mesh_.geometry.vertices[i];
+    var testDistance = testHandle.distanceTo(diem.Globals.mouse);
+    if (testDistance < minDistance) {
+      this.handle_ = i;
+      minDistance = testDistance;
+    }
+  }
+  return [];
+};
+
 /**
  * Set one vertex to the current mouse posisiton.
  * @returns {Array}
  */
 diem.cloth.PhysicalPiece.prototype.onDrag = function() {
-  this.mesh_.geometry.vertices[0].set(
+  goog.asserts.assert(this.handle_ != null);
+  this.mesh_.geometry.vertices[this.handle_].set(
     diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
   return [];
 };
@@ -88,9 +105,11 @@ diem.cloth.PhysicalPiece.prototype.onDrag = function() {
  * @returns {Array}
  */
 diem.cloth.PhysicalPiece.prototype.onDragEnd = function() {
-  this.mesh_.geometry.vertices[0].set(
+  goog.asserts.assert(this.handle_ != null);
+  this.mesh_.geometry.vertices[this.handle_].set(
     diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
-  this.pinned_.push(0);
+  this.pinned_.push(this.handle_);
+  this.handle_ = null;
   return [];
 };
 
