@@ -1,2 +1,3 @@
 *.zip
-webapp/static/js/closure-library
+webapp/static/js/closure_library
+bazel-*

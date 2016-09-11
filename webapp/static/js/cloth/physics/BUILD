@@ -27,11 +27,6 @@ closure_js_library(
     srcs = ["constraint.js"],
 )
 
-closure_js_library(
-    name = "constraint",
-    srcs = ["constraint.js"],
-)
-
 closure_js_test(
     name = "constraint-test",
     srcs = ["constraint_test.js"],

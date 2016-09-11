@@ -18,3 +18,13 @@ Prerequisites:
 
 Run `bazel run //:diem`.  This will download the AppEngine SDK and Closure, then
 build and launch a dev AppEngine instance listening on localhost:8080.
+
+To run with SimpleHTTPServer, create a symlink to the closure library:
+
+```
+$ ln -s $(bazel info output_base)/external/closure_library webapp/static/js/closure_library
+$ cd webapp/static
+$ python -m SimpleHTTPServer
+```
+
+Then visit localhost:8000/debug.html.
