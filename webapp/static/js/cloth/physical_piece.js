@@ -96,8 +96,8 @@ diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
  */
 diem.cloth.PhysicalPiece.prototype.onDrag = function() {
   goog.asserts.assert(this.handle_ != null);
-  this.mesh_.geometry.vertices[this.handle_].set(
-    diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
+  var handleVec = this.mesh_.geometry.vertices[this.handle_];
+  handleVec.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
   return [];
 };
 
@@ -106,8 +106,6 @@ diem.cloth.PhysicalPiece.prototype.onDrag = function() {
  */
 diem.cloth.PhysicalPiece.prototype.onDragEnd = function() {
   goog.asserts.assert(this.handle_ != null);
-  this.mesh_.geometry.vertices[this.handle_].set(
-    diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
   this.pinned_.push(this.handle_);
   this.handle_ = null;
   return [];
