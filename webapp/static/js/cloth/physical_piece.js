@@ -73,7 +73,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   }
   for (i = 0; i < this.pinned_.length; ++i) {
     var index = this.pinned_[i];
-    this.mesh_.geometry.vertices[index].copy(this.previous_[i]);
+    this.mesh_.geometry.vertices[index].copy(this.previous_[index]);
   }
 
   this.mesh_.geometry.verticesNeedUpdate = true;
