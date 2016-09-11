@@ -64,6 +64,9 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var vertices = this.mesh_.geometry.vertices;
   for (var i = 0; i < vertices.length; i++) {
     this.integrate_(i);
+    if (this.mesh_.geometry.vertices[i].y < 0) {
+      this.mesh_.geometry.vertices[i].setY(0);
+    }
   }
   for (i = 0; i < this.constraints_.length; ++i) {
     this.constraints_[i].satisfy();
