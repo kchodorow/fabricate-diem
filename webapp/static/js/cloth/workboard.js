@@ -95,7 +95,7 @@ diem.cloth.Workboard.prototype.getEdges = function() {
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.onDragStart = function() {
-  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
+  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_, this.w, this.h);
   physicalPiece.addToParent(this.mesh_);
   physicalPiece.onDragStart();
   this.currentPiece_ = physicalPiece;

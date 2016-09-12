@@ -5,6 +5,7 @@ goog.provide('diem.SceneContainer');
 goog.require('diem.EventHandler');
 goog.require('diem.Globals');
 goog.require('diem.Person');
+goog.require('diem.Physics');
 goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
@@ -93,6 +94,7 @@ diem.SceneContainer.prototype.render = function(now) {
   }
 
   requestAnimationFrame(render);
+  diem.Physics.get().update();
   this.renderer.render(this.scene, this.camera);
   var tool = this.toolManager_.getTool();
   var simulations = tool.getIntersectable(diem.events.TIME);

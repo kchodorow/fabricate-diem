@@ -19,7 +19,7 @@ diem.cloth.physics.Grid = function() {
 
 diem.cloth.physics.Grid.generate = function(mesh) {
   var tracker = new diem.cloth.physics.Grid();
-  tracker.generate_(mesh);
+  tracker.gen2_(mesh);
   return tracker;
 };
 
@@ -29,6 +29,19 @@ diem.cloth.physics.Grid.prototype.getGeometry = function() {
 
 diem.cloth.physics.Grid.prototype.getConstraints = function() {
   return this.constraints_;
+};
+
+/**
+ * Simple version.
+ */
+diem.cloth.physics.Grid.prototype.gen2_ = function(piece) {
+  var geo = piece.geometry;
+  for (var i = 0; i < geo.vertices.length; ++i) {
+    this.geometry_.vertices.push(new THREE.Vector3().copy(geo.vertices[i]));
+  }
+  for (i = 0; i < geo.faces.length; ++i) {
+    this.geometry_.faces.push(new THREE.Face3().copy(geo.faces[i]));
+  }
 };
 
 /**
