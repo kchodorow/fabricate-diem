@@ -77,10 +77,6 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   diem.Physics.get().getWorld().addRigidBody(mouseRigidBody);
   this.mouse = mouseRigidBody;
 
-  var constraint = new Ammo.btPoint2PointConstraint(
-    mouseRigidBody, clothSoftBody.get_m_nodes().at(0).get_m_x());
-  diem.Physics.get().getWorld().addConstraint(constraint, true);
-
   var influence = 0.5;
   clothSoftBody.appendAnchor( 0, mouseRigidBody, false, influence );
 
@@ -115,10 +111,10 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var nodes = softBody.get_m_nodes();
   var indexFloat = 0;
 
-  console.log(this.mouse.getCenterOfMassTransform().getOrigin().y());
-//  var offsetMouse = new THREE.Vector3().copy(
-//    diem.Globals.mouse).sub(this.mesh_.parent.position);
-//  nodes.at(0).set_m_x(new Ammo.btVector3(offsetMouse.x, offsetMouse.y, 0));
+  var mousePos = new THREE.Vector3().copy(diem.Globals.mouse).sub(
+    this.mesh_.parent.position);
+  this.mouse.getWorldTransform().setOrigin(
+    new Ammo.btVector3(mousePos.x, mousePos.y, 0));
 
   for (var i = 0; i < numVerts; i++) {
     var node = nodes.at(i);
@@ -134,7 +130,6 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
 };
 
 diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
-
   this.handle_ = 0;
 /*  this.handle_ = -1;
   var minDistance = Number.MAX_VALUE;

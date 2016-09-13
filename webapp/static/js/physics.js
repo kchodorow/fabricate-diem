@@ -28,7 +28,7 @@ diem.Physics = function() {
   this.physicsWorld.addRigidBody(groundRigidBody);
 };
 
-diem.Physics.GRAVITY = -1;//-9.8;
+diem.Physics.GRAVITY = -9.8;
 diem.Physics.INSTANCE = null;
 
 diem.Physics.get = function() {
