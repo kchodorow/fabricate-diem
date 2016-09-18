@@ -3,9 +3,6 @@ goog.provide('diem.cloth.PhysicalPiece');
 goog.provide('diem.cloth.PhysicalPiece.Constraint');
 
 goog.require('diem.MeshWrapper');
-goog.require('diem.cloth.physics.Column');
-goog.require('diem.cloth.physics.Constraint');
-goog.require('diem.cloth.physics.Grid');
 goog.require('diem.events');
 goog.require('diem.tools.DragPiece');
 
@@ -17,22 +14,19 @@ goog.require('diem.tools.DragPiece');
  */
 diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   goog.base(this);
-  this.constraints_ = [];
-  this.previous_ = [];
-  // Array of indexes of pinned vertices.
   this.pinned_ = [];
-  var clothPos = piece.geometry.vertices[0];
-  var clothNumSegmentsZ = clothWidth * 5;
+
+  var physics = diem.Physics.get();
+  var clothPos = new THREE.Vector3().copy(piece.position);
+  this.orig_pos = clothPos;
+  var clothNumSegmentsX = clothWidth * 5;
   var clothNumSegmentsY = clothHeight * 5;
-  var clothSegmentLengthZ = clothWidth / clothNumSegmentsZ;
-  var clothSegmentLengthY = clothHeight / clothNumSegmentsY;
 
   // Make a grid of vertices.
   var clothGeometry = new THREE.PlaneBufferGeometry(
-    clothWidth, clothHeight, clothNumSegmentsZ, clothNumSegmentsY);
-//  clothGeometry.rotateY( Math.PI * 0.5 );
-  clothGeometry.translate(
-    clothPos.x, clothPos.y + clothHeight * 0.5, clothPos.z - clothWidth * 0.5);
+    clothWidth, clothHeight, clothNumSegmentsX, clothNumSegmentsY);
+  clothGeometry.translate(clothPos.x, clothPos.y, 0);
+
   var clothMaterial = new THREE.MeshLambertMaterial({
     color: 0xFFFFFF,
     side: THREE.DoubleSide
@@ -41,19 +35,23 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
 
+  // The btSoftBody is centered at (0,0), so its corners should be offset
+  // by the position of the cloth.
+  // Weirdness: why is 1,0 the llc?
   var softBodyHelpers = new Ammo.btSoftBodyHelpers();
   var clothCorner00 = new Ammo.btVector3(
     clothPos.x, clothPos.y + clothHeight, clothPos.z);
   var clothCorner01 = new Ammo.btVector3(
-    clothPos.x, clothPos.y + clothHeight, clothPos.z - clothWidth);
+    clothPos.x + clothWidth, clothPos.y + clothHeight, clothPos.z);
   var clothCorner10 = new Ammo.btVector3(
     clothPos.x, clothPos.y, clothPos.z);
   var clothCorner11 = new Ammo.btVector3(
-    clothPos.x, clothPos.y, clothPos.z - clothWidth);
+    clothPos.x + clothWidth, clothPos.y, clothPos.z);
+  // TODO: what are the last couple args?
   var clothSoftBody = softBodyHelpers.CreatePatch(
     diem.Physics.get().getWorld().getWorldInfo(),
-    clothCorner00, clothCorner01, clothCorner10,
-    clothCorner11, clothNumSegmentsZ + 1, clothNumSegmentsY + 1, 0, true);
+    clothCorner00, clothCorner10, clothCorner01, clothCorner11,
+    clothNumSegmentsX + 1, clothNumSegmentsY + 1, 0, true);
   var sbConfig = clothSoftBody.get_m_cfg();
   sbConfig.set_viterations( 10 );
   sbConfig.set_piterations( 10 );
@@ -62,34 +60,27 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   clothSoftBody.setTotalMass( 0.9, false );
   Ammo.castObject(clothSoftBody, Ammo.btCollisionObject).getCollisionShape()
     .setMargin(margin * 3);
+  // TODO: what are the last couple args?
   diem.Physics.get().getWorld().addSoftBody(clothSoftBody, 1, -1);
   this.mesh_.userData.physicsBody = clothSoftBody;
   // Disable deactivation
   clothSoftBody.setActivationState(4);
 
-  var mouseShape = new Ammo.btSphereShape(.1);
-  var mouseMotionState = new Ammo.btDefaultMotionState(
-    new Ammo.btTransform(new Ammo.btQuaternion(0,0,0,1), new Ammo.btVector3(0,10,0)));
-  var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
-    0, mouseMotionState, mouseShape,
-    new Ammo.btVector3(diem.Globals.mouse.x, diem.Globals.mouse.y, 0));
-  var mouseRigidBody = new Ammo.btRigidBody(mouseBodyInfo);
-  diem.Physics.get().getWorld().addRigidBody(mouseRigidBody);
-  this.mouse = mouseRigidBody;
+  var geometry = new THREE.SphereGeometry( 1, 32, 32 );
+  var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+  var sphere = new THREE.Mesh( geometry, material );
+  sphere.position.set(diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
+  piece.parent.add(sphere);
+  this.mouseMesh = sphere;
+  this.mouse = physics.addMouseBody();
 
-  var influence = 0.5;
-  clothSoftBody.appendAnchor( 0, mouseRigidBody, false, influence );
+  var influence = 1;
+  clothSoftBody.appendAnchor(0, this.mouse, false, influence);
 
   this.handle_ = 0;
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
-
-diem.cloth.PhysicalPiece.TIMESTEP_SQ = .9;
-diem.cloth.PhysicalPiece.DAMPING = 0.03;
-diem.cloth.PhysicalPiece.DRAG = 1 - diem.cloth.PhysicalPiece.DAMPING;
-diem.cloth.PhysicalPiece.DIFF = new THREE.Vector3();
-diem.cloth.PhysicalPiece.EPSILON = .1;
 
 /**
  * @override
@@ -110,11 +101,6 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var numVerts = clothPositions.length / 3;
   var nodes = softBody.get_m_nodes();
   var indexFloat = 0;
-
-  var mousePos = new THREE.Vector3().copy(diem.Globals.mouse).sub(
-    this.mesh_.parent.position);
-  this.mouse.getWorldTransform().setOrigin(
-    new Ammo.btVector3(mousePos.x, mousePos.y, 0));
 
   for (var i = 0; i < numVerts; i++) {
     var node = nodes.at(i);
@@ -149,6 +135,10 @@ diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
  * @returns {Array}
  */
 diem.cloth.PhysicalPiece.prototype.onDrag = function() {
+  var mousePos = new THREE.Vector3().copy(diem.Globals.mouse);
+  this.mouse.getWorldTransform().setOrigin(
+    new Ammo.btVector3(mousePos.x, mousePos.y, 0));
+  this.mouseMesh.position.set(mousePos.x, mousePos.y, 0);
 /*  goog.asserts.assert(this.handle_ != -1);
   var handleVec = this.mesh_.geometry.vertices[this.handle_];
   handleVec.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
