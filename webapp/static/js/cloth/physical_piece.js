@@ -102,6 +102,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   this.mesh_.geometry.computeVertexNormals();
   this.mesh_.geometry.attributes.position.needsUpdate = true;
   this.mesh_.geometry.attributes.normal.needsUpdate = true;
+  this.mesh_.geometry.boundingSphere = null;
 };
 
 diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
