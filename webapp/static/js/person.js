@@ -27,7 +27,6 @@ diem.Person = function(scene, register) {
       tmp.addToParent(scene);
       register(tmp.getIntersectables());
       tmp.mesh_.rotateZ(Math.PI);
-      tmp.mesh_.updateMatrixWorld();
       tmp._addPhysics(scene);
     });
 };
@@ -35,31 +34,25 @@ diem.Person = function(scene, register) {
 goog.inherits(diem.Person, diem.MeshWrapper);
 
 diem.Person.prototype._addPhysics = function(scene) {
-  var mouseShape = new Ammo.btSphereShape(5);
-  var mouseMotionState = new Ammo.btDefaultMotionState(
-    new Ammo.btTransform(new Ammo.btQuaternion(0,0,0,1), new Ammo.btVector3(0,0,0)));
-  var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
-    0, mouseMotionState, mouseShape,
-    new Ammo.btVector3(0, 0, 0));
-  var mouseRigidBody = new Ammo.btRigidBody(mouseBodyInfo);
-  diem.Physics.get().getWorld().addRigidBody(mouseRigidBody);
-  var geometry = new THREE.SphereGeometry( 5, 32, 32 );
-  var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-  var sphere = new THREE.Mesh( geometry, material );
-  scene.add(sphere);
-/*
-  var bodyMotionState = new Ammo.btDefaultMotionState(
-    new Ammo.btTransform(new Ammo.btQuaternion(0,0,0,1), new Ammo.btVector3(0,0,0)));
+  var transform = new Ammo.btTransform();
+  transform.setOrigin(new Ammo.btVector3(0, 0, 0));
+  var meshQuat = this.mesh_.getWorldQuaternion();
+  var quaternion = new Ammo.btQuaternion(
+    meshQuat.x, meshQuat.y, meshQuat.z, meshQuat.w);
+  transform.setRotation(quaternion);
+  var bodyMotionState = new Ammo.btDefaultMotionState(transform);
   var bodyShape = new Ammo.btConvexHullShape();
   var vertices = this.mesh_.geometry.vertices;
   for (var i = 0; i < vertices.length; ++i) {
     bodyShape.addPoint(new Ammo.btVector3(vertices[i].x, vertices[i].y, vertices[i].z));
   }
+  var inertia = new Ammo.btVector3(0, 0, 0);
+  var mass = 0;
   var bodyInfo = new Ammo.btRigidBodyConstructionInfo(
-    0, bodyMotionState, bodyShape, new Ammo.btVector3(0, 10, 0));
+    mass, bodyMotionState, bodyShape, inertia);
   var rigidBody = new Ammo.btRigidBody(bodyInfo);
 
-  diem.Physics.get().getWorld().addRigidBody(rigidBody);*/
+  diem.Physics.get().getWorld().addRigidBody(rigidBody);
 };
 
 /**

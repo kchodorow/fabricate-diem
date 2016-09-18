@@ -17,15 +17,6 @@ diem.Physics = function() {
   this.physicsWorld.setGravity( new Ammo.btVector3(0, diem.Physics.GRAVITY, 0));
   this.physicsWorld.getWorldInfo().set_m_gravity(
     new Ammo.btVector3( 0, diem.Physics.GRAVITY, 0));
-
-  // Add ground
-  var groundShape = new Ammo.btStaticPlaneShape(new Ammo.btVector3(0, 1, 0), -1);
-  var groundMotionState = new Ammo.btDefaultMotionState(
-    new Ammo.btTransform(new Ammo.btQuaternion(0, 0, 0, 1), new Ammo.btVector3(0, 0, 0)));
-  var groundBodyInfo = new Ammo.btRigidBodyConstructionInfo(
-    0, groundMotionState, groundShape, new Ammo.btVector3(0, 0, 0));
-  var groundRigidBody = new Ammo.btRigidBody(groundBodyInfo);
-  this.physicsWorld.addRigidBody(groundRigidBody);
 };
 
 diem.Physics.GRAVITY = -9.8;
@@ -52,8 +43,8 @@ diem.Physics.prototype.addMouseBody = function() {
   transform.setOrigin(new Ammo.btVector3(
     diem.Globals.mouse.x, diem.Globals.mouse.y, 0));
   transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
-  var inertia = new Ammo.btVector3(0, 0, 0);
   var mouseMotionState = new Ammo.btDefaultMotionState(transform);
+  var inertia = new Ammo.btVector3(0, 0, 0);
   var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
     0,  // mass
     mouseMotionState,
