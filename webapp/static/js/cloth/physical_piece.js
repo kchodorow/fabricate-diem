@@ -66,17 +66,6 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   // Disable deactivation
   clothSoftBody.setActivationState(4);
 
-  var geometry = new THREE.SphereGeometry( 1, 32, 32 );
-  var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-  var sphere = new THREE.Mesh( geometry, material );
-  sphere.position.set(diem.Globals.mouse.x, diem.Globals.mouse.y, 0);
-  piece.parent.add(sphere);
-  this.mouseMesh = sphere;
-  this.mouse = physics.addMouseBody();
-
-  var influence = 1;
-  clothSoftBody.appendAnchor(0, this.mouse, false, influence);
-
   this.handle_ = 0;
 };
 
@@ -116,17 +105,27 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
 };
 
 diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
-  this.handle_ = 0;
-/*  this.handle_ = -1;
+  this.handle_ = -1;
+  var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;
   var minDistance = Number.MAX_VALUE;
-  for (var i = 1; i < this.mesh_.geometry.vertices.length; ++i) {
-    var testHandle = this.mesh_.geometry.vertices[i];
+  var nodes = this.mesh_.userData.physicsBody.get_m_nodes();
+  for (var i = 0; i < numVerts; i++) {
+    var node = nodes.at(i);
+    var nodePos = node.get_m_x();
+    var testHandle = new THREE.Vector3(
+      nodePos.x(), nodePos.y(), nodePos.z());
     var testDistance = testHandle.distanceTo(diem.Globals.mouse);
     if (testDistance < minDistance) {
       this.handle_ = i;
       minDistance = testDistance;
     }
-  }*/
+  }
+
+  this.mouse = diem.Physics.get().addMouseBody();
+
+  var influence = 1;
+  this.mesh_.userData.physicsBody.appendAnchor(
+    this.handle_, this.mouse, false, influence);
   return [];
 };
 
@@ -138,12 +137,6 @@ diem.cloth.PhysicalPiece.prototype.onDrag = function() {
   var mousePos = new THREE.Vector3().copy(diem.Globals.mouse);
   this.mouse.getWorldTransform().setOrigin(
     new Ammo.btVector3(mousePos.x, mousePos.y, 0));
-  this.mouseMesh.position.set(mousePos.x, mousePos.y, 0);
-/*  goog.asserts.assert(this.handle_ != -1);
-  var handleVec = this.mesh_.geometry.vertices[this.handle_];
-  handleVec.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
-  this.mesh_.geometry.attributes.position.array[0] = diem.Globals.mouse.x;
-  this.mesh_.geometry.attributes.position.array[1] = diem.Globals.mouse.y;*/
   return [];
 };
 
