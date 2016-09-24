@@ -16,15 +16,10 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   goog.base(this);
   this.pinned_ = [];
 
-  var physics = diem.Physics.get();
   var clothPos = new THREE.Vector3().copy(piece.position);
-  this.orig_pos = clothPos;
-  var clothNumSegmentsX = clothWidth * 5;
-  var clothNumSegmentsY = clothHeight * 5;
 
   // Make a grid of vertices.
-  var clothGeometry = new THREE.PlaneBufferGeometry(
-    clothWidth, clothHeight, clothNumSegmentsX, clothNumSegmentsY);
+  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
   clothGeometry.translate(clothPos.x, clothPos.y, 0);
 
   var clothMaterial = new THREE.MeshLambertMaterial({
@@ -49,11 +44,11 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
     true);
 
   var sbConfig = clothSoftBody.get_m_cfg();
-  sbConfig.set_viterations( 10 );
-  sbConfig.set_piterations( 10 );
+  sbConfig.set_viterations(10);
+  sbConfig.set_piterations(10);
 
   var margin = 0.05;
-  clothSoftBody.setTotalMass( 0.9, false );
+  clothSoftBody.setTotalMass(0.9, false);
   Ammo.castObject(clothSoftBody, Ammo.btCollisionObject).getCollisionShape()
     .setMargin(margin * 3);
   // TODO: what are the last couple args?
@@ -66,6 +61,52 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
+
+/**
+ * @param {THREE.Geometry}
+ * @returns THREE.BufferGeometry
+ * @private
+ */
+diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
+  var numVertices = geometry.vertices.length;
+  var numFaces = geometry.faces.length;
+
+  var bufferGeom = new THREE.BufferGeometry().fromGeometry(geometry);
+  var vertices = new Float32Array(numVertices * 3);
+  var normals = new Float32Array(numVertices * 3);
+  var indices;
+  if (numFaces * 3 > 65535) {
+    indices = new Uint32Array(numFaces * 3);
+  } else {
+    indices = new Uint16Array(numFaces * 3);
+  }
+
+  for (var i = 0; i < numVertices; i++) {
+    var p = geometry.vertices[ i ];
+    var i3 = i * 3;
+
+    vertices[i3] = p.x;
+    vertices[i3 + 1] = p.y;
+    vertices[i3 + 2] = p.z;
+    normals[i3] = 0;
+    normals[i3 + 1] = 0;
+    normals[i3 + 2] = 1;
+  }
+
+  for (i = 0; i < numFaces; i++) {
+    var f = geometry.faces[ i ];
+    i3 = i * 3;
+
+    indices[ i3 ] = f.a;
+    indices[ i3 + 1 ] = f.b;
+    indices[ i3 + 2 ] = f.c;
+  }
+
+  bufferGeom.setIndex(new THREE.BufferAttribute(indices, 1));
+  bufferGeom.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  bufferGeom.addAttribute('normal', new THREE.BufferAttribute(normals, 3));
+  return bufferGeom;
+}
 
 diem.cloth.PhysicalPiece.isEqual_ = function(n1, n2) {
   var delta = 0.000001;
