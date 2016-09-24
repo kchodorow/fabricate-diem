@@ -14,9 +14,6 @@ diem.Pattern = function() {
 diem.Pattern.CLOTH_OFFSET_X = 10;
 diem.Pattern.CLOTH_OFFSET_Y = 8;
 
-diem.Pattern.ADD_PIECE = 'ADD_PIECE';
-diem.Pattern.PATH_TOOL = 'PATH_TOOL';
-
 /**
  * Create a new piece of cloth, adds it to the array of pieces, and returns it.
  */

@@ -44,7 +44,8 @@ diem.Person.prototype._addPhysics = function(scene) {
   var bodyShape = new Ammo.btConvexHullShape();
   var vertices = this.mesh_.geometry.vertices;
   for (var i = 0; i < vertices.length; ++i) {
-    bodyShape.addPoint(new Ammo.btVector3(vertices[i].x, vertices[i].y, vertices[i].z));
+    bodyShape.addPoint(
+      new Ammo.btVector3(vertices[i].x, vertices[i].y, vertices[i].z));
   }
   var inertia = new Ammo.btVector3(0, 0, 0);
   var mass = 0;
