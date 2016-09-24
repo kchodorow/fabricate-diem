@@ -38,20 +38,17 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   // The btSoftBody is centered at (0,0), so its corners should be offset
   // by the position of the cloth.
   // Weirdness: why is 1,0 the llc?
+  var indexedBufferGeom = this.mesh_.geometry;
+  mapIndices(this.mesh_.geometry, indexedBufferGeom );
+
   var softBodyHelpers = new Ammo.btSoftBodyHelpers();
-  var clothCorner00 = new Ammo.btVector3(
-    clothPos.x, clothPos.y + clothHeight, clothPos.z);
-  var clothCorner01 = new Ammo.btVector3(
-    clothPos.x + clothWidth, clothPos.y + clothHeight, clothPos.z);
-  var clothCorner10 = new Ammo.btVector3(
-    clothPos.x, clothPos.y, clothPos.z);
-  var clothCorner11 = new Ammo.btVector3(
-    clothPos.x + clothWidth, clothPos.y, clothPos.z);
-  // TODO: what are the last couple args?
-  var clothSoftBody = softBodyHelpers.CreatePatch(
+  var clothSoftBody = softBodyHelpers.CreateFromTriMesh(
     diem.Physics.get().getWorld().getWorldInfo(),
-    clothCorner00, clothCorner10, clothCorner01, clothCorner11,
-    clothNumSegmentsX + 1, clothNumSegmentsY + 1, 0, true);
+    this.mesh_.geometry.ammoVertices,
+    this.mesh_.geometry.ammoIndices,
+    this.mesh_.geometry.ammoIndices.length / 3,
+    true);
+
   var sbConfig = clothSoftBody.get_m_cfg();
   sbConfig.set_viterations( 10 );
   sbConfig.set_piterations( 10 );
@@ -71,6 +68,41 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
+function isEqual( x1, y1, z1, x2, y2, z2 ) {
+  var delta = 0.000001;
+  return Math.abs( x2 - x1 ) < delta &&
+    Math.abs( y2 - y1 ) < delta &&
+    Math.abs( z2 - z1 ) < delta;
+}
+
+function mapIndices( bufGeometry, indexedBufferGeom ) {
+  var vertices = bufGeometry.attributes.position.array;
+  var idxVertices = indexedBufferGeom.attributes.position.array;
+  var indices = indexedBufferGeom.index.array;
+
+  var numIdxVertices = idxVertices.length / 3;
+  var numVertices = vertices.length / 3;
+
+  bufGeometry.ammoVertices = idxVertices;
+  bufGeometry.ammoIndices = indices;
+  bufGeometry.ammoIndexAssociation = [];
+
+  for ( var i = 0; i < numIdxVertices; i++ ) {
+    var association = [];
+    bufGeometry.ammoIndexAssociation.push( association );
+
+    var i3 = i * 3;
+    for ( var j = 0; j < numVertices; j++ ) {
+      var j3 = j * 3;
+      if (isEqual(
+        idxVertices[i3], idxVertices[i3 + 1],  idxVertices[i3 + 2],
+        vertices[j3], vertices[j3 + 1], vertices[j3 + 2])) {
+        association.push( j3 );
+      }
+    }
+  }
+}
+
 /**
  * @override
  */
@@ -85,23 +117,43 @@ diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
  * Run one step of physics.
  */
 diem.cloth.PhysicalPiece.prototype.simulate = function() {
-  var softBody = this.mesh_.userData.physicsBody;
-  var clothPositions = this.mesh_.geometry.attributes.position.array;
-  var numVerts = clothPositions.length / 3;
-  var nodes = softBody.get_m_nodes();
   var indexFloat = 0;
+  var geometry = this.mesh_.geometry;
+  var volumePositions = geometry.attributes.position.array;
+  var volumeNormals = geometry.attributes.normal.array;
+  var association = geometry.ammoIndexAssociation;
+  var numVerts = association.length;
 
-  for (var i = 0; i < numVerts; i++) {
-    var node = nodes.at(i);
+  var softBody = this.mesh_.userData.physicsBody;
+  var nodes = softBody.get_m_nodes();
+  for ( var j = 0; j < numVerts; j ++ ) {
+    var node = nodes.at( j );
     var nodePos = node.get_m_x();
-    clothPositions[indexFloat++] = nodePos.x();
-    clothPositions[indexFloat++] = nodePos.y();
-    clothPositions[indexFloat++] = nodePos.z();
+    var x = nodePos.x();
+    var y = nodePos.y();
+    var z = nodePos.z();
+    var nodeNormal = node.get_m_n();
+    var nx = nodeNormal.x();
+    var ny = nodeNormal.y();
+    var nz = nodeNormal.z();
+
+    var assocVertex = association[ j ];
+
+    for ( var k = 0, kl = assocVertex.length; k < kl; k++ ) {
+      var indexVertex = assocVertex[ k ];
+      volumePositions[ indexVertex ] = x;
+      volumeNormals[ indexVertex ] = nx;
+      indexVertex++;
+      volumePositions[ indexVertex ] = y;
+      volumeNormals[ indexVertex ] = ny;
+      indexVertex++;
+      volumePositions[ indexVertex ] = z;
+      volumeNormals[ indexVertex ] = nz;
+    }
   }
 
-  this.mesh_.geometry.computeVertexNormals();
-  this.mesh_.geometry.attributes.position.needsUpdate = true;
-  this.mesh_.geometry.attributes.normal.needsUpdate = true;
+  geometry.attributes.position.needsUpdate = true;
+  geometry.attributes.normal.needsUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
 };
 
