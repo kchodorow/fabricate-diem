@@ -10,7 +10,7 @@ filegroup(
     name = "js",
     srcs = [
         "renderers/CanvasRenderer.js",
-        "three.js",
+        "//webapp/static/js/vendor",
         ":lib.js",
     ],
     visibility = ["//webapp/static:__pkg__"],
