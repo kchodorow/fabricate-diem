@@ -13,7 +13,7 @@
     <!-- Custom styles for this template -->
     <link href="/css/bootstrap-theme.css" rel="stylesheet">
 
-    <script src="/js/vendor/jquery-3.1.1.js"></script>
+    <script src="/js/vendor/jquery-3.1.1.min.js"></script>
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="/js/vendor/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="/js/vendor/bootstrap.js"></script>
@@ -23,10 +23,6 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
       <![endif]-->
-    <style>
-      body { margin: 0; }
-      canvas { width: 100%; height: 100% }
-    </style>
    </head>
 
   <body>
@@ -37,36 +33,14 @@
           <ul class="nav nav-pills pull-right">
             <li role="presentation" class="active"><a href="#">Home</a></li>
             <li role="presentation"><a href="#">About</a></li>
-            <li role="presentation"><a href="#">Contact</a></li>
+            <li role="presentation"><a href="#">Account</a></li>
           </ul>
         </nav>
-        <h3 class="text-muted">Project name</h3>
+        <h3 class="text-muted">Fabricate Diem</h3>
       </div>
 
       <div id="model-box">
       </div>
-
-      <script type="x-shader/x-fragment" id="fragmentShaderDepth">
-#include <packing>
-
-uniform sampler2D texture;
-varying vec2 vUV;
-
-void main() {
-  vec4 pixel = texture2D( texture, vUV );
-  if ( pixel.a < 0.5 ) discard;
-  gl_FragData[ 0 ] = packDepthToRGBA( gl_FragCoord.z );
-}
-      </script>
-
-      <script type="x-shader/x-vertex" id="vertexShaderDepth">
-varying vec2 vUV;
-void main() {
-  vUV = 0.75 * uv;
-  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-  gl_Position = projectionMatrix * mvPosition;
-}
-      </script>
 
       <script src="js/vendor/three.js"></script>
       <script src="js/vendor/SubdivisionModifier.js"></script>
