@@ -16,6 +16,7 @@ diem.Pattern.CLOTH_OFFSET_Y = 8;
 
 /**
  * Create a new piece of cloth, adds it to the array of pieces, and returns it.
+ * @returns {diem.cloth.Workboard}
  */
 diem.Pattern.prototype.addPiece = function() {
   var cloth = new diem.cloth.Workboard(7, 10);

@@ -51,7 +51,7 @@ closure_js_library(
     deps = [
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
-        "//webapp/static/js/cloth/physics",
+        "//webapp/static/js:physics",
         "//webapp/static/js/events",
         "//webapp/static/js/tools:drag-piece",
     ],
@@ -66,7 +66,6 @@ closure_js_test(
     suppress = ["JSC_MISSING_JSDOC"],
     deps = [
         ":cloth",
-        "//webapp/static/js/cloth/physics",
         "@io_bazel_rules_closure//closure/library",
         "@io_bazel_rules_closure//closure/library:testing",
     ],

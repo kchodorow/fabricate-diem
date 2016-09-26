@@ -3,12 +3,15 @@ goog.provide('diem.cloth.PhysicalPiece');
 goog.provide('diem.cloth.PhysicalPiece.Constraint');
 
 goog.require('diem.MeshWrapper');
+goog.require('diem.Physics');
 goog.require('diem.events');
 goog.require('diem.tools.DragPiece');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.
  * @param {THREE.Mesh} piece
+ * @param {number} clothWidth
+ * @param {number} clothHeight
  * @constructor
  * @extends {diem.MeshWrapper}
  */
@@ -33,7 +36,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   // The btSoftBody is centered at (0,0), so its corners should be offset
   // by the position of the cloth.
   // Weirdness: why is 1,0 the llc?
-  this.mapIndices();
+  this.mapIndices_();
 
   var softBodyHelpers = new Ammo.btSoftBodyHelpers();
   var clothSoftBody = softBodyHelpers.CreateFromTriMesh(
@@ -63,8 +66,8 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 /**
- * @param {THREE.Geometry}
- * @returns THREE.BufferGeometry
+ * @param {THREE.Geometry} geometry
+ * @returns {THREE.BufferGeometry}
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
@@ -109,14 +112,23 @@ diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geome
   bufferGeom.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
   bufferGeom.addAttribute('normal', new THREE.BufferAttribute(normals, 3));
   return bufferGeom;
-}
+};
 
+/**
+ * @param {number} n1
+ * @param {number} n2
+ * @returns {boolean}
+ * @private
+ */
 diem.cloth.PhysicalPiece.isEqual_ = function(n1, n2) {
   var delta = 0.000001;
   return Math.abs(n2 - n1) < delta;
 };
 
-diem.cloth.PhysicalPiece.prototype.mapIndices = function() {
+/**
+ * @private
+ */
+diem.cloth.PhysicalPiece.prototype.mapIndices_ = function() {
   var geometry = this.mesh_.geometry;
   var vertices = geometry.attributes.position.array;
   var idxVertices = geometry.attributes.position.array;
@@ -199,6 +211,9 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   this.mesh_.geometry.boundingSphere = null;
 };
 
+/**
+ * @override
+ */
 diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
   this.handle_ = -1;
   var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;

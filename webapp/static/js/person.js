@@ -33,6 +33,10 @@ diem.Person = function(scene, register) {
 
 goog.inherits(diem.Person, diem.MeshWrapper);
 
+/**
+ * @param {THREE.Scene} scene
+ * @private
+ */
 diem.Person.prototype._addPhysics = function(scene) {
   var transform = new Ammo.btTransform();
   transform.setOrigin(new Ammo.btVector3(0, 0, 0));

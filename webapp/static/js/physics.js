@@ -22,6 +22,9 @@ diem.Physics = function() {
 diem.Physics.GRAVITY = -9.8;
 diem.Physics.INSTANCE = null;
 
+/**
+ * @returns {diem.Physics}
+ */
 diem.Physics.get = function() {
   if (diem.Physics.INSTANCE == null) {
     diem.Physics.INSTANCE = new diem.Physics();
@@ -29,14 +32,24 @@ diem.Physics.get = function() {
   return diem.Physics.INSTANCE;
 };
 
+/**
+ * Updates world by one timestep.
+ */
 diem.Physics.prototype.update = function() {
   this.physicsWorld.stepSimulation(this.clock.getDelta(), 10);
 };
 
+/**
+ * @returns {Ammo.btSoftRigidDynamicsWorld}
+ */
 diem.Physics.prototype.getWorld = function() {
   return this.physicsWorld;
 };
 
+/**
+ * Adds the mouse as a "rigid body" so the fabric can be attached to it.
+ * @returns {Ammo.btRigidBody}
+ */
 diem.Physics.prototype.addMouseBody = function() {
   var mouseShape = new Ammo.btSphereShape(.1);
   var transform = new Ammo.btTransform();

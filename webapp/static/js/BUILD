@@ -10,8 +10,8 @@ filegroup(
     name = "js",
     srcs = [
         "renderers/CanvasRenderer.js",
-        "//webapp/static/js/vendor",
         ":lib.js",
+        "//webapp/static/js/vendor",
     ],
     visibility = ["//webapp/static:__pkg__"],
 )
@@ -41,6 +41,7 @@ closure_js_library(
         ":globals",
         ":pattern",
         ":person",
+        ":physics",
         "//webapp/static/js/cloth",
         "//webapp/static/js/tools",
         "//webapp/static/js/tools:tool-manager",
@@ -61,10 +62,18 @@ closure_js_library(
     ],
     deps = [
         ":mesh-wrapper",
+        ":physics",
         ":pin",
         "//webapp/static/js/events",
         "//webapp/static/js/tools:drag-piece",
     ],
+)
+
+# Closure wrapper for Ammo world.
+closure_js_library(
+    name = "physics",
+    srcs = ["physics.js"],
+    visibility = ["//webapp/static/js/cloth:__pkg__"],
 )
 
 closure_js_library(
