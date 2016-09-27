@@ -28,12 +28,13 @@ java_library(
 
 java_binary(
     name = "editor",
-    main_class = "com.kchodorow.diem.editor.Editor",
-    srcs = ["Editor.java"],
+    main_class = "com.kchodorow.diem.editor.EditorServlet",
+    srcs = ["EditorServlet.java"],
     data = ["editor.soy"],
     deps = [
         ":wrapper",
         "@guice//jar",
+        "@javax_servlet_api//jar",
         "@soy//jar",
     ],
 )

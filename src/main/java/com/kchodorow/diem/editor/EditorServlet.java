@@ -6,13 +6,21 @@ import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.SoyModule;
 import com.google.template.soy.tofu.SoyTofu;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Renders the HTML template for editing patterns.
  */
-public class Editor {
-    public static void main (String[] args) {
+public class EditorServlet extends HttpServlet {
+
+    private final SoyTofu.Renderer renderer;
+
+    private EditorServlet() {
+        super();
         // Create a Guice injector that contains the SoyModule and use it get a SoyFileSet.Builder.
         Injector injector = Guice.createInjector(new SoyModule());
         SoyFileSet.Builder sfsBuilder = injector.getInstance(SoyFileSet.Builder.class);
@@ -23,8 +31,18 @@ public class Editor {
         // Compile the template into a SoyTofu object.
         // SoyTofu's newRenderer method returns an object that can render any template in the file set.
         SoyTofu tofu = sfs.compileToTofu();
+        this.renderer = tofu.newRenderer("examples.simple.helloWorld");
+    }
+
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.getWriter().write(renderer.render());
+    }
+
+    public static void main (String[] args) {
+        EditorServlet servlet = new EditorServlet();
 
         // Render the template with no data.
-        System.out.println(tofu.newRenderer("examples.simple.helloWorld").render());
+        System.out.println(servlet.renderer.render());
     }
 }
