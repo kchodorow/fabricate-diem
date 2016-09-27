@@ -1,10 +1,5 @@
-package com.kchodorow.diem.editor;
+package com.kchodorow.diem;
 
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-
-import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.template.soy.SoyFileSet;
@@ -20,23 +15,18 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Renders the HTML template for editing patterns.
+ * Display the index.
  */
-public class EditorServlet extends HttpServlet {
-
+public class MainServlet extends HttpServlet{
     private final SoyTofu.Renderer renderer;
 
-    public EditorServlet() {
+    public MainServlet() {
         super();
         Injector injector = Guice.createInjector(new SoyModule());
         SoyFileSet.Builder sfsBuilder = injector.getInstance(SoyFileSet.Builder.class);
-        SoyFileSet sfs = sfsBuilder
-                .add(new File("templates/editor.soy"))
-                .add(new File("templates/main.soy"))
-                .build();
-
+        SoyFileSet sfs = sfsBuilder.add(new File("templates/main.soy")).build();
         SoyTofu tofu = sfs.compileToTofu();
-        this.renderer = tofu.newRenderer("diem.editor.editor");
+        this.renderer = tofu.newRenderer("diem.main");
     }
 
     @Override

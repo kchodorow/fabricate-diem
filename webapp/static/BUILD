@@ -6,20 +6,12 @@ load(
 filegroup(
     name = "static",
     srcs = [
-        "index.html",
         ":assets",
         ":deps.js",
         "//webapp/static/css",
         "//webapp/static/js",
     ],
     visibility = ["//webapp:__pkg__"],
-)
-
-genrule(
-    name = "mv-html",
-    srcs = ["release.html"],
-    outs = ["index.html"],
-    cmd = "cp $< $@",
 )
 
 filegroup(

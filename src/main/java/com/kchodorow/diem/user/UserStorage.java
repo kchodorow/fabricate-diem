@@ -3,6 +3,10 @@ package com.kchodorow.diem.user;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.base.Preconditions;
+import com.google.template.soy.data.SoyMapData;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Result;
 
@@ -14,7 +18,30 @@ public class UserStorage {
         ObjectifyService.register(Account.class);
     }
 
-    public Account get(User user) {
+    private final String uri;
+
+    public UserStorage(String uri) {
+        this.uri = uri;
+    }
+
+    public SoyMapData getSoyMapData() {
+        UserService userService = UserServiceFactory.getUserService();
+        if (!userService.isUserLoggedIn()) {
+            return new SoyMapData(
+                    "name", null,
+                    "login", userService.createLoginURL(uri));
+        }
+
+        User user = userService.getCurrentUser();
+        Preconditions.checkNotNull(user);
+        Account account = get(user);
+        return new SoyMapData(
+                "name", account.getDisplayName(),
+                "user_uri", account.getUsername(),
+                "logout", userService.createLogoutURL(uri));
+    }
+
+    private Account get(User user) {
         Result<Account> result = ofy().load().entity(new Account(user.getUserId()));
         Account account = result.now();
 
@@ -29,4 +56,6 @@ public class UserStorage {
         ofy().save().entity(account).now();
         return account;
     }
+
+
 }

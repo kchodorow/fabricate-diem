@@ -1,6 +1,9 @@
 filegroup(
     name = "templates",
-    srcs = ["editor.soy"],
+    srcs = [
+        "editor.soy",
+        "main.soy",
+    ],
     visibility = ["//webapp:__pkg__"],
 )
 
@@ -8,15 +11,43 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_java_template_library
 
 closure_java_template_library(
     name = "editor-template",
-    srcs = ["editor.soy"],
+    srcs = [
+        "editor.soy",
+        "main.soy"
+    ],
     java_package = "com.kchodorow.diem.editor",
 )
 
 java_library(
     name = "editor",
     srcs = [":EditorSoyInfo.java"],
-    data = ["editor.soy"],
+    data = [
+        "editor.soy",
+        "main.soy",
+    ],
     visibility = ["//src/main/java/com/kchodorow/diem/editor:__pkg__"],
+    runtime_deps = [
+        "@guava//jar",
+        "@guice_assistedinject//jar",
+        "@guice_multibindings//jar",
+        "@icu4j//jar",
+        "@jsr305//jar",
+        "@jsr330_inject//jar",
+        "@org_aopalliance//jar",
+    ],
+    deps = [
+        ":main",
+        "@guava//jar",
+        "@guice//jar",
+        "@soy//jar",
+    ],
+)
+
+java_library(
+    name = "main",
+    srcs = [":MainSoyInfo.java"],
+    data = ["main.soy"],
+    visibility = ["//src/main/java/com/kchodorow/diem:__pkg__"],
     runtime_deps = [
         "@guava//jar",
         "@guice_assistedinject//jar",

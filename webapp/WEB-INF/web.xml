@@ -3,8 +3,8 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
   <servlet>
-    <servlet-name>account</servlet-name>
-    <servlet-class>com.kchodorow.diem.user.AccountServlet</servlet-class>
+    <servlet-name>index</servlet-name>
+    <servlet-class>com.kchodorow.diem.MainServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>editor</servlet-name>
@@ -12,23 +12,13 @@
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>account</servlet-name>
-    <url-pattern>/login</url-pattern>
+    <servlet-name>index</servlet-name>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>editor</servlet-name>
     <url-pattern>/edit/*</url-pattern>
   </servlet-mapping>
-
-  <security-constraint>
-    <web-resource-collection>
-      <web-resource-name>my-thing</web-resource-name>
-      <url-pattern>/login</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>*</role-name>
-    </auth-constraint>
-  </security-constraint>
 
   <!-- See https://github.com/objectify/objectify/wiki/Setup#enable-objectifyfilter-for-your-requests,
   required to clean up thread-local transaction contexts. -->

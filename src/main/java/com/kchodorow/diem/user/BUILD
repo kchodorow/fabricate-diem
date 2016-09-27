@@ -18,6 +18,8 @@ java_library(
     deps = [
         "@com_google_appengine_java//:user",
         "@com_google_objectify//jar",
+        "@guava//jar",
+        "@soy//jar",
     ],
-    visibility = ["//src/main/java/com/kchodorow/diem/editor:__pkg__"],
+    visibility = ["//src/main/java/com/kchodorow/diem:__subpackages__"],
 )
