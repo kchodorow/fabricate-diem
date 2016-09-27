@@ -9,6 +9,7 @@ filegroup(
         "index.html",
         ":assets",
         ":deps.js",
+        "//webapp/static/css",
         "//webapp/static/js",
     ],
     visibility = ["//:__pkg__"],

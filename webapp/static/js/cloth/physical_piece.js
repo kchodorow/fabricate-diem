@@ -24,7 +24,6 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   // Make a grid of vertices.
   var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
   clothGeometry.translate(clothPos.x, clothPos.y, 0);
-
   var clothMaterial = new THREE.MeshLambertMaterial({
     color: 0xFFFFFF,
     side: THREE.DoubleSide
@@ -71,7 +70,7 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
-  var subdivider = new THREE.SubdivisionModifier(3);
+  var subdivider = new THREE.SubdivisionModifier(4);
   subdivider.modify(geometry);
 
   var numVertices = geometry.vertices.length;
