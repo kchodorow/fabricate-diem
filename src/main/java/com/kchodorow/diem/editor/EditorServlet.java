@@ -4,7 +4,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.SoyModule;
+import com.google.template.soy.data.SoyMapData;
 import com.google.template.soy.tofu.SoyTofu;
+import com.kchodorow.diem.user.User;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,6 @@ public class EditorServlet extends HttpServlet {
 
     public EditorServlet() {
         super();
-        System.out.println("Currently in: " + System.getenv("PWD"));
         // Create a Guice injector that contains the SoyModule and use it get a SoyFileSet.Builder.
         Injector injector = Guice.createInjector(new SoyModule());
         SoyFileSet.Builder sfsBuilder = injector.getInstance(SoyFileSet.Builder.class);
@@ -36,14 +37,9 @@ public class EditorServlet extends HttpServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+        renderer.setData(new SoyMapData("name", User.get(request)));
+        resp.setContentType("text/html");
         resp.getWriter().write(renderer.render());
-    }
-
-    public static void main (String[] args) {
-        EditorServlet servlet = new EditorServlet();
-
-        // Render the template with no data.
-        System.out.println(servlet.renderer.render());
     }
 }

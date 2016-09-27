@@ -20,7 +20,7 @@ diem.Person = function(scene, register) {
   var loader = new THREE.ObjectLoader();
   var tmp = this;
   loader.load(
-    'assets/standard-female-figure.json',
+    '/assets/standard-female-figure.json',
     function(object) {
       var person = object.children[0];
       tmp.mesh_ = person;

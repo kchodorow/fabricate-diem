@@ -1,12 +1,21 @@
 workspace(name = "com_kchodorow_diem")
 
-git_repository(
+local_repository(
     name = "io_bazel_rules_appengine",
-    remote = "https://github.com/bazelbuild/rules_appengine.git",
-    commit = "bec2c82",
+    path = "/Users/k/gitroot/rules_appengine",
 )
-load("@io_bazel_rules_appengine//appengine:appengine.bzl", "appengine_repositories")
-appengine_repositories()
+
+load("@io_bazel_rules_appengine//appengine:appengine.bzl",
+        "APPENGINE_BUILD_FILE")
+new_local_repository(
+    name = "com_google_appengine_java",
+    path = "/Users/k/Downloads",
+    build_file_content = APPENGINE_BUILD_FILE,
+)
+maven_jar(
+    name = "javax_servlet_api",
+    artifact = "javax.servlet:servlet-api:2.5",
+)
 
 git_repository(
     name = "io_bazel_rules_closure",
