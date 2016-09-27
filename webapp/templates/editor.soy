@@ -3,6 +3,8 @@
 /**
  * Pattern editor.
  * @param name
+ * @param user_uri
+ * @param logout
  */
 {template .helloWorld}
 <!DOCTYPE html>
@@ -25,12 +27,13 @@
       <div class="header clearfix">
         <nav>
           <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="#">About</a></li>
+            <li role="presentation" class="active"><a href="/">Home</a></li>
+            <li role="presentation"><a href="/about">About</a></li>
             {if $name}
-              <li role="presentation"><a href="#">{$name}</a></li>
+              <li role="presentation"><a href="/u/{$user_uri}">{$name}</a></li>
+              <li role="presentation"><a href="{$logout}">Log out</a></li>
             {else}
-              <li role="presentation"><a href="#">Log in</a></li>
+              <li role="presentation"><a href="/login">Log in</a></li>
             {/if}
           </ul>
         </nav>
