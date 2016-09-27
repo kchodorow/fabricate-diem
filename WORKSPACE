@@ -15,3 +15,9 @@ git_repository(
 )
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
 closure_repositories()
+
+# For closure template libraries.
+maven_jar(
+    name = "org_aopalliance",
+    artifact = "aopalliance:aopalliance:jar:1.0",
+)
