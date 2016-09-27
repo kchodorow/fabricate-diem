@@ -30,3 +30,9 @@ maven_jar(
     name = "org_aopalliance",
     artifact = "aopalliance:aopalliance:jar:1.0",
 )
+
+# For Datastore access.
+maven_jar(
+    name = "com_google_objectify",
+    artifact = "com.googlecode.objectify:objectify:5.1.13",
+)

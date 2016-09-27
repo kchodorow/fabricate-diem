@@ -4,12 +4,15 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.SoyModule;
 import com.google.template.soy.data.SoyMapData;
 import com.google.template.soy.tofu.SoyTofu;
+import com.kchodorow.diem.user.Account;
+import com.kchodorow.diem.user.UserStorage;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,15 +45,16 @@ public class EditorServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser();
-        if (user == null) {
+        if (!userService.isUserLoggedIn()) {
             renderer.setData(new SoyMapData("name", null));
         } else {
-            // TODO: get something reasonable for the username.
+            User user = userService.getCurrentUser();
+            Preconditions.checkNotNull(user);
+            Account account = new UserStorage().get(user);
             renderer.setData(new SoyMapData(
-                    "name", user.getNickname(),
-                    "user_uri", user.getUserId(),
-                    "logout", userService.createLogoutURL("/")));
+                    "name", account.getDisplayName(),
+                    "user_uri", account.getUsername(),
+                    "logout", userService.createLogoutURL(request.getRequestURI())));
         }
         resp.setContentType("text/html");
         resp.getWriter().write(renderer.render());

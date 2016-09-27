@@ -30,4 +30,14 @@
     </auth-constraint>
   </security-constraint>
 
+  <!-- See https://github.com/objectify/objectify/wiki/Setup#enable-objectifyfilter-for-your-requests,
+  required to clean up thread-local transaction contexts. -->
+  <filter>
+    <filter-name>ObjectifyFilter</filter-name>
+    <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ObjectifyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>
