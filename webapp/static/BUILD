@@ -12,7 +12,7 @@ filegroup(
         "//webapp/static/css",
         "//webapp/static/js",
     ],
-    visibility = ["//:__pkg__"],
+    visibility = ["//webapp:__pkg__"],
 )
 
 genrule(

@@ -19,14 +19,15 @@ public class EditorServlet extends HttpServlet {
 
     private final SoyTofu.Renderer renderer;
 
-    private EditorServlet() {
+    public EditorServlet() {
         super();
+        System.out.println("Currently in: " + System.getenv("PWD"));
         // Create a Guice injector that contains the SoyModule and use it get a SoyFileSet.Builder.
         Injector injector = Guice.createInjector(new SoyModule());
         SoyFileSet.Builder sfsBuilder = injector.getInstance(SoyFileSet.Builder.class);
 
         // Bundle the Soy files for your project into a SoyFileSet.
-        SoyFileSet sfs = sfsBuilder.add(new File("src/main/java/com/kchodorow/diem/editor/editor.soy")).build();
+        SoyFileSet sfs = sfsBuilder.add(new File("templates/editor.soy")).build();
 
         // Compile the template into a SoyTofu object.
         // SoyTofu's newRenderer method returns an object that can render any template in the file set.
