@@ -2,24 +2,6 @@
 <!DOCTYPE web-app PUBLIC "-//Oracle Corporation//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
-  <servlet>
-    <servlet-name>index</servlet-name>
-    <servlet-class>com.kchodorow.diem.MainServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>editor</servlet-name>
-    <servlet-class>com.kchodorow.diem.editor.EditorServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>index</servlet-name>
-    <url-pattern>/</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>editor</servlet-name>
-    <url-pattern>/edit/*</url-pattern>
-  </servlet-mapping>
-
   <!-- See https://github.com/objectify/objectify/wiki/Setup#enable-objectifyfilter-for-your-requests,
   required to clean up thread-local transaction contexts. -->
   <filter>
@@ -30,4 +12,41 @@
     <filter-name>ObjectifyFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
+  <filter>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>index</servlet-name>
+    <servlet-class>com.kchodorow.diem.MainServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>editor</servlet-name>
+    <servlet-class>com.kchodorow.diem.editor.EditorServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>com.kchodorow.diem.user.AccountServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>index</servlet-name>
+    <url-pattern>/index</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>editor</servlet-name>
+    <url-pattern>/project/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
+  </servlet-mapping>
+
 </web-app>

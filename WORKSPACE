@@ -36,3 +36,8 @@ maven_jar(
     name = "com_google_objectify",
     artifact = "com.googlecode.objectify:objectify:5.1.13",
 )
+
+maven_jar(
+    name = "org_tuckey_urlrewritefilter",
+    artifact = "org.tuckey:urlrewritefilter:4.0.3",
+)

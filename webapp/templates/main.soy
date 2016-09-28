@@ -31,7 +31,7 @@
             <li role="presentation" class="active"><a href="/">Home</a></li>
             <li role="presentation"><a href="/about">About</a></li>
             {if $name}
-              <li role="presentation"><a href="/u/{$user_uri}">{$name}</a></li>
+              <li role="presentation"><a href="{$user_uri}">{$name}</a></li>
               <li role="presentation"><a href="{$logout}">Log out</a></li>
             {else}
               <li role="presentation"><a href="{$login}">Log in</a></li>

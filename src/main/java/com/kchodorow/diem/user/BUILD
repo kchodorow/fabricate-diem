@@ -4,8 +4,11 @@ java_library(
     visibility = ["//src/main/java:__pkg__"],
     deps = [
         ":account",
+        "//webapp/templates:user",
         "@com_google_objectify//jar",
+        "@guice//jar",
         "@javax_servlet_api//jar",
+        "@soy//jar",
     ],    
 )
 

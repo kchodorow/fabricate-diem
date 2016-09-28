@@ -40,10 +40,10 @@ public class EditorServlet extends HttpServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SoyMapData data = new UserStorage(request.getRequestURI()).getSoyMapData();
         renderer.setData(data);
-        resp.setContentType("text/html");
-        resp.getWriter().write(renderer.render());
+        response.setContentType("text/html");
+        response.getWriter().write(renderer.render());
     }
 }
