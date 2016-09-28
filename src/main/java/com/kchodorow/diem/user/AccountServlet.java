@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class AccountServlet extends HttpServlet {
+    private static final int USERNAME_IDX = 6;
 
     private final SoyTofu.Renderer renderer;
 
@@ -33,9 +34,23 @@ public class AccountServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException {
-        SoyMapData data = new UserStorage(request.getRequestURI()).getSoyMapData();
+        SoyMapData data = new UserStorage(request.getRequestURI()).getLoggedInUser();
+        String username = getUsername(request.getRequestURI());
+        Account userInfo = UserStorage.get(username);
+        if (userInfo != null) {
+            data.put("username", userInfo.getUsername());
+        }
         renderer.setData(data);
         response.setContentType("text/html");
         response.getWriter().write(renderer.render());
+    }
+
+    private String getUsername(String requestURI) {
+        // "/user/someone"
+        String username = requestURI.substring(USERNAME_IDX);
+        if (username.contains("/")) {
+            username = username.substring(0, username.indexOf('/'));
+        }
+        return username;
     }
 }

@@ -24,7 +24,7 @@ public class UserStorage {
         this.uri = uri;
     }
 
-    public SoyMapData getSoyMapData() {
+    public SoyMapData getLoggedInUser() {
         UserService userService = UserServiceFactory.getUserService();
         if (!userService.isUserLoggedIn()) {
             return new SoyMapData(
@@ -34,28 +34,30 @@ public class UserStorage {
 
         User user = userService.getCurrentUser();
         Preconditions.checkNotNull(user);
-        Account account = get(user);
+        Account account = getOrCreate(user);
         return new SoyMapData(
                 "name", account.getDisplayName(),
                 "user_uri", account.getUsername(),
                 "logout", userService.createLogoutURL(uri));
     }
 
-    private Account get(User user) {
-        Result<Account> result = ofy().load().entity(new Account(user.getUserId()));
-        Account account = result.now();
+    private Account getOrCreate(User user) {
+        Account account = get(user.getUserId());
 
         if (account == null) {
-            account = UserStorage.createUser(user);
+            account = UserStorage.create(user);
         }
         return account;
     }
 
-    private static Account createUser(User user) {
+    private static Account create(User user) {
         Account account = new Account(user);
         ofy().save().entity(account).now();
         return account;
     }
 
-
+    static Account get(String userId) {
+        Result<Account> result = ofy().load().entity(new Account(userId));
+        return result.now();
+    }
 }

@@ -1,10 +1,5 @@
 package com.kchodorow.diem.editor;
 
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-
-import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.template.soy.SoyFileSet;
@@ -41,7 +36,7 @@ public class EditorServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        SoyMapData data = new UserStorage(request.getRequestURI()).getSoyMapData();
+        SoyMapData data = new UserStorage(request.getRequestURI()).getLoggedInUser();
         renderer.setData(data);
         response.setContentType("text/html");
         response.getWriter().write(renderer.render());

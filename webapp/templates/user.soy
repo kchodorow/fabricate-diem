@@ -1,10 +1,14 @@
 {namespace diem.user}
 
 /**
- * @param name
+ * @param username
  */
 {template .main}
     {call diem.header data="all" /}
-    User: {$name}
+    {if $username}
+        User: {$username}
+    {else}
+        No such user found.
+    {/if}
     {call diem.footer data="all" /}
 {/template}

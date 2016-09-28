@@ -3,6 +3,7 @@ package com.kchodorow.diem.user;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  * Holds user account info.
@@ -13,6 +14,7 @@ public class Account {
     String id;
 
     String displayName;
+    @Index
     String username;
     String email;
 

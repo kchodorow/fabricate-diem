@@ -9,7 +9,7 @@ java_library(
         "@guice//jar",
         "@javax_servlet_api//jar",
         "@soy//jar",
-    ],    
+    ],
 )
 
 java_library(

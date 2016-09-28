@@ -31,7 +31,7 @@ public class MainServlet extends HttpServlet{
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
-        SoyMapData data = new UserStorage(request.getRequestURI()).getSoyMapData();
+        SoyMapData data = new UserStorage(request.getRequestURI()).getLoggedInUser();
         renderer.setData(data);
         resp.setContentType("text/html");
         resp.getWriter().write(renderer.render());
