@@ -6,6 +6,7 @@ import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.SoyModule;
 import com.google.template.soy.data.SoyMapData;
 import com.google.template.soy.tofu.SoyTofu;
+import com.kchodorow.diem.template.DataBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,8 @@ public class AccountServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException {
-        SoyMapData data = new UserStorage(request.getRequestURI()).getLoggedInUser();
+        SoyMapData data = new DataBuilder().setUri(request.getRequestURI()).build();
+
         String username = getUsername(request.getRequestURI());
         Account userInfo = UserStorage.get(username);
         if (userInfo != null) {

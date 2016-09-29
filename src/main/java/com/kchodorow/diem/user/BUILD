@@ -4,6 +4,7 @@ java_library(
     visibility = ["//src/main/java:__pkg__"],
     deps = [
         ":account",
+        "//src/main/java/com/kchodorow/diem/template",
         "//webapp/templates:user",
         "@com_google_objectify//jar",
         "@guice//jar",
