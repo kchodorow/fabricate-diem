@@ -9,6 +9,9 @@ goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
 goog.require('diem.cloth.PhysicalPiece');
 goog.require('diem.tools.DragPiece');
+goog.require('goog.Uri');
+goog.require('goog.net.XhrIo');
+goog.require('goog.structs.Map');
 
 /**
  * @param {number} w
@@ -116,4 +119,16 @@ diem.cloth.Workboard.prototype.onDrag = function() {
  */
 diem.cloth.Workboard.prototype.onDragEnd = function() {
   return this.currentPiece_.onDragEnd();
+};
+
+diem.cloth.Workboard.prototype.send = function() {
+  var request = new goog.net.XhrIo();
+  var anchors = [];
+  for (var i = 0; i < this.anchors_.length; ++i) {
+    var anchor = this.anchors_[i];
+    anchors.push(anchor.getObject().getPosition());
+  }
+  var data = goog.Uri.QueryData.createFromMap(
+    new goog.structs.Map({anchors: anchors}));
+  request.send('/store', 'POST', data.toString());
 };

@@ -5,7 +5,7 @@ java_binary(
     runtime_deps = [
         "//src/main/java/com/kchodorow/diem",
         "//src/main/java/com/kchodorow/diem/editor",
-        "//src/main/java/com/kchodorow/diem/user",
+        "//src/main/java/com/kchodorow/diem/project:servlet",
         "@org_tuckey_urlrewritefilter//jar",
     ],
 )

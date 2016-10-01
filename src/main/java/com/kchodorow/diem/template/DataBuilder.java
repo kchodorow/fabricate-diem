@@ -5,8 +5,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.base.Preconditions;
 import com.google.template.soy.data.SoyMapData;
-import com.kchodorow.diem.user.Account;
-import com.kchodorow.diem.user.UserStorage;
+import com.kchodorow.diem.account.Account;
+import com.kchodorow.diem.account.AccountStorage;
 
 /**
  * Gets SoyMapData to render the HTML header.
@@ -34,10 +34,10 @@ public class DataBuilder {
         } else {
             User user = userService.getCurrentUser();
             Preconditions.checkNotNull(user);
-            Account account = UserStorage.getOrCreate(user);
+            Account account = AccountStorage.getOrCreate(user.getUserId(), user.getEmail());
             data.put(
-                    "name", account.getDisplayName(),
-                    "user_uri", account.getUsername(),
+                    "name", account.getEmail(),
+                    "user_uri", "/" + account.getUsername(),
                     "logout", userService.createLogoutURL(uri));
         }
         return data;

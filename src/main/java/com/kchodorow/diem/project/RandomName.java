@@ -1,4 +1,4 @@
-package com.kchodorow.diem.editor;
+package com.kchodorow.diem.project;
 
 /**
  * Generate a random article of clothing.

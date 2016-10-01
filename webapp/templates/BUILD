@@ -55,7 +55,7 @@ java_library(
 java_library(
     name = "user",
     srcs = [":UserSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem/user:__pkg__"],
+    visibility = ["//src/main/java/com/kchodorow/diem/account:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = [":main"] + DEPS,
 )

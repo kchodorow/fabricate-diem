@@ -25,6 +25,7 @@ closure_js_library(
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js/tools:drag-piece",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 
