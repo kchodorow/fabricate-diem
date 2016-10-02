@@ -1,16 +1,11 @@
 package com.kchodorow.diem;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.template.soy.SoyFileSet;
-import com.google.template.soy.SoyModule;
-import com.google.template.soy.data.SoyMapData;
-import com.google.template.soy.tofu.SoyTofu;
+import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.google.common.collect.ImmutableList;
 import com.kchodorow.diem.account.Account;
 import com.kchodorow.diem.account.AccountStorage;
 import com.kchodorow.diem.template.DataBuilder;
 
-import java.io.File;
 import java.io.IOException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,33 +14,26 @@ import javax.servlet.http.HttpServletResponse;
 public class UserServlet extends HttpServlet {
     private static final int USERNAME_IDX = 6;
 
-    private final SoyTofu.Renderer renderer;
+    private final DataBuilder dataBuilder;
 
     public UserServlet() {
         super();
-        Injector injector = Guice.createInjector(new SoyModule());
-        SoyFileSet.Builder sfsBuilder = injector.getInstance(SoyFileSet.Builder.class);
-        SoyFileSet sfs = sfsBuilder
-                .add(new File("templates/user.soy"))
-                .add(new File("templates/main.soy"))
-                .build();
-
-        SoyTofu tofu = sfs.compileToTofu();
-        this.renderer = tofu.newRenderer("diem.account.main");
+        this.dataBuilder = new DataBuilder(
+                "diem.user.main", ImmutableList.of("templates/user.soy", "templates/main.soy"));
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException {
-        SoyMapData data = new DataBuilder().setUri(request.getRequestURI()).build();
         String username = getUsername(request.getRequestURI());
         Account userInfo = AccountStorage.getByUsername(username);
         if (userInfo != null) {
-            data.put("username", userInfo.getUsername());
+            dataBuilder.put("username", userInfo.getUsername());
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
-        renderer.setData(data);
-        response.setContentType("text/html");
-        response.getWriter().write(renderer.render());
+        dataBuilder.build(request, response);
     }
 
     private String getUsername(String requestURI) {

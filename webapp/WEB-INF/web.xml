@@ -16,10 +16,6 @@
   <filter>
     <filter-name>UrlRewriteFilter</filter-name>
     <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-    <init-param>
-      <param-name>logLevel</param-name>
-      <param-value>DEBUG</param-value>
-    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>UrlRewriteFilter</filter-name>
@@ -28,37 +24,45 @@
   </filter-mapping>
 
   <servlet>
-    <servlet-name>index</servlet-name>
+    <servlet-name>Index</servlet-name>
     <servlet-class>com.kchodorow.diem.MainServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>editor</servlet-name>
+    <servlet-name>Editor</servlet-name>
     <servlet-class>com.kchodorow.diem.editor.EditorServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>user</servlet-name>
+    <servlet-name>User</servlet-name>
     <servlet-class>com.kchodorow.diem.UserServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>newproj</servlet-name>
+    <servlet-name>SetUsername</servlet-name>
+    <servlet-class>com.kchodorow.diem.account.SetUsernameServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>NewProject</servlet-name>
     <servlet-class>com.kchodorow.diem.project.NewProjectServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>index</servlet-name>
+    <servlet-name>Index</servlet-name>
     <url-pattern>/index</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>editor</servlet-name>
+    <servlet-name>Editor</servlet-name>
     <url-pattern>/project/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>user</servlet-name>
+    <servlet-name>User</servlet-name>
     <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>newproj</servlet-name>
-    <url-pattern>/new</url-pattern>
+    <servlet-name>SetUsername</servlet-name>
+    <url-pattern>/+/set-username</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>NewProject</servlet-name>
+    <url-pattern>/+/new</url-pattern>
   </servlet-mapping>
 
 </web-app>

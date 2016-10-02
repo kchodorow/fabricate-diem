@@ -39,7 +39,7 @@ DEPS = [
 java_library(
     name = "main",
     srcs = [":MainSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem:__pkg__"],
+    visibility = ["//src/main/java/com/kchodorow/diem/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = DEPS,
 )
@@ -47,7 +47,7 @@ java_library(
 java_library(
     name = "editor",
     srcs = [":EditorSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem/editor:__pkg__"],
+    visibility = ["//src/main/java/com/kchodorow/diem/editor/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = [":main"] + DEPS,
 )
@@ -55,7 +55,7 @@ java_library(
 java_library(
     name = "user",
     srcs = [":UserSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem/account:__pkg__"],
+    visibility = ["//src/main/java/com/kchodorow/diem/account/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = [":main"] + DEPS,
 )

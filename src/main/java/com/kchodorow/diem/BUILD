@@ -8,11 +8,7 @@ java_library(
     deps = [
         "//src/main/java/com/kchodorow/diem/account",
         "//src/main/java/com/kchodorow/diem/template",
-        "//webapp/templates:main",
-        "@com_google_appengine_java//:user",
         "@guava//jar",
-        "@guice//jar",
         "@javax_servlet_api//jar",
-        "@soy//jar",
     ],
 )

@@ -33,7 +33,7 @@ public class Account {
         this.email = email;
     }
 
-    public static Account createWithId(String userId) {
+    static Account createWithId(String userId) {
         Account account = new Account();
         account.id = userId;
         return account;
@@ -41,6 +41,10 @@ public class Account {
 
     public String getUsername() {
         return username;
+    }
+
+    void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

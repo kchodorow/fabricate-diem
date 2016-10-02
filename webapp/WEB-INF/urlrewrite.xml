@@ -6,6 +6,11 @@ PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN" "http://www.tuckey.org/res/dtds/u
 <urlrewrite>
   <rule stopProcessing="true">
     <from>^/new$</from>
+    <to>/new</to>
+  </rule>
+  <rule stopProcessing="true">
+    <from>^/set-username$</from>
+    <to>/set-username</to>
   </rule>
 
   <rule>
