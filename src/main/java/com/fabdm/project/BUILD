@@ -10,7 +10,7 @@ java_library(
         "@guava//jar",
     ],
     visibility = [
-        "//src/main/java/com/kchodorow/diem:__subpackages__"
+        "//src/main/java/com/fabdm:__subpackages__"
     ],
 )
 
@@ -19,7 +19,7 @@ java_library(
     srcs = ["NewProjectServlet.java"],
     deps = [
         ":project",
-        "//src/main/java/com/kchodorow/diem/account",        
+        "//src/main/java/com/fabdm/account",        
         "@com_google_appengine_java//:user",
         "@com_google_objectify//jar",
         "@guava//jar",

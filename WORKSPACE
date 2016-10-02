@@ -1,4 +1,4 @@
-workspace(name = "com_kchodorow_diem")
+workspace(name = "com_fabdm")
 
 local_repository(
     name = "io_bazel_rules_appengine",

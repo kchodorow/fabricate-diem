@@ -1,4 +1,4 @@
-package com.kchodorow.diem.project;
+package com.fabdm.project;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;

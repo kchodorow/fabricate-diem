@@ -1,4 +1,4 @@
-package com.kchodorow.diem.project;
+package com.fabdm.project;
 
 /**
  * Generate a random article of clothing.

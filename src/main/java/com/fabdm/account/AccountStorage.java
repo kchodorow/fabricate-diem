@@ -1,4 +1,4 @@
-package com.kchodorow.diem.account;
+package com.fabdm.account;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 

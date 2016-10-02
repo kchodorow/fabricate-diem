@@ -17,7 +17,7 @@ closure_java_template_library(
         "main.soy",
         "user.soy",
     ],
-    java_package = "com.kchodorow.diem.editor",
+    java_package = "com.fabdm.editor",
 )
 
 RUNTIME_DEPS = [
@@ -39,7 +39,7 @@ DEPS = [
 java_library(
     name = "main",
     srcs = [":MainSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem/template:__pkg__"],
+    visibility = ["//src/main/java/com/fabdm/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = DEPS,
 )
@@ -47,7 +47,7 @@ java_library(
 java_library(
     name = "editor",
     srcs = [":EditorSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem/editor/template:__pkg__"],
+    visibility = ["//src/main/java/com/fabdm/editor/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = [":main"] + DEPS,
 )
@@ -55,7 +55,7 @@ java_library(
 java_library(
     name = "user",
     srcs = [":UserSoyInfo.java"],
-    visibility = ["//src/main/java/com/kchodorow/diem/account/template:__pkg__"],
+    visibility = ["//src/main/java/com/fabdm/account/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = [":main"] + DEPS,
 )

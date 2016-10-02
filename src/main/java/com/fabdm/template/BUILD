@@ -2,7 +2,7 @@ java_library(
     name = "template",
     srcs = glob(["*.java"]),
     deps = [
-        "//src/main/java/com/kchodorow/diem/account",
+        "//src/main/java/com/fabdm/account",
         "//webapp/templates:main",
         "@com_google_appengine_java//:user",
         "@guava//jar",
@@ -10,5 +10,5 @@ java_library(
         "@javax_servlet_api//jar",
         "@soy//jar",
     ],
-    visibility = ["//src/main/java/com/kchodorow/diem:__subpackages__"],
+    visibility = ["//src/main/java/com/fabdm:__subpackages__"],
 )

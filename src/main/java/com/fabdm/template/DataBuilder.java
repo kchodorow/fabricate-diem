@@ -1,4 +1,4 @@
-package com.kchodorow.diem.template;
+package com.fabdm.template;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -12,8 +12,8 @@ import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.SoyModule;
 import com.google.template.soy.data.SoyMapData;
 import com.google.template.soy.tofu.SoyTofu;
-import com.kchodorow.diem.account.Account;
-import com.kchodorow.diem.account.AccountStorage;
+import com.fabdm.account.Account;
+import com.fabdm.account.AccountStorage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

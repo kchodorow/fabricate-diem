@@ -25,23 +25,23 @@
 
   <servlet>
     <servlet-name>Index</servlet-name>
-    <servlet-class>com.kchodorow.diem.MainServlet</servlet-class>
+    <servlet-class>com.fabdm.MainServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>Editor</servlet-name>
-    <servlet-class>com.kchodorow.diem.editor.EditorServlet</servlet-class>
+    <servlet-class>com.fabdm.editor.EditorServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>User</servlet-name>
-    <servlet-class>com.kchodorow.diem.UserServlet</servlet-class>
+    <servlet-class>com.fabdm.UserServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>SetUsername</servlet-name>
-    <servlet-class>com.kchodorow.diem.account.SetUsernameServlet</servlet-class>
+    <servlet-class>com.fabdm.account.SetUsernameServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>NewProject</servlet-name>
-    <servlet-class>com.kchodorow.diem.project.NewProjectServlet</servlet-class>
+    <servlet-class>com.fabdm.project.NewProjectServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>

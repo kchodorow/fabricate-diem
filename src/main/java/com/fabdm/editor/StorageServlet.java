@@ -1,9 +1,9 @@
-package com.kchodorow.diem.editor;
+package com.fabdm.editor;
 
+import com.fabdm.account.Account;
+import com.fabdm.project.Project;
 import com.google.common.base.Preconditions;
-import com.kchodorow.diem.project.Project;
-import com.kchodorow.diem.account.Account;
-import com.kchodorow.diem.account.AccountStorage;
+import com.fabdm.account.AccountStorage;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

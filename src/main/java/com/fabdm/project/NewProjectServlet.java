@@ -1,4 +1,4 @@
-package com.kchodorow.diem.project;
+package com.fabdm.project;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -7,8 +7,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.base.Preconditions;
 import com.googlecode.objectify.ObjectifyService;
-import com.kchodorow.diem.account.Account;
-import com.kchodorow.diem.account.AccountStorage;
+import com.fabdm.account.Account;
+import com.fabdm.account.AccountStorage;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

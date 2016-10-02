@@ -5,14 +5,14 @@ java_library(
         "AccountStorage.java",
     ],
     deps = [
-        "//src/main/java/com/kchodorow/diem/project",
+        "//src/main/java/com/fabdm/project",
         "@com_google_appengine_java//:user",
         "@com_google_objectify//jar",
         "@guava//jar",
         "@jsr305//jar",
         "@soy//jar",
     ],
-    visibility = ["//src/main/java/com/kchodorow/diem:__subpackages__"],
+    visibility = ["//src/main/java/com/fabdm:__subpackages__"],
 )
 
 java_library(
@@ -20,7 +20,7 @@ java_library(
     srcs = ["SetUsernameServlet.java"],
     deps = [
         ":account",
-        "//src/main/java/com/kchodorow/diem/template",
+        "//src/main/java/com/fabdm/template",
         "@com_google_appengine_java//:user", 
         "@com_google_objectify//jar", 
         "@guava//jar",

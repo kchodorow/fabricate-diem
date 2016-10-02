@@ -1,7 +1,7 @@
-package com.kchodorow.diem;
+package com.fabdm.editor;
 
+import com.fabdm.template.DataBuilder;
 import com.google.common.collect.ImmutableList;
-import com.kchodorow.diem.template.DataBuilder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,16 +9,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Display the index.
+ * Renders the HTML template for editing patterns.
  */
-public class MainServlet extends HttpServlet{
+public class EditorServlet extends HttpServlet {
 
     private final DataBuilder builder;
 
-    public MainServlet() {
+    public EditorServlet() {
         super();
         this.builder = new DataBuilder(
-                "diem.main", ImmutableList.of("templates/main.soy"));
+                "diem.editor.editor",
+                ImmutableList.of("templates/editor.soy", "templates/main.soy"));
     }
 
     @Override

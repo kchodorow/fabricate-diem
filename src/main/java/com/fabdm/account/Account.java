@@ -1,11 +1,11 @@
-package com.kchodorow.diem.account;
+package com.fabdm.account;
 
+import com.fabdm.project.Project;
 import com.google.appengine.repackaged.com.google.api.client.util.Maps;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
-import com.kchodorow.diem.project.Project;
 import com.sun.istack.internal.Nullable;
 
 import java.util.Map;

@@ -1,10 +1,9 @@
-package com.kchodorow.diem;
+package com.fabdm;
 
-import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.fabdm.template.DataBuilder;
 import com.google.common.collect.ImmutableList;
-import com.kchodorow.diem.account.Account;
-import com.kchodorow.diem.account.AccountStorage;
-import com.kchodorow.diem.template.DataBuilder;
+import com.fabdm.account.Account;
+import com.fabdm.account.AccountStorage;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServlet;

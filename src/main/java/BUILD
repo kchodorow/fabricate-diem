@@ -3,10 +3,10 @@ java_binary(
     main_class = "does.not.exist",
     visibility = ["//:__pkg__"],
     runtime_deps = [
-        "//src/main/java/com/kchodorow/diem",
-        "//src/main/java/com/kchodorow/diem/account:servlet",
-        "//src/main/java/com/kchodorow/diem/editor",
-        "//src/main/java/com/kchodorow/diem/project:servlet",
+        "//src/main/java/com/fabdm",
+        "//src/main/java/com/fabdm/account:servlet",
+        "//src/main/java/com/fabdm/editor",
+        "//src/main/java/com/fabdm/project:servlet",
         "@org_tuckey_urlrewritefilter//jar",
     ],
 )

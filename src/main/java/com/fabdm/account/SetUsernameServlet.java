@@ -1,5 +1,6 @@
-package com.kchodorow.diem.account;
+package com.fabdm.account;
 
+import com.fabdm.template.DataBuilder;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -7,7 +8,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
-import com.kchodorow.diem.template.DataBuilder;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServlet;
