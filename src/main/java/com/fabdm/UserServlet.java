@@ -36,6 +36,7 @@ public class UserServlet extends HttpServlet {
             errorBuilder.build(request, response);
             return;
         }
+        dataBuilder.put("projects", userInfo.getProjectNames());
         dataBuilder.put("username", userInfo.getUsername());
         dataBuilder.build(request, response);
     }

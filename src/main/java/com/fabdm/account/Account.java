@@ -3,6 +3,7 @@ package com.fabdm.account;
 import com.fabdm.project.Project;
 import com.google.appengine.repackaged.com.google.api.client.util.Maps;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -10,6 +11,7 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.sun.istack.internal.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +28,7 @@ public class Account {
 
     // TODO: project visibility.
     Map<String, Ref<Project>> projects = Maps.newHashMap();
+    private Object projectNames;
 
     public Account() {
     }
@@ -62,6 +65,10 @@ public class Account {
     @Nullable
     public Project getProject(String projectName) {
         return projects.containsKey(projectName) ? projects.get(projectName).get() : null;
+    }
+
+    public List<String> getProjectNames() {
+        return ImmutableList.copyOf(projects.keySet());
     }
 
     // TODO: add saved patterns.

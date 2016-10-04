@@ -2,10 +2,22 @@
 
 /**
  * @param username
+ * @param projects
  */
 {template .main}
     {call diem.header data="all" /}
     User: {$username}
+
+    <h4>Projects</h4>
+    <ul>
+    {foreach $project in $projects}
+    <li>
+      <a href="{$project}">{$project}</a>
+    </li>
+    {ifempty}
+      No projects, yet!
+    {/foreach}
+    </ul>
     {call diem.footer data="all" /}
 {/template}
 
