@@ -6,7 +6,6 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.base.Preconditions;
-import com.googlecode.objectify.ObjectifyService;
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 
@@ -19,9 +18,6 @@ import java.io.IOException;
  * Creates a new project.
  */
 public class NewProjectServlet extends HttpServlet {
-    static {
-        ObjectifyService.register(Project.class);
-    }
 
     // TODO: add forking.
     @Override
@@ -40,7 +36,6 @@ public class NewProjectServlet extends HttpServlet {
         // TODO: dedup project name.
 
         ofy().save().entity(project).now();
-        System.out.println("account id is now: " + project);
         account.addProject(project);
         ofy().save().entity(account).now();
         response.sendRedirect("/" + account.getUsername() + "/" + project.getUri());

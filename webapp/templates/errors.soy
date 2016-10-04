@@ -1,4 +1,4 @@
-{namespace diem}
+{namespace diem.errors}
 
 /**
  * @param username
@@ -9,8 +9,11 @@
     {call diem.footer data="all" /}
 {/template}
 
-{template .not_found}
+/**
+ * @param project
+ */
+{template .project_not_found}
     {call diem.header data="all" /}
-    Page not found.
+    Project {$project} not found.
     {call diem.footer data="all" /}
 {/template}

@@ -4,21 +4,21 @@
 PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN" "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
 
 <urlrewrite>
-  <rule stopProcessing="true">
+  <rule>
     <from>^/new$</from>
-    <to>/new</to>
+    <to>/+/new</to>
   </rule>
-  <rule stopProcessing="true">
+  <rule>
     <from>^/set-username$</from>
-    <to>/set-username</to>
+    <to>/+/set-username</to>
   </rule>
-  <rule stopProcessing="true">
+  <rule>
     <from>^/index$</from>
-    <to>/index</to>
+    <to>/+/index</to>
   </rule>
 
   <rule>
-    <from>^/(\w+)/(\w+)$</from>
+    <from>^/(\w+)/([-A-Za-z_0-9]+)$</from>
     <to>/project/$1/$2</to>
   </rule>
 
@@ -29,6 +29,6 @@ PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN" "http://www.tuckey.org/res/dtds/u
 
   <rule>
     <from>^/$</from>
-    <to>/index</to>
+    <to>/+/index</to>
   </rule>
 </urlrewrite>

@@ -3,7 +3,7 @@ package com.fabdm.project;
 /**
  * Generate a random article of clothing.
  */
-public class RandomName {
+class RandomName {
     private static final String[] ARTICLES = {
             "blouse",
             "bodice",
@@ -16,6 +16,7 @@ public class RandomName {
             "dress",
             "jacket",
             "kilt",
+            "mantle",
             "negligee",
             "overalls",
             "pajamas",
@@ -33,9 +34,12 @@ public class RandomName {
             "bohemian",
             "boho",
             "cargo",
+            "comfy",
+            "delicate",
             "earth mother",
             "elegant",
             "fantasy",
+            "holiday",
             "gothic",
             "hippy",
             "hipster",
@@ -52,18 +56,18 @@ public class RandomName {
     private final String article;
     private final String adjective;
 
-    public RandomName() {
+    RandomName() {
         this.article = ARTICLES[(int) Math.floor(Math.random() * ARTICLES.length)];
         this.adjective = ADJECTIVES[(int) Math.floor(Math.random() * ADJECTIVES.length)];
     }
 
-    public String getDescription() {
+    String getDescription() {
         boolean plural = article.endsWith("s") && ! article.endsWith("ss");
         String aOrAn = "A" + (adjective.matches("^[aeiou].*") && !plural ? "n" : "");
-        return aOrAn + (plural ? " pair of " : "") + adjective + " " + article;
+        return aOrAn + (plural ? " pair of " : " ") + adjective + " " + article;
     }
 
-    public String getUri() {
-        return adjective + "-" + article;
+    String getUri() {
+        return adjective.replaceAll(" ", "-") + "-" + article.replaceAll(" ", "-");
     }
 }

@@ -2,15 +2,15 @@
 <!DOCTYPE web-app PUBLIC "-//Oracle Corporation//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+  <listener>
+    <listener-class>com.fabdm.StartupRegistrar</listener-class>
+  </listener>
+
   <!-- See https://github.com/objectify/objectify/wiki/Setup#enable-objectifyfilter-for-your-requests,
   required to clean up thread-local transaction contexts. -->
   <filter>
     <filter-name>ObjectifyFilter</filter-name>
     <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
-    <init-param>
-      <param-name>logLevel</param-name>
-      <param-value>DEBUG</param-value>
-    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>ObjectifyFilter</filter-name>
@@ -50,7 +50,7 @@
 
   <servlet-mapping>
     <servlet-name>Index</servlet-name>
-    <url-pattern>/index</url-pattern>
+    <url-pattern>/+/index</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Editor</servlet-name>
@@ -62,11 +62,11 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SetUsername</servlet-name>
-    <url-pattern>/set-username</url-pattern>
+    <url-pattern>/+/set-username</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>NewProject</servlet-name>
-    <url-pattern>/new</url-pattern>
+    <url-pattern>/+/new</url-pattern>
   </servlet-mapping>
 
 </web-app>

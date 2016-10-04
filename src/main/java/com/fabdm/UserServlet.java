@@ -21,7 +21,7 @@ public class UserServlet extends HttpServlet {
         this.dataBuilder = new DataBuilder(
                 "diem.user.main", ImmutableList.of("templates/user.soy", "templates/main.soy"));
         this.errorBuilder = new DataBuilder(
-                "diem.user_not_found",
+                "diem.errors.user_not_found",
                 ImmutableList.of("templates/errors.soy", "templates/main.soy"));
     }
 

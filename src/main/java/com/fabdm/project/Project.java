@@ -18,6 +18,7 @@ public class Project {
     }
 
     private Project(String username, String description, String uri) {
+        this.id = null;
         this.username = username;
         this.description = description;
         this.uri = uri;
@@ -28,7 +29,15 @@ public class Project {
         return new Project(username, randomName.getDescription(), randomName.getUri());
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getUri() {
         return uri;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
