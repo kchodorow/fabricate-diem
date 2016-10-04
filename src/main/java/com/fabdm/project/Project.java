@@ -13,6 +13,7 @@ public class Project {
     String username;
     String description;
     String uri;
+    int version;
 
     public Project() {
     }
@@ -22,6 +23,7 @@ public class Project {
         this.username = username;
         this.description = description;
         this.uri = uri;
+        this.version = 0;
     }
 
     static Project createProject(String username) {
@@ -39,5 +41,11 @@ public class Project {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+        // TODO: strip existing version off of URI?
+        this.uri = uri + "-" + version;
     }
 }

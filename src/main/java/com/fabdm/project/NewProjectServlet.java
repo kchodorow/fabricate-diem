@@ -13,11 +13,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Creates a new project.
  */
 public class NewProjectServlet extends HttpServlet {
+
+    private static final Pattern ENDS_WITH_VERSION = Pattern.compile("^\\w+-([0-9])+$");
 
     // TODO: add forking.
     @Override
@@ -32,12 +36,30 @@ public class NewProjectServlet extends HttpServlet {
 
         Account account = AccountStorage.getById(user.getUserId());
         Preconditions.checkNotNull(account);
+
         Project project = Project.createProject(account.getUsername());
-        // TODO: dedup project name.
+        if (account.getProject(project.getUri()) != null) {
+            dedupProject(project, account);
+        }
 
         ofy().save().entity(project).now();
         account.addProject(project);
         ofy().save().entity(account).now();
         response.sendRedirect("/" + account.getUsername() + "/" + project.getUri());
+    }
+
+    private void dedupProject(Project project, Account account) {
+        String projectName = project.getUri();
+
+        while (account.getProject(projectName) != null) {
+            int version = 1;
+            Matcher m = ENDS_WITH_VERSION.matcher(projectName);
+            if (m.matches()) {
+                version = Integer.parseInt(m.group(1));
+                version++;
+            }
+            project.setVersion(version);
+            projectName = project.getUri();
+        }
     }
 }
