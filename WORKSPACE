@@ -41,3 +41,13 @@ maven_jar(
     name = "org_tuckey_urlrewritefilter",
     artifact = "org.tuckey:urlrewritefilter:4.0.3",
 )
+
+# Testing.
+maven_jar(
+    name = "org_junit",
+    artifact = "junit:junit:4.4",
+)
+maven_jar(
+    name = "org_mockito",
+    artifact = "org.mockito:mockito-all:1.9.5",
+)

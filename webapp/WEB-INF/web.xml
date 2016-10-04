@@ -7,6 +7,10 @@
   <filter>
     <filter-name>ObjectifyFilter</filter-name>
     <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+    <init-param>
+      <param-name>logLevel</param-name>
+      <param-value>DEBUG</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>ObjectifyFilter</filter-name>
@@ -58,11 +62,11 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SetUsername</servlet-name>
-    <url-pattern>/+/set-username</url-pattern>
+    <url-pattern>/set-username</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>NewProject</servlet-name>
-    <url-pattern>/+/new</url-pattern>
+    <url-pattern>/new</url-pattern>
   </servlet-mapping>
 
 </web-app>

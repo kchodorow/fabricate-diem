@@ -14,11 +14,15 @@ public class UserServlet extends HttpServlet {
     private static final int USERNAME_IDX = 6;
 
     private final DataBuilder dataBuilder;
+    private final DataBuilder errorBuilder;
 
     public UserServlet() {
         super();
         this.dataBuilder = new DataBuilder(
                 "diem.user.main", ImmutableList.of("templates/user.soy", "templates/main.soy"));
+        this.errorBuilder = new DataBuilder(
+                "diem.user_not_found",
+                ImmutableList.of("templates/errors.soy", "templates/main.soy"));
     }
 
     @Override
@@ -26,12 +30,13 @@ public class UserServlet extends HttpServlet {
         throws IOException {
         String username = getUsername(request.getRequestURI());
         Account userInfo = AccountStorage.getByUsername(username);
-        if (userInfo != null) {
-            dataBuilder.put("username", userInfo.getUsername());
-        } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        if (userInfo == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            errorBuilder.put("username", username);
+            errorBuilder.build(request, response);
             return;
         }
+        dataBuilder.put("username", userInfo.getUsername());
         dataBuilder.build(request, response);
     }
 

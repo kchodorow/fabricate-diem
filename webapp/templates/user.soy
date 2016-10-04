@@ -15,7 +15,7 @@
  */
 {template .setusername}
     {call diem.header data="all" /}
-    {if $error != null}
+    {if $error != ''}
     <div id="error-msg">
       {if $error == 'taken'}
         Username is already taken.
@@ -30,6 +30,9 @@
       <div id='username' class="form-group">
         <h4>Set your username:</h4>
         <p><input type="text" name="username" class="username" placeholder="Username" pattern="[A-Za-z_0-9]{lb}3,12{rb}"></p>
+        <span id="helpBlock" class="help-block">
+          Usernames must be 3-12 characters long and can contain letters, numbers, and underscores.
+        </span>
       </div>
       <input type="hidden" name="redirect" value="{$uri}"/>
       <input type="submit"/>

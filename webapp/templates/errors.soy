@@ -1,0 +1,16 @@
+{namespace diem}
+
+/**
+ * @param username
+ */
+{template .user_not_found}
+    {call diem.header data="all" /}
+    No such user found: {$username}
+    {call diem.footer data="all" /}
+{/template}
+
+{template .not_found}
+    {call diem.header data="all" /}
+    Page not found.
+    {call diem.footer data="all" /}
+{/template}

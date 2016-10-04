@@ -12,6 +12,10 @@ PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN" "http://www.tuckey.org/res/dtds/u
     <from>^/set-username$</from>
     <to>/set-username</to>
   </rule>
+  <rule stopProcessing="true">
+    <from>^/index$</from>
+    <to>/index</to>
+  </rule>
 
   <rule>
     <from>^/(\w+)/(\w+)$</from>

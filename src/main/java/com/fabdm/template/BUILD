@@ -3,7 +3,7 @@ java_library(
     srcs = glob(["*.java"]),
     deps = [
         "//src/main/java/com/fabdm/account",
-        "//webapp/templates:main",
+        "//webapp/templates:java-template",
         "@com_google_appengine_java//:user",
         "@guava//jar",
         "@guice//jar",

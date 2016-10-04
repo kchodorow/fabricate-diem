@@ -101,7 +101,6 @@ public class SetUsernameServlet extends HttpServlet {
         if (uri.startsWith("/set-username")) {
             uri = "/";
         }
-        System.out.println("In post! " + uri);
         response.sendRedirect(uri);
     }
 

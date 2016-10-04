@@ -1,22 +1,21 @@
+SOY_FILES = [
+    "editor.soy",
+    "errors.soy",
+    "main.soy",
+    "user.soy",
+]
+
 filegroup(
     name = "templates",
-    srcs = [
-        "editor.soy",
-        "main.soy",
-        "user.soy",
-    ],
+    srcs = SOY_FILES,
     visibility = ["//webapp:__pkg__"],
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_java_template_library")
 
 closure_java_template_library(
-    name = "editor-template",
-    srcs = [
-        "editor.soy",
-        "main.soy",
-        "user.soy",
-    ],
+    name = "soy-template",
+    srcs = SOY_FILES,
     java_package = "com.fabdm.editor",
 )
 
@@ -37,25 +36,15 @@ DEPS = [
 ]
 
 java_library(
-    name = "main",
-    srcs = [":MainSoyInfo.java"],
+    name = "java-template",
+    srcs = [
+        ":EditorSoyInfo.java",
+        ":ErrorsSoyInfo.java",
+        ":MainSoyInfo.java",
+        ":UserSoyInfo.java",
+    ],
     visibility = ["//src/main/java/com/fabdm/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = DEPS,
 )
 
-java_library(
-    name = "editor",
-    srcs = [":EditorSoyInfo.java"],
-    visibility = ["//src/main/java/com/fabdm/editor/template:__pkg__"],
-    runtime_deps = RUNTIME_DEPS,
-    deps = [":main"] + DEPS,
-)
-
-java_library(
-    name = "user",
-    srcs = [":UserSoyInfo.java"],
-    visibility = ["//src/main/java/com/fabdm/account/template:__pkg__"],
-    runtime_deps = RUNTIME_DEPS,
-    deps = [":main"] + DEPS,
-)
