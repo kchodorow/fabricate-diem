@@ -5,8 +5,8 @@ import com.fabdm.account.AccountStorage;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
 import com.google.appengine.repackaged.com.google.common.base.Preconditions;
+import com.google.appengine.repackaged.com.google.gson.Gson;
 import com.google.common.collect.ImmutableList;
-import com.googlecode.objectify.ObjectifyService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +36,31 @@ public class EditorServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        Project project = getProject(request, response);
+        builder.put("description", project.getDescription());
+        builder.build(request, response);
+    }
+
+    class Vector2 {
+        int x;
+        int y;
+    }
+
+    static class Action {
+        Vector2[] anchors;
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        //Project project = getProject(request, response);
+        String data = request.getParameter("data");
+        Action workboard = new Gson().fromJson(data, Action.class);
+        System.out.println(workboard);
+    }
+
+    private Project getProject(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         // URI: /project/foo/bar
         String parts[] = request.getRequestURI().split("/");
         Preconditions.checkState(parts.length >= 4);
@@ -45,16 +70,14 @@ public class EditorServlet extends HttpServlet {
         if (account == null) {
             errorBuilder.put("project", projectName);
             errorBuilder.build(request, response);
-            return;
+            return null;
         }
         Project project = account.getProject(projectName);
         if (project == null) {
             errorBuilder.put("project", projectName);
             errorBuilder.build(request, response);
-            return;
+            return null;
         }
-        project = ofy().load().entity(project).now();
-        builder.put("description", project.getDescription());
-        builder.build(request, response);
+        return ofy().load().entity(project).now();
     }
 }

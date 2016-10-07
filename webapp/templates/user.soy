@@ -12,7 +12,7 @@
     <ul>
     {foreach $project in $projects}
     <li>
-      <a href="{$project}">{$project}</a>
+      <a href="{$username}/{$project}">{$project}</a>
     </li>
     {ifempty}
       No projects, yet!

@@ -29,6 +29,7 @@ diem.cloth.Workboard = function(w, h) {
   // The piece currently being dragged.
   this.currentPiece_ = null;
   this.initMeshes_();
+  this.send();
 };
 
 goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
@@ -126,9 +127,9 @@ diem.cloth.Workboard.prototype.send = function() {
   var anchors = [];
   for (var i = 0; i < this.anchors_.length; ++i) {
     var anchor = this.anchors_[i];
-    anchors.push(anchor.getObject().getPosition());
+    anchors.push(anchor.getObject().position);
   }
-  var data = goog.Uri.QueryData.createFromMap(
-    new goog.structs.Map({anchors: anchors}));
-  request.send('/store', 'POST', data.toString());
+  var data = {anchors : anchors};
+  request.send(
+    window.location.pathname, 'POST', "data=" + JSON.stringify(data));
 };
