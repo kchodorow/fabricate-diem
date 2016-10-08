@@ -63,9 +63,10 @@ diem.EventHandler.prototype.setupDraggable_ = function() {
  * @private
  */
 diem.EventHandler.prototype.getRaycasterCoordinates_ = function(x, y) {
-  return {
-    x: ((x - this.offsetLeft_) / diem.Globals.WIDTH) * 2 - 1,
-    y: -((y - this.offsetTop_) / diem.Globals.HEIGHT) * 2 + 1};
+  return new THREE.Vector3(
+    ((x - this.offsetLeft_) / diem.Globals.WIDTH) * 2 - 1,
+    -((y - this.offsetTop_) / diem.Globals.HEIGHT) * 2 + 1,
+    0.5);
 };
 
 /**
@@ -75,11 +76,7 @@ diem.EventHandler.prototype.getRaycasterCoordinates_ = function(x, y) {
  * @private
  */
 diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
-  var vector = new THREE.Vector3();
-  vector.set(
-    ((x - this.offsetLeft_) / diem.Globals.WIDTH) * 2 - 1,
-    -((y - this.offsetTop_) / diem.Globals.HEIGHT) * 2 + 1,
-    0.5);
+  var vector = this.getRaycasterCoordinates_(x, y);
   vector.unproject(this.camera_);
   var dir = vector.sub(this.camera_.position).normalize();
   var distance = -this.camera_.position.z / dir.z;
