@@ -6,7 +6,10 @@ load(
 
 closure_js_library(
     name = "events",
-    srcs = ["events.js"],
+    srcs = [
+        "event_builder.js",
+        "events.js",
+    ],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = ["@io_bazel_rules_closure//closure/library"],
 )

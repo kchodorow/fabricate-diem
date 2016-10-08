@@ -37,26 +37,23 @@ public class EditorServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         Project project = getProject(request, response);
+        if (project == null) {
+            return;
+        }
         builder.put("description", project.getDescription());
         builder.build(request, response);
-    }
-
-    class Vector2 {
-        int x;
-        int y;
-    }
-
-    static class Action {
-        Vector2[] anchors;
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        //Project project = getProject(request, response);
+        Project project = getProject(request, response);
+        if (project == null) {
+            return;
+        }
         String data = request.getParameter("data");
-        Action workboard = new Gson().fromJson(data, Action.class);
-        System.out.println(workboard);
+        Project.Action action = new Gson().fromJson(data, Project.Action.class);
+        project.setAction(action);
     }
 
     private Project getProject(HttpServletRequest request, HttpServletResponse response)

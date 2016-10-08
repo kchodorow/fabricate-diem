@@ -12,18 +12,31 @@ diem.events.Intersectable = function(toolId, action, mesh) {
   this.meshWrapper_ = mesh;
 };
 
+/**
+ * @returns {string} the name of this tool (e.g., 'RM_ANCHOR_PT').
+ */
 diem.events.Intersectable.prototype.getToolId = function() {
   return this.toolId_;
 };
 
+/**
+ * @returns {string} the action id that this mesh should "intersect" (e.g.,
+ * 'CLICKABLE').
+ */
 diem.events.Intersectable.prototype.getAction = function() {
   return this.action_;
 };
 
+/**
+ * @returns {diem.MeshWrapper}
+ */
 diem.events.Intersectable.prototype.getMeshWrapper = function() {
   return this.meshWrapper_;
 };
 
+/**
+ * @returns {diem.events.Intersectable.Builder}
+ */
 diem.events.Intersectable.builder = function() {
   return new diem.events.Intersectable.Builder();
 };

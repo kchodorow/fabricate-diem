@@ -2,6 +2,7 @@
 goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
+goog.require('diem.storage.Pattern');
 goog.require('diem.tools.ToolManager');
 
 goog.require('goog.events');
@@ -21,6 +22,10 @@ diem.EventHandler = function(camera, toolManager) {
 
   this.setupOnClick_();
   this.setupDraggable_();
+  this.storage_ = new diem.storage.Pattern();
+  var box = document.getElementById('model-box');
+  this.offsetLeft_ = box.offsetLeft;
+  this.offsetTop_ = box.offsetTop;
 };
 
 /**
@@ -57,10 +62,10 @@ diem.EventHandler.prototype.setupDraggable_ = function() {
  * @returns {Object} a struct with x & y fields
  * @private
  */
-diem.EventHandler.getRaycasterCoordinates_ = function(x, y) {
+diem.EventHandler.prototype.getRaycasterCoordinates_ = function(x, y) {
   return {
-    x: (x / diem.Globals.WIDTH) * 2 - 1,
-    y: -(y / diem.Globals.HEIGHT) * 2 + 1};
+    x: ((x - this.offsetLeft_) / diem.Globals.WIDTH) * 2 - 1,
+    y: -((y - this.offsetTop_) / diem.Globals.HEIGHT) * 2 + 1};
 };
 
 /**
@@ -71,7 +76,10 @@ diem.EventHandler.getRaycasterCoordinates_ = function(x, y) {
  */
 diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   var vector = new THREE.Vector3();
-  vector.set((x / diem.Globals.WIDTH) * 2 - 1, -(y / diem.Globals.HEIGHT) * 2 + 1, 0.5);
+  vector.set(
+    ((x - this.offsetLeft_) / diem.Globals.WIDTH) * 2 - 1,
+    -((y - this.offsetTop_) / diem.Globals.HEIGHT) * 2 + 1,
+    0.5);
   vector.unproject(this.camera_);
   var dir = vector.sub(this.camera_.position).normalize();
   var distance = -this.camera_.position.z / dir.z;
@@ -89,7 +97,7 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
 diem.EventHandler.prototype.getIntersections_ = function(x, y, intersectables) {
   this.updateMouseCoordinates_(x, y);
   this.raycaster_.setFromCamera(
-    diem.EventHandler.getRaycasterCoordinates_(x, y), this.camera_);
+    this.getRaycasterCoordinates_(x, y), this.camera_);
   return this.raycaster_.intersectObjects(intersectables);
 };
 
@@ -130,7 +138,8 @@ diem.EventHandler.prototype.dragAction = function() {
  */
 diem.EventHandler.prototype.dragEnd = function() {
   if (this.clicked_ != null && this.clicked_.onDragEnd) {
-    this.clicked_.onDragEnd();
+    var event = this.clicked_.onDragEnd();
+    this.storage_.send(event);
   }
   this.clicked_ = null;
 };

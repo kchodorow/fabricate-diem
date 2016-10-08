@@ -97,6 +97,7 @@ closure_js_library(
     deps = [
         ":globals",
         "//webapp/static/js/events",
+        "//webapp/static/js/storage",
         "//webapp/static/js/tools:tool-manager",
         "@io_bazel_rules_closure//closure/library",
     ],

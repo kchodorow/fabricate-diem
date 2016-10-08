@@ -14,6 +14,22 @@ public class Project {
     String description;
     String uri;
     int version;
+    Action action;
+
+    static class Vector2 {
+        int x;
+        int y;
+    }
+
+    static class Anchor {
+        Vector2 anchor;
+        Vector2 cwcp;
+        Vector2 ccwcp;
+    }
+
+    public static class Action {
+        Anchor[] anchors;
+    }
 
     public Project() {
     }
@@ -43,9 +59,13 @@ public class Project {
         return description;
     }
 
-    public void setVersion(int version) {
+    void setVersion(int version) {
         this.version = version;
         // TODO: strip existing version off of URI?
         this.uri = uri + "-" + version;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
     }
 }

@@ -7,6 +7,7 @@ goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
+goog.require('diem.events.EventBuilder');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.RemoveAnchorPoint');
 
@@ -27,6 +28,7 @@ diem.cloth.Anchor = function(corner) {
   var material = new THREE.MeshBasicMaterial({color : color});
   this.mesh_ = new THREE.Mesh(geometry, material);
   this.mesh_.position.copy(corner);
+  this.mesh_.name = 'anchor' + diem.cloth.Anchor.INDEX++;
 
   this.cwCp_ = new diem.cloth.ControlPoint(this.mesh_);
   this.ccwCp_ = new diem.cloth.ControlPoint(this.mesh_);
@@ -35,6 +37,7 @@ diem.cloth.Anchor = function(corner) {
 goog.inherits(diem.cloth.Anchor, diem.MeshWrapper);
 
 diem.cloth.Anchor.ANCHOR_SIZE = .30;
+diem.cloth.Anchor.INDEX = 0;
 
 /**
  * @override
@@ -164,11 +167,24 @@ diem.cloth.Anchor.prototype.onDrag = function() {
 
 /**
  * Resets the control points' drag behavior, depending on the drag result.
+ * @returns {diem.events.Event}
  */
 diem.cloth.Anchor.prototype.onDragEnd = function() {
   var freeCps = !this.controlPointsAtOrigin_();
   this.cwCp_.setIndependentlyDraggable(freeCps);
   this.ccwCp_.setIndependentlyDraggable(freeCps);
+  var event = new diem.events.EventBuilder();
+  if (freeCps) {
+    event.addEvent(this.cwCp_.onDragEnd());
+    event.addEvent(this.ccwCp_.onDragEnd());
+  } else {
+    event.addAction({
+      type: diem.events.MOVE_ANCHOR,
+      id: this.getObject().geometry.id,
+      moveTo: this.getObject().position
+    });
+  }
+  return event.build();
 };
 
 /**

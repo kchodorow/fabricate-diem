@@ -28,7 +28,6 @@ public class Account {
 
     // TODO: project visibility.
     Map<String, Ref<Project>> projects = Maps.newHashMap();
-    private Object projectNames;
 
     public Account() {
     }
