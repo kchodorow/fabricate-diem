@@ -50,13 +50,29 @@ diem.SceneContainer = function() {
     this.scene,
     goog.bind(this.toolManager_.handleIntersectables, this.toolManager_));
   this.toolManager_.registerTool(
-    new diem.tools.PersonTool(person, goog.events.KeyCodes.LEFT));
+    new diem.tools.PersonTool(person, [goog.events.KeyCodes.LEFT]));
   this.toolManager_.registerTool(
-    new diem.tools.PersonTool(person, goog.events.KeyCodes.RIGHT));
+    new diem.tools.PersonTool(person, [goog.events.KeyCodes.RIGHT]));
   this.toolManager_.registerTool(
-    new diem.tools.PersonTool(person, goog.events.KeyCodes.UP));
+    new diem.tools.PersonTool(person, [goog.events.KeyCodes.UP]));
   this.toolManager_.registerTool(
-    new diem.tools.PersonTool(person, goog.events.KeyCodes.DOWN));
+    new diem.tools.PersonTool(person, [goog.events.KeyCodes.DOWN]));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, [
+      goog.events.KeyCodes.LEFT,
+      goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT]));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, [
+      goog.events.KeyCodes.RIGHT,
+      goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT]));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, [
+      goog.events.KeyCodes.UP,
+      goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT]));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, [
+      goog.events.KeyCodes.DOWN,
+      goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT]));
   this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   diem.storage.Storage.get().request(goog.bind(this.load, this));

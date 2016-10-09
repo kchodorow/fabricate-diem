@@ -5,7 +5,7 @@ goog.require('goog.events.KeyCodes');
 
 /**
  * @param {diem.MeshWrapper} person
- * @param {goog.events.KeyCodes} dir
+ * @param {Array.<goog.events.KeyCodes>} dir
  * @constructor
  * @extends {diem.tools.Tool}
  */
@@ -34,5 +34,5 @@ diem.tools.PersonTool.prototype.onSelect = function() {
  * @override
  */
 diem.tools.PersonTool.prototype.getKeys = function() {
-  return [this.dir_];
+  return this.dir_;
 };
