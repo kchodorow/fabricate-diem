@@ -38,7 +38,6 @@ closure_js_library(
     deps = [
         ":event_handler",
         ":globals",
-        ":pattern",
         ":person",
         ":physics",
         "//webapp/static/js/cloth",

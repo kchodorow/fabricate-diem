@@ -21,7 +21,7 @@ diem.storage.Model.prototype.addPiece = function(piece) {
 diem.storage.Model.prototype.getStorable = function() {
   var storable = {pieces : []};
   for (var i = 0; i < this.pieces_.length; ++i) {
-    storable.pieces.push(this.pieces_[i].getStorable());
+    storable.pieces.push(diem.storage.Piece.getStorable(this.pieces_[i]));
   }
   return JSON.stringify(storable);
 };
@@ -40,44 +40,28 @@ diem.storage.Model.getHash = function(json) {
  * @constructor
  */
 diem.storage.Piece = function() {
-  this.uuid_ = null;
-  this.anchors_ = [];
-  this.edges_ = [];
-};
-
-diem.storage.Piece.prototype.setUuid = function(uuid) {
-  this.uuid_ = uuid;
+  this.uuid = null;
+  this.position = null;
+  this.anchors = [];
+  this.edges = [];
 };
 
 /**
- * @param {diem.cloth.Anchor} anchors
+ * @param {diem.cloth.Workboard} workboard
  */
-diem.storage.Piece.prototype.setAnchors = function(anchors) {
-  this.anchors_ = anchors;
-};
-
-/**
- * @param {diem.cloth.Edge} edges
- */
-diem.storage.Piece.prototype.setEdges = function(edges) {
-  this.edges_ = edges;
-};
-
-diem.storage.Piece.prototype.getStorable = function() {
-  var anchors = [];
-  for (var i = 0; i < this.anchors_.length; ++i) {
-    anchors.push(diem.storage.Anchor.getStorable(this.anchors_[i]));
+diem.storage.Piece.getStorable = function(workboard) {
+  var piece = new diem.storage.Piece();
+  piece.uuid = workboard.getUuid();
+  piece.position = workboard.getObject().position.clone();
+  for (var i = 0; i < workboard.anchors_.length; ++i) {
+    piece.anchors.push(diem.storage.Anchor.getStorable(workboard.anchors_[i]));
   }
   var edges = [];
-  for (i = 0; i < this.edges_.length; ++i) {
-    edges.push(diem.storage.Edge.getStorable(this.edges_[i]));
+  for (i = 0; i < workboard.shape_['edges_'].length; ++i) {
+    piece.edges.push(
+      diem.storage.Edge.getStorable(workboard.shape_['edges_'][i]));
   }
-
-  return {
-    uuid: this.uuid_,
-    anchors: anchors,
-    edges: edges
-  };
+  return piece;
 };
 
 /**

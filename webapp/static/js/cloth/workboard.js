@@ -10,7 +10,6 @@ goog.require('diem.cloth.Edge');
 goog.require('diem.cloth.PhysicalPiece');
 goog.require('diem.storage.Anchor');
 goog.require('diem.storage.Edge');
-goog.require('diem.storage.Piece');
 goog.require('diem.storage.Storage');
 goog.require('diem.tools.DragPiece');
 
@@ -92,11 +91,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
     this.shape_['edges_'][i].addToParent(this.mesh_);
   }
 
-  var storage = new diem.storage.Piece();
-  storage.setUuid(this.mesh_.uuid);
-  storage.setAnchors(this.anchors_);
-  storage.setEdges(this.shape_['edges_']);
-  diem.storage.Storage.getCurrent().addPiece(storage);
+  diem.storage.Storage.getCurrent().addPiece(this);
 };
 
 /**

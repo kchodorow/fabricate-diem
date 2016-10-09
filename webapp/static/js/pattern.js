@@ -30,6 +30,7 @@ diem.Pattern.prototype.addPiece = function() {
 
 diem.Pattern.prototype.load = function(piece) {
   var cloth = diem.cloth.Workboard.load(piece);
+  cloth.getObject().position.copy(piece.position);
   this.pieces_.push(cloth);
   return cloth;
 };

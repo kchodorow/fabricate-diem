@@ -21,9 +21,11 @@ diem.tools.AddPiece = function(scene) {
 goog.inherits(diem.tools.AddPiece, diem.tools.Tool);
 
 /**
+ * @param {diem.tools.Tool} activeTool Ignored.
+ * @param {diem.storage.Piece} [opt_piece]
  * @override
  */
-diem.tools.AddPiece.prototype.onSelect = function(opt_piece) {
+diem.tools.AddPiece.prototype.onSelect = function(activeTool, opt_piece) {
   var piece;
   if (opt_piece) {
     piece = this.pattern_.load(opt_piece);

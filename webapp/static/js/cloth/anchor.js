@@ -30,7 +30,7 @@ diem.cloth.Anchor = function(corner) {
   this.mesh_.name = 'anchor' + diem.cloth.Anchor.INDEX++;
 
   this.cwCp_ = new diem.cloth.ControlPoint(corner.cwCp, this.mesh_);
-  this.ccwCp_ = new diem.cloth.ControlPoint(corner.cwCp, this.mesh_);
+  this.ccwCp_ = new diem.cloth.ControlPoint(corner.ccwCp, this.mesh_);
 };
 
 goog.inherits(diem.cloth.Anchor, diem.MeshWrapper);
