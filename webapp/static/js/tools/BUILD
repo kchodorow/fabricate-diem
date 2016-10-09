@@ -7,6 +7,7 @@ closure_js_library(
         ":add-piece",
         ":anchor-point",
         ":drag-piece",
+        ":person",
     ],
 )
 
@@ -36,6 +37,15 @@ closure_js_library(
     deps = [
         ":tool",
         "//webapp/static/js:pattern",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "person",
+    srcs = ["person_tool.js"],
+    deps = [
+        ":tool",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

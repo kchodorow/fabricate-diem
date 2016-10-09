@@ -34,6 +34,26 @@ diem.Person = function(scene, register) {
 goog.inherits(diem.Person, diem.MeshWrapper);
 
 /**
+ * @override
+ */
+diem.Person.prototype.move = function(dir) {
+  switch (dir) {
+  case goog.events.KeyCodes.LEFT:
+    this.mesh_.position.setX(this.mesh_.position.x - 1);
+    break;
+  case goog.events.KeyCodes.RIGHT:
+    this.mesh_.position.setX(this.mesh_.position.x + 1);
+    break;
+  case goog.events.KeyCodes.UP:
+    this.mesh_.position.setY(this.mesh_.position.y + 1);
+    break;
+  case goog.events.KeyCodes.DOWN:
+    this.mesh_.position.setY(this.mesh_.position.y - 1);
+    break;
+  }
+};
+
+/**
  * @param {THREE.Scene} scene
  * @private
  */

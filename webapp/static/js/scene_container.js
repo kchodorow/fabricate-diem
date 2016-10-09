@@ -11,8 +11,10 @@ goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.DragPiece');
+goog.require('diem.tools.PersonTool');
 goog.require('diem.tools.RemoveAnchorPoint');
 goog.require('diem.tools.ToolManager');
+goog.require('goog.events.KeyCodes');
 
 // TODO: more dynamic.
 var WIDTH = 800;
@@ -41,13 +43,21 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.AnchorPoint());
   this.toolManager_.registerTool(new diem.tools.DragPiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
-  this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   this.drawAxes_();
   this.initLights_();
   var person = new diem.Person(
     this.scene,
     goog.bind(this.toolManager_.handleIntersectables, this.toolManager_));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, goog.events.KeyCodes.LEFT));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, goog.events.KeyCodes.RIGHT));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, goog.events.KeyCodes.UP));
+  this.toolManager_.registerTool(
+    new diem.tools.PersonTool(person, goog.events.KeyCodes.DOWN));
+  this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   diem.storage.Storage.get().request(goog.bind(this.load, this));
 };

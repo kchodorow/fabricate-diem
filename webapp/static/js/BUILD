@@ -44,6 +44,7 @@ closure_js_library(
         "//webapp/static/js/storage",
         "//webapp/static/js/tools",
         "//webapp/static/js/tools:tool-manager",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 
