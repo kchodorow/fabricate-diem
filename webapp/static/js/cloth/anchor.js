@@ -12,7 +12,7 @@ goog.require('diem.tools.RemoveAnchorPoint');
 
 /**
  * @constructor
- * @param {THREE.Vector3} corner the position of this anchor point in world
+ * @param {diem.storage.Anchor} corner the position of this anchor point in world
  *     coordinates. It will be adjusted to relative coordinates when addToParent
  *     is called.
  */
@@ -26,11 +26,11 @@ diem.cloth.Anchor = function(corner) {
     0);
   var material = new THREE.MeshBasicMaterial({color : color});
   this.mesh_ = new THREE.Mesh(geometry, material);
-  this.mesh_.position.copy(corner);
+  this.mesh_.position.copy(corner.anchor);
   this.mesh_.name = 'anchor' + diem.cloth.Anchor.INDEX++;
 
-  this.cwCp_ = new diem.cloth.ControlPoint(this.mesh_);
-  this.ccwCp_ = new diem.cloth.ControlPoint(this.mesh_);
+  this.cwCp_ = new diem.cloth.ControlPoint(corner.cwCp, this.mesh_);
+  this.ccwCp_ = new diem.cloth.ControlPoint(corner.cwCp, this.mesh_);
 };
 
 goog.inherits(diem.cloth.Anchor, diem.MeshWrapper);

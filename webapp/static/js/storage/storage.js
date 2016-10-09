@@ -3,6 +3,7 @@ goog.provide('diem.storage.Storage');
 goog.require('diem.storage.Model');
 
 goog.require('goog.asserts');
+goog.require('goog.events');
 goog.require('goog.net.XhrIo');
 
 /**
@@ -13,6 +14,7 @@ diem.storage.Storage = function() {
   this.model_ = new diem.storage.Model();
   this.lastSend_ = Date.now();
   this.lastHash_ = diem.storage.Model.getHash(this.model_.getStorable());
+  this.patternLoaded_ = false;
 };
 
 diem.storage.Storage.INSTANCE = null;
@@ -44,6 +46,12 @@ diem.storage.Storage.get = function() {
  * @param {Object} obj
  */
 diem.storage.Storage.prototype.send = function() {
+  // Until loading the pattern has finished, don't send an empty model
+  // to the server or we'll overwrite our project!
+  if (!this.patternLoaded_) {
+    return;
+  }
+
   // Don't send if it's been less than 10 seconds since the last save.
   var now = Date.now();
   if (now - this.lastSend_ < 10000) {
@@ -64,4 +72,20 @@ diem.storage.Storage.prototype.send = function() {
     window.location.pathname, 'POST', "data=" + json);
   // TODO: wait until send was successful.
   this.lastSend_ = Date.now();
+};
+
+diem.storage.Storage.prototype.request = function(callback) {
+  var request = new goog.net.XhrIo();
+  var storage = this;
+  // TODO: handle errors.
+  goog.events.listen(request, goog.net.EventType.COMPLETE, function(e) {
+    var xhr = e.target;
+    var obj = xhr.getResponseJson();
+    // If this is a new pattern, there won't be a model to load.
+    if (obj.model != null) {
+      callback(obj.model);
+    }
+    storage.patternLoaded_ = true;
+  });
+  request.send(window.location.pathname + "?format=json", 'GET');
 };

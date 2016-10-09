@@ -52,7 +52,10 @@ closure_js_library(
     name = "pattern",
     srcs = ["pattern.js"],
     visibility = ["//webapp/static/js/tools:__pkg__"],
-    deps = ["//webapp/static/js/cloth"],
+    deps = [
+        "//webapp/static/js/cloth",
+        "//webapp/static/js/storage",
+    ],
 )
 
 closure_js_library(

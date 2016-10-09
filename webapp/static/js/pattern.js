@@ -19,11 +19,17 @@ diem.Pattern.CLOTH_OFFSET_Y = 8;
  * @returns {diem.cloth.Workboard}
  */
 diem.Pattern.prototype.addPiece = function() {
-  var cloth = new diem.cloth.Workboard(7, 10);
+  var cloth = diem.cloth.Workboard.createNew(7, 10);
   cloth.getObject().position.set(
     diem.Pattern.CLOTH_OFFSET_X,
     diem.Pattern.CLOTH_OFFSET_Y * this.pieces_.length,
     0);
+  this.pieces_.push(cloth);
+  return cloth;
+};
+
+diem.Pattern.prototype.load = function(piece) {
+  var cloth = diem.cloth.Workboard.load(piece);
   this.pieces_.push(cloth);
   return cloth;
 };

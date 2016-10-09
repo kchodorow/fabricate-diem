@@ -21,6 +21,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
  */
 public class EditorServlet extends HttpServlet {
 
+    private final static String JSON = "json";
+
     private final DataBuilder builder;
     private final DataBuilder errorBuilder;
 
@@ -39,6 +41,11 @@ public class EditorServlet extends HttpServlet {
             throws IOException {
         Project project = getProject(request, response);
         if (project == null) {
+            return;
+        }
+        String format = request.getParameter("format");
+        if (format != null && format.equals(JSON)) {
+            response.getWriter().write("{\"model\":" + project.getModel() + "}");
             return;
         }
         builder.put("description", project.getDescription());

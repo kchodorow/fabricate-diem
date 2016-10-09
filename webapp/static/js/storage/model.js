@@ -1,8 +1,9 @@
-goog.provide('diem.storage.Model');
-goog.provide('diem.storage.Piece');
 goog.provide('diem.storage.Anchor');
 goog.provide('diem.storage.Edge');
+goog.provide('diem.storage.Model');
+goog.provide('diem.storage.Piece');
 
+goog.require('goog.asserts');
 goog.require('goog.crypt.Md5');
 
 /**
@@ -39,13 +40,13 @@ diem.storage.Model.getHash = function(json) {
  * @constructor
  */
 diem.storage.Piece = function() {
-  this.id_ = null;
+  this.uuid_ = null;
   this.anchors_ = [];
   this.edges_ = [];
 };
 
-diem.storage.Piece.prototype.setId = function(id) {
-  this.id_ = id;
+diem.storage.Piece.prototype.setUuid = function(uuid) {
+  this.uuid_ = uuid;
 };
 
 /**
@@ -73,10 +74,20 @@ diem.storage.Piece.prototype.getStorable = function() {
   }
 
   return {
-    id: this.id_,
+    uuid: this.uuid_,
     anchors: anchors,
     edges: edges
   };
+};
+
+/**
+ * @constructor
+ */
+diem.storage.Anchor = function() {
+  this.uuid = null;
+  this.anchor = null;
+  this.cwCp = null;
+  this.ccwCp = null;
 };
 
 /**
@@ -84,8 +95,8 @@ diem.storage.Piece.prototype.getStorable = function() {
  * @returns {diem.storage.Anchor}
  */
 diem.storage.Anchor.getStorable = function(inAnchor) {
-  var anchor = {};
-  anchor.id = inAnchor.getId();
+  var anchor = new diem.storage.Anchor();
+  anchor.uuid = inAnchor.getUuid();
   anchor.anchor = inAnchor.getObject().position;
   anchor.cwCp = inAnchor.cwCp_.getObject().position;
   anchor.ccwCp = inAnchor.ccwCp_.getObject().position;
@@ -93,11 +104,52 @@ diem.storage.Anchor.getStorable = function(inAnchor) {
 };
 
 /**
+ * Returns an achor point in storable format.
+ * @returns {diem.storage.Anchor}
+ */
+diem.storage.Anchor.fromVector = function(vec, uuid) {
+  var anchor = {};
+  anchor.uuid = uuid;
+  anchor.anchor = vec;
+  anchor.cwCp = vec.clone();
+  anchor.ccwCp = vec.clone();
+  return anchor;
+};
+
+diem.storage.Edge = function() {
+  this.startAnchor = null;
+  this.endAnchor = null;
+};
+
+/**
  * @param {diem.cloth.Edge} edge
  */
 diem.storage.Edge.getStorable = function(inEdge) {
-  var edge = {};
-  edge.startAnchor = inEdge.startAnchor_.getId();
-  edge.endAnchor = inEdge.endAnchor_.getId();
+  var edge = new diem.storage.Edge();
+  edge.startAnchor = inEdge.startAnchor_.getUuid();
+  edge.endAnchor = inEdge.endAnchor_.getUuid();
   return edge;
+};
+
+/**
+ * Creates edges from an array of anchors. The anchors must be in edge-order
+ * (i.e., not skip around the shape).
+ * @param {array<diem.storage.Anchor>} anchors
+ * @returns {array<diem.storage.Edge>}
+ */
+diem.storage.Edge.fromAnchors = function(anchors) {
+  goog.asserts.assert(anchors.length > 1);
+
+  var edges = [];
+  for (var i = 1; i < anchors.length; ++i) {
+    var edge = new diem.storage.Edge();
+    edge.startAnchor = anchors[i - 1].uuid;
+    edge.endAnchor = anchors[i].uuid;
+    edges.push(edge);
+  }
+  edge = new diem.storage.Edge();
+  edge.startAnchor = anchors[anchors.length - 1].uuid;
+  edge.endAnchor = anchors[0].uuid;
+  edges.push(edge);
+  return edges;
 };

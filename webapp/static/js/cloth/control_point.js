@@ -6,12 +6,14 @@ goog.require('diem.tools.AnchorPoint');
 
 /**
  * @constructor
+ * @param {THREE.Vector3} position the cp's position.
  * @param {THREE.Mesh} mesh the anchor point's mesh.
  */
-diem.cloth.ControlPoint = function(mesh) {
+diem.cloth.ControlPoint = function(position, mesh) {
   goog.base(this);
 
   this.mesh_ = mesh.clone();
+  this.mesh_.position.copy(position);
   this.anchor_ = mesh;
 
   var lineMaterial = new THREE.LineBasicMaterial(

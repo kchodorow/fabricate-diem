@@ -4,6 +4,7 @@ goog.provide('diem.SceneContainer');
 
 goog.require('diem.EventHandler');
 goog.require('diem.Globals');
+goog.require('diem.Pattern');
 goog.require('diem.Person');
 goog.require('diem.Physics');
 goog.require('diem.storage.Storage');
@@ -48,6 +49,16 @@ diem.SceneContainer = function() {
   var person = new diem.Person(
     this.scene,
     goog.bind(this.toolManager_.handleIntersectables, this.toolManager_));
+
+  diem.storage.Storage.get().request(goog.bind(this.load, this));
+};
+
+diem.SceneContainer.prototype.load = function(model) {
+  var tool = this.toolManager_.getTool(diem.tools.AddPiece.NAME);
+  for (var i = 0; i < model.pieces.length; ++i) {
+    var intersectables = tool.onSelect(model.pieces[i]);
+    this.toolManager_.handleIntersectables(intersectables);
+  }
 };
 
 /**

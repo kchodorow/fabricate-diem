@@ -17,8 +17,8 @@ diem.MeshWrapper.prototype.getObject = function() {
 /**
  * @returns {string}
  */
-diem.MeshWrapper.prototype.getId = function() {
-  return this.mesh_.geometry.id;
+diem.MeshWrapper.prototype.getUuid = function() {
+  return this.mesh_.uuid;
 };
 
 /**

@@ -23,8 +23,13 @@ goog.inherits(diem.tools.AddPiece, diem.tools.Tool);
 /**
  * @override
  */
-diem.tools.AddPiece.prototype.onSelect = function() {
-  var piece = this.pattern_.addPiece();
+diem.tools.AddPiece.prototype.onSelect = function(opt_piece) {
+  var piece;
+  if (opt_piece) {
+    piece = this.pattern_.load(opt_piece);
+  } else {
+    piece = this.pattern_.addPiece();
+  }
   piece.addToParent(this.scene_);
   return piece.getIntersectables();
 };

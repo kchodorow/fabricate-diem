@@ -8,26 +8,23 @@ goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
 goog.require('diem.cloth.PhysicalPiece');
+goog.require('diem.storage.Anchor');
+goog.require('diem.storage.Edge');
 goog.require('diem.storage.Piece');
 goog.require('diem.storage.Storage');
 goog.require('diem.tools.DragPiece');
 
 /**
- * @param {number} w
- * @param {number} h
  * @constructor
  * @extends {diem.MeshWrapper}
+ * @private
  */
-diem.cloth.Workboard = function(w, h) {
+diem.cloth.Workboard = function() {
   goog.base(this);
-  this.w = w;
-  this.h = h;
-
   this.fabric_ = new diem.Fabric();
 
-  // The piece currently being dragged.
+  // The physical piece currently being dragged.
   this.currentPiece_ = null;
-  this.initMeshes_();
 };
 
 goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
@@ -35,30 +32,49 @@ goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
 diem.cloth.Workboard.INDEX = 0;
 
 /**
+ * @param {number} w
+ * @param {number} h
+ * @returns {diem.cloth.Workboard}
+ */
+diem.cloth.Workboard.createNew = function(w, h) {
+  var workboard = new diem.cloth.Workboard();
+  var anchors = [
+    diem.storage.Anchor.fromVector(new THREE.Vector3(0, 0, 0), "0"),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(w, 0, 0), "1"),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, 0), "2"),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, 0), "3")];
+  var edges = diem.storage.Edge.fromAnchors(anchors);
+  workboard.initMeshes_({anchors : anchors, edges : edges});
+  return workboard;
+};
+
+/**
+ * @returns {diem.cloth.Workboard}
+ */
+diem.cloth.Workboard.load = function(piece) {
+  var workboard = new diem.cloth.Workboard();
+  workboard.initMeshes_(piece);
+  return workboard;
+};
+
+/**
  * Initial square of cloth.
  * @private
  */
-diem.cloth.Workboard.prototype.initMeshes_ = function() {
-  var corners = [
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(this.w, 0, 0),
-    new THREE.Vector3(this.w, this.h, 0),
-    new THREE.Vector3(0, this.h, 0)];
-
+diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
+  var corners = piece.anchors;
   this.anchors_ = [];
-  var storage = new diem.storage.Piece();
   for (var i = 0; i < corners.length; ++i) {
     var anchor = new diem.cloth.Anchor(corners[i]);
     this.anchors_.push(anchor);
   }
 
+  var edges = piece.edges;
   this.shape_ = new THREE.Shape();
   this.shape_['edges_'] = [];
-  for (i = 0; i < corners.length; ++i) {
-    var startAnchor = this.anchors_[i];
-    var j = (i + 1) % corners.length;
-    var endAnchor = this.anchors_[j];
-
+  for (i = 0; i < edges.length; ++i) {
+    var startAnchor = this.getAnchor_(edges[i].startAnchor, corners);
+    var endAnchor = this.getAnchor_(edges[i].endAnchor, corners);
     var edge = new diem.cloth.Edge(startAnchor, endAnchor);
     this.shape_.curves.push(edge.getBezierCurve());
     this.shape_['edges_'].push(edge);
@@ -76,10 +92,26 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
     this.shape_['edges_'][i].addToParent(this.mesh_);
   }
 
-  storage.setId(this.getId());
+  var storage = new diem.storage.Piece();
+  storage.setUuid(this.mesh_.uuid);
   storage.setAnchors(this.anchors_);
   storage.setEdges(this.shape_['edges_']);
   diem.storage.Storage.getCurrent().addPiece(storage);
+};
+
+/**
+ * Get the anchor point corresponding to the given storage anchor.
+ * @private
+ */
+diem.cloth.Workboard.prototype.getAnchor_ = function(uuid, storageAnchors) {
+  for (var i = 0; i < storageAnchors.length; ++i) {
+    // Storage anchors are in the same order as cloth ones.
+    if (uuid == storageAnchors[i].uuid) {
+      return this.anchors_[i];
+    }
+  }
+  goog.asserts.assert(false, uuid + " not found in " + storageAnchors);
+  return null;
 };
 
 /**
