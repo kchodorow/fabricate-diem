@@ -5,8 +5,6 @@ goog.provide('diem.MeshWrapper');
  */
 diem.MeshWrapper = function() {
   this.mesh_ = null;
-  // "Parent" classes.
-  this.mixins_ = {};
 };
 
 /**
@@ -14,6 +12,13 @@ diem.MeshWrapper = function() {
  */
 diem.MeshWrapper.prototype.getObject = function() {
   return this.mesh_;
+};
+
+/**
+ * @returns {string}
+ */
+diem.MeshWrapper.prototype.getId = function() {
+  return this.mesh_.geometry.id;
 };
 
 /**

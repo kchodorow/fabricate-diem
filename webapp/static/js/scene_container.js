@@ -6,6 +6,7 @@ goog.require('diem.EventHandler');
 goog.require('diem.Globals');
 goog.require('diem.Person');
 goog.require('diem.Physics');
+goog.require('diem.storage.Storage');
 goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
@@ -101,4 +102,5 @@ diem.SceneContainer.prototype.render = function(now) {
   for (var i = 0; i < simulations.length; ++i) {
     tool.getMeshWrapper(simulations[i]).simulate();
   }
+  diem.storage.Storage.get().send();
 };

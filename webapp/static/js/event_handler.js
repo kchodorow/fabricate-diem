@@ -2,7 +2,6 @@
 goog.provide('diem.EventHandler');
 
 goog.require('diem.Globals');
-goog.require('diem.storage.Pattern');
 goog.require('diem.tools.ToolManager');
 
 goog.require('goog.events');
@@ -22,7 +21,6 @@ diem.EventHandler = function(camera, toolManager) {
 
   this.setupOnClick_();
   this.setupDraggable_();
-  this.storage_ = new diem.storage.Pattern();
   var box = document.getElementById('model-box');
   this.offsetLeft_ = box.offsetLeft;
   this.offsetTop_ = box.offsetTop;
@@ -135,8 +133,7 @@ diem.EventHandler.prototype.dragAction = function() {
  */
 diem.EventHandler.prototype.dragEnd = function() {
   if (this.clicked_ != null && this.clicked_.onDragEnd) {
-    var event = this.clicked_.onDragEnd();
-    this.storage_.send(event);
+    this.clicked_.onDragEnd();
   }
   this.clicked_ = null;
 };

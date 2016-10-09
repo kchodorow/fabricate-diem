@@ -9,7 +9,6 @@ load(
 filegroup(
     name = "js",
     srcs = [
-        "renderers/CanvasRenderer.js",
         ":lib.js",
         "//webapp/static/js/vendor",
     ],
@@ -43,6 +42,7 @@ closure_js_library(
         ":person",
         ":physics",
         "//webapp/static/js/cloth",
+        "//webapp/static/js/storage",
         "//webapp/static/js/tools",
         "//webapp/static/js/tools:tool-manager",
     ],

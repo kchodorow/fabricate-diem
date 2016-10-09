@@ -5,7 +5,10 @@ load(
 
 closure_js_library(
     name = "storage",
-    srcs = ["pattern.js"],
-    visibility = ["//webapp/static/js:__pkg__"],
+    srcs = [
+        "model.js",
+        "storage.js",
+    ],
+    visibility = ["//webapp/static/js:__subpackages__"],
     deps = ["@io_bazel_rules_closure//closure/library"],
 )

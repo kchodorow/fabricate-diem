@@ -8,6 +8,7 @@ goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
 goog.require('diem.events.EventBuilder');
+goog.require('diem.storage.Anchor');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.RemoveAnchorPoint');
 
@@ -150,6 +151,7 @@ diem.cloth.Anchor.prototype.onDragStart = function() {
 
 /**
  * Actually performs the drag.
+ * TODO: prevent edges from crossing.
  */
 diem.cloth.Anchor.prototype.onDrag = function() {
   if (this.dragAllCp_) {
@@ -194,4 +196,17 @@ diem.cloth.Anchor.prototype.onDragEnd = function() {
 diem.cloth.Anchor.prototype.controlPointsAtOrigin_ = function() {
   return this.mesh_.position.equals(this.cwCp_.getObject().position)
     && this.mesh_.position.equals(this.ccwCp_.getObject().position);
+};
+
+/**
+ * Returns an achor point in storable format.
+ * @returns {diem.storage.Anchor}
+ */
+diem.cloth.Anchor.prototype.getStorable = function() {
+  var storageAnchor = new diem.storage.Anchor();
+  storageAnchor.id = this.getId();
+  storageAnchor.anchor = this.getObject().position;
+  storageAnchor.cwCp = this.cwCp_.getObject().position;
+  storageAnchor.ccwCp = this.ccwCp_.getObject().position;
+  return storageAnchor;
 };

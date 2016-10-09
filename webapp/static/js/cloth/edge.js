@@ -7,7 +7,10 @@ goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
+goog.require('diem.storage.Edge');
 goog.require('diem.tools.AddAnchorPoint');
+
+goog.require('goog.asserts');
 
 /**
  * An edge is made up of two anchor points, and described by two control points.
@@ -18,6 +21,8 @@ goog.require('diem.tools.AddAnchorPoint');
  */
 diem.cloth.Edge = function(startAnchor, endAnchor) {
   goog.base(this);
+  goog.asserts.assert(startAnchor != null);
+  goog.asserts.assert(endAnchor != null);
 
   this.startAnchor_ = startAnchor;
   this.endAnchor_ = endAnchor;
@@ -151,4 +156,15 @@ diem.cloth.Edge.prototype.updateGeometry = function() {
     this.mesh_.geometry.vertices[i].copy(points[i]);
   }
   this.mesh_.geometry.verticesNeedUpdate = true;
+};
+
+/**
+ * Returns an edge point in storable format.
+ * @returns {diem.storage.Edge}
+ */
+diem.cloth.Edge.prototype.getStorable = function() {
+  var edge = new diem.storage.Edge();
+  edge.startAnchor = this.startAnchor_.getId();
+  edge.endAnchor = this.endAnchor_.getId();
+  return edge;
 };

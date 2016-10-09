@@ -1,6 +1,9 @@
 java_library(
     name = "editor",
-    srcs = ["EditorServlet.java"],
+    srcs = [
+        "EditorServlet.java",
+        "Model.java"
+    ],
     visibility = ["//src/main/java:__pkg__"],
     deps = [
         "//src/main/java/com/fabdm/account",

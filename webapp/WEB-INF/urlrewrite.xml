@@ -18,12 +18,12 @@ PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN" "http://www.tuckey.org/res/dtds/u
   </rule>
 
   <rule>
-    <from>^/(\w+)/([-A-Za-z_0-9]+)$</from>
+    <from>^/([A-Za-z]\w*)/([-A-Za-z_0-9]+)$</from>
     <to>/project/$1/$2</to>
   </rule>
 
   <rule>
-    <from>^/(\w+)$</from>
+    <from>^/([A-Za-z]\w*)$</from>
     <to>/user/$1</to>
   </rule>
 

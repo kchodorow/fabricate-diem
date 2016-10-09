@@ -8,6 +8,8 @@ goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.cloth.Edge');
 goog.require('diem.cloth.PhysicalPiece');
+goog.require('diem.storage.Piece');
+goog.require('diem.storage.Storage');
 goog.require('diem.tools.DragPiece');
 
 /**
@@ -26,7 +28,6 @@ diem.cloth.Workboard = function(w, h) {
   // The piece currently being dragged.
   this.currentPiece_ = null;
   this.initMeshes_();
-  this.send();
 };
 
 goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
@@ -45,8 +46,11 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
     new THREE.Vector3(0, this.h, 0)];
 
   this.anchors_ = [];
+  var storage = new diem.storage.Piece();
   for (var i = 0; i < corners.length; ++i) {
-    this.anchors_.push(new diem.cloth.Anchor(corners[i]));
+    var anchor = new diem.cloth.Anchor(corners[i]);
+    this.anchors_.push(anchor);
+    storage.addAnchor(anchor.getStorable());
   }
 
   this.shape_ = new THREE.Shape();
@@ -59,6 +63,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
     var edge = new diem.cloth.Edge(startAnchor, endAnchor);
     this.shape_.curves.push(edge.getBezierCurve());
     this.shape_['edges_'].push(edge);
+    storage.addEdge(edge.getStorable());
   }
   diem.cloth.ControlPoint.updateActions(this.shape_);
 
@@ -67,6 +72,8 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
   this.mesh_.shape = this.shape_;
   this.mesh_.name = 'workboard' + diem.cloth.Workboard.INDEX++;
+  storage.setId(this.getId());
+  diem.storage.Storage.getCurrent().addPiece(storage);
 
   for (i = 0; i < this.anchors_.length; ++i) {
     this.anchors_[i].addToParent(this.mesh_);
@@ -120,20 +127,4 @@ diem.cloth.Workboard.prototype.onDrag = function() {
  */
 diem.cloth.Workboard.prototype.onDragEnd = function() {
   return this.currentPiece_.onDragEnd();
-};
-
-diem.cloth.Workboard.prototype.send = function() {
-  var request = new goog.net.XhrIo();
-  var anchors = [];
-  for (var i = 0; i < this.anchors_.length; ++i) {
-    var anchor = this.anchors_[i];
-    anchors.push({anchor : anchor.getObject().position});
-  }
-  var data = {
-    anchors : anchors,
-    // TODO
-    material : {}
-  };
-  request.send(
-    window.location.pathname, 'POST', "data=" + JSON.stringify(data));
 };

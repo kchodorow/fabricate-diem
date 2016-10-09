@@ -6,6 +6,7 @@ import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
 import com.google.appengine.repackaged.com.google.common.base.Preconditions;
 import com.google.appengine.repackaged.com.google.gson.Gson;
+import com.google.appengine.repackaged.com.google.gson.JsonSyntaxException;
 import com.google.common.collect.ImmutableList;
 
 import javax.servlet.http.HttpServlet;
@@ -52,8 +53,17 @@ public class EditorServlet extends HttpServlet {
             return;
         }
         String data = request.getParameter("data");
-        Project.Action action = new Gson().fromJson(data, Project.Action.class);
-        project.setAction(action);
+        try {
+            new Gson().fromJson(data, Model.class);
+        } catch (JsonSyntaxException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("text/json");
+            response.getWriter().write("{\"msg\":\"" + e.getMessage() + "\"}");
+            return;
+        }
+        project.setModel(data);
+        ofy().save().entity(project).now();
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private Project getProject(HttpServletRequest request, HttpServletResponse response)
