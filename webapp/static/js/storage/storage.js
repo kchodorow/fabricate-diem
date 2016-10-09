@@ -12,7 +12,7 @@ goog.require('goog.net.XhrIo');
 diem.storage.Storage = function() {
   this.model_ = new diem.storage.Model();
   this.lastSend_ = Date.now();
-  this.lastHash_ = this.model_.getHash();
+  this.lastHash_ = diem.storage.Model.getHash(this.model_.getStorable());
 };
 
 diem.storage.Storage.INSTANCE = null;
@@ -51,7 +51,8 @@ diem.storage.Storage.prototype.send = function() {
   }
 
   // Don't send if it's the exact same model we sent last time.
-  var hash = this.model_.getHash();
+  var json = this.model_.getStorable();
+  var hash = diem.storage.Model.getHash(json);
   if (this.lastHash_ == hash) {
     this.lastSend_ = now;
     return;
@@ -60,7 +61,7 @@ diem.storage.Storage.prototype.send = function() {
 
   var request = new goog.net.XhrIo();
   request.send(
-    window.location.pathname, 'POST', "data=" + JSON.stringify(this.model_));
+    window.location.pathname, 'POST', "data=" + json);
   // TODO: wait until send was successful.
   this.lastSend_ = Date.now();
 };

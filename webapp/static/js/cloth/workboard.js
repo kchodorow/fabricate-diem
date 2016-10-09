@@ -50,7 +50,6 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   for (var i = 0; i < corners.length; ++i) {
     var anchor = new diem.cloth.Anchor(corners[i]);
     this.anchors_.push(anchor);
-    storage.addAnchor(anchor.getStorable());
   }
 
   this.shape_ = new THREE.Shape();
@@ -63,7 +62,6 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
     var edge = new diem.cloth.Edge(startAnchor, endAnchor);
     this.shape_.curves.push(edge.getBezierCurve());
     this.shape_['edges_'].push(edge);
-    storage.addEdge(edge.getStorable());
   }
   diem.cloth.ControlPoint.updateActions(this.shape_);
 
@@ -72,13 +70,16 @@ diem.cloth.Workboard.prototype.initMeshes_ = function() {
   this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
   this.mesh_.shape = this.shape_;
   this.mesh_.name = 'workboard' + diem.cloth.Workboard.INDEX++;
-  storage.setId(this.getId());
-  diem.storage.Storage.getCurrent().addPiece(storage);
 
   for (i = 0; i < this.anchors_.length; ++i) {
     this.anchors_[i].addToParent(this.mesh_);
     this.shape_['edges_'][i].addToParent(this.mesh_);
   }
+
+  storage.setId(this.getId());
+  storage.setAnchors(this.anchors_);
+  storage.setEdges(this.shape_['edges_']);
+  diem.storage.Storage.getCurrent().addPiece(storage);
 };
 
 /**

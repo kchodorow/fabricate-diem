@@ -157,14 +157,3 @@ diem.cloth.Edge.prototype.updateGeometry = function() {
   }
   this.mesh_.geometry.verticesNeedUpdate = true;
 };
-
-/**
- * Returns an edge point in storable format.
- * @returns {diem.storage.Edge}
- */
-diem.cloth.Edge.prototype.getStorable = function() {
-  var edge = new diem.storage.Edge();
-  edge.startAnchor = this.startAnchor_.getId();
-  edge.endAnchor = this.endAnchor_.getId();
-  return edge;
-};

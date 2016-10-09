@@ -7,8 +7,6 @@ goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
-goog.require('diem.events.EventBuilder');
-goog.require('diem.storage.Anchor');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.RemoveAnchorPoint');
 
@@ -134,7 +132,6 @@ diem.cloth.Anchor.prototype.onClick = function() {
     this.mesh_.parent.remove(this.ccwCp_.getLine());
     this.mesh_.parent.remove(secondCurve.getObject());
     this.mesh_.parent.remove(this.mesh_);
-
     return [];
   }
 };
@@ -175,18 +172,6 @@ diem.cloth.Anchor.prototype.onDragEnd = function() {
   var freeCps = !this.controlPointsAtOrigin_();
   this.cwCp_.setIndependentlyDraggable(freeCps);
   this.ccwCp_.setIndependentlyDraggable(freeCps);
-  var event = new diem.events.EventBuilder();
-  if (freeCps) {
-    event.addEvent(this.cwCp_.onDragEnd());
-    event.addEvent(this.ccwCp_.onDragEnd());
-  } else {
-    event.addAction({
-      type: diem.events.MOVE_ANCHOR,
-      id: this.getObject().geometry.id,
-      moveTo: this.getObject().position
-    });
-  }
-  return event.build();
 };
 
 /**
@@ -196,17 +181,4 @@ diem.cloth.Anchor.prototype.onDragEnd = function() {
 diem.cloth.Anchor.prototype.controlPointsAtOrigin_ = function() {
   return this.mesh_.position.equals(this.cwCp_.getObject().position)
     && this.mesh_.position.equals(this.ccwCp_.getObject().position);
-};
-
-/**
- * Returns an achor point in storable format.
- * @returns {diem.storage.Anchor}
- */
-diem.cloth.Anchor.prototype.getStorable = function() {
-  var storageAnchor = new diem.storage.Anchor();
-  storageAnchor.id = this.getId();
-  storageAnchor.anchor = this.getObject().position;
-  storageAnchor.cwCp = this.cwCp_.getObject().position;
-  storageAnchor.ccwCp = this.ccwCp_.getObject().position;
-  return storageAnchor;
 };

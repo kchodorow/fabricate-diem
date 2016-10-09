@@ -2,7 +2,6 @@
 goog.provide('diem.cloth.ControlPoint');
 
 goog.require('diem.events');
-goog.require('diem.events.EventBuilder');
 goog.require('diem.tools.AnchorPoint');
 
 /**
@@ -93,16 +92,6 @@ diem.cloth.ControlPoint.prototype.onDragImpl = function(opt_multiplier) {
   this.updateLine();
 
   diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
-};
-
-diem.cloth.ControlPoint.prototype.onDragEnd = function() {
-  var event = new diem.events.EventBuilder();
-  event.addAction({
-    type: diem.events.MOVE_CP,
-    id: this.getObject().geometry.id,
-    moveTo: this.getObject().position
-  });
-  return event.build();
 };
 
 /**

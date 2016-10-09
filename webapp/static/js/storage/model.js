@@ -10,21 +10,28 @@ goog.require('goog.crypt.Md5');
  * @constructor
  */
 diem.storage.Model = function() {
-  this.pieces = [];
+  this.pieces_ = [];
 };
 
 diem.storage.Model.prototype.addPiece = function(piece) {
-  this.pieces.push(piece);
+  this.pieces_.push(piece);
+};
+
+diem.storage.Model.prototype.getStorable = function() {
+  var storable = {pieces : []};
+  for (var i = 0; i < this.pieces_.length; ++i) {
+    storable.pieces.push(this.pieces_[i].getStorable());
+  }
+  return JSON.stringify(storable);
 };
 
 /**
+ * @param {string} json output of Model.getStorable.
  * @return {string} the hashed digest.
  */
-diem.storage.Model.prototype.getHash = function() {
+diem.storage.Model.getHash = function(json) {
   var hash = new goog.crypt.Md5();
-  for (var i = 0; i < this.pieces.length; ++i) {
-    hash.update(this.pieces[i].getHash());
-  }
+  hash.update(json);
   return "" + hash.digest();
 };
 
@@ -32,89 +39,65 @@ diem.storage.Model.prototype.getHash = function() {
  * @constructor
  */
 diem.storage.Piece = function() {
-  this.id = null;
-  this.anchors = [];
-  this.edges = [];
+  this.id_ = null;
+  this.anchors_ = [];
+  this.edges_ = [];
 };
 
 diem.storage.Piece.prototype.setId = function(id) {
-  this.id = id;
+  this.id_ = id;
 };
 
 /**
- * @param {diem.storage.Anchor}
+ * @param {diem.cloth.Anchor} anchors
  */
-diem.storage.Piece.prototype.addAnchor = function(anchor) {
-  this.anchors.push(anchor);
+diem.storage.Piece.prototype.setAnchors = function(anchors) {
+  this.anchors_ = anchors;
 };
 
 /**
- * @param {diem.storage.Edge}
+ * @param {diem.cloth.Edge} edges
  */
-diem.storage.Piece.prototype.addEdge = function(edge) {
-  this.edges.push(edge);
+diem.storage.Piece.prototype.setEdges = function(edges) {
+  this.edges_ = edges;
 };
 
-/**
- * @return {string} the hashed digest.
- */
-diem.storage.Piece.prototype.getHash = function() {
-  var hash = new goog.crypt.Md5();
-  hash.update(this.id);
-  for (var i = 0; i < this.anchors.length; ++i) {
-    hash.update(this.anchors[i].getHash());
+diem.storage.Piece.prototype.getStorable = function() {
+  var anchors = [];
+  for (var i = 0; i < this.anchors_.length; ++i) {
+    anchors.push(diem.storage.Anchor.getStorable(this.anchors_[i]));
   }
-  for (i = 0; i < this.edges.length; ++i) {
-    hash.update(this.edges[i].getHash());
+  var edges = [];
+  for (i = 0; i < this.edges_.length; ++i) {
+    edges.push(diem.storage.Edge.getStorable(this.edges_[i]));
   }
-  return "" + hash.digest();
+
+  return {
+    id: this.id_,
+    anchors: anchors,
+    edges: edges
+  };
 };
 
 /**
- * @constructor
+ * Returns an achor point in storable format.
+ * @returns {diem.storage.Anchor}
  */
-diem.storage.Anchor = function() {
-  /** @type {string} */
-  this.id = null;
-  /** @type {x:number,y:number} */
-  this.anchor = null;
-  /** @type {x:number,y:number} */
-  this.cwCp = null;
-  /** @type {x:number,y:number} */
-  this.ccwCp = null;
+diem.storage.Anchor.getStorable = function(inAnchor) {
+  var anchor = {};
+  anchor.id = inAnchor.getId();
+  anchor.anchor = inAnchor.getObject().position;
+  anchor.cwCp = inAnchor.cwCp_.getObject().position;
+  anchor.ccwCp = inAnchor.ccwCp_.getObject().position;
+  return anchor;
 };
 
 /**
- * @return {string} the hashed digest.
+ * @param {diem.cloth.Edge} edge
  */
-diem.storage.Anchor.prototype.getHash = function() {
-  var hash = new goog.crypt.Md5();
-  hash.update(this.id);
-  hash.update(this.anchor.x);
-  hash.update(this.anchor.y);
-  hash.update(this.cwCp.x);
-  hash.update(this.cwCp.y);
-  hash.update(this.ccwCp.x);
-  hash.update(this.ccwCp.y);
-  return "" + hash.digest();
-};
-
-/**
- * @constructor
- */
-diem.storage.Edge = function() {
-  /** @type {string} */
-  this.startAnchor = null;
-  /** @type {string} */
-  this.endAnchor = null;
-};
-
-/**
- * @return {string} the hashed digest.
- */
-diem.storage.Edge.prototype.getHash = function() {
-  var hash = new goog.crypt.Md5();
-  hash.update(this.startAnchor);
-  hash.update(this.endAnchor);
-  return "" + hash.digest();
+diem.storage.Edge.getStorable = function(inEdge) {
+  var edge = {};
+  edge.startAnchor = inEdge.startAnchor_.getId();
+  edge.endAnchor = inEdge.endAnchor_.getId();
+  return edge;
 };
