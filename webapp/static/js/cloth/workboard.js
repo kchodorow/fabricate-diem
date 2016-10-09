@@ -48,6 +48,7 @@ diem.cloth.Workboard.createNew = function(w, h) {
 };
 
 /**
+ * @param {diem.storage.Piece} piece
  * @returns {diem.cloth.Workboard}
  */
 diem.cloth.Workboard.load = function(piece) {
@@ -58,6 +59,7 @@ diem.cloth.Workboard.load = function(piece) {
 
 /**
  * Initial square of cloth.
+ * @param {diem.storage.Piece} piece
  * @private
  */
 diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
@@ -83,6 +85,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
   this.geometry_ = new THREE.ShapeGeometry(this.shape_);
 
   this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
+  this.mesh_.uuid = piece.uuid;
   this.mesh_.shape = this.shape_;
   this.mesh_.name = 'workboard' + diem.cloth.Workboard.INDEX++;
 
@@ -96,6 +99,9 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
 
 /**
  * Get the anchor point corresponding to the given storage anchor.
+ * @param {string} uuid
+ * @param {Array.<diem.storage.Anchor>} storageAnchors
+ * @returns {diem.cloth.Anchor}
  * @private
  */
 diem.cloth.Workboard.prototype.getAnchor_ = function(uuid, storageAnchors) {

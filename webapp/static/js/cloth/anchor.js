@@ -26,8 +26,9 @@ diem.cloth.Anchor = function(corner) {
     0);
   var material = new THREE.MeshBasicMaterial({color : color});
   this.mesh_ = new THREE.Mesh(geometry, material);
-  this.mesh_.position.copy(corner.anchor);
+  this.mesh_.uuid = corner.uuid;
   this.mesh_.name = 'anchor' + diem.cloth.Anchor.INDEX++;
+  this.mesh_.position.copy(corner.anchor);
 
   this.cwCp_ = new diem.cloth.ControlPoint(corner.cwCp, this.mesh_);
   this.ccwCp_ = new diem.cloth.ControlPoint(corner.ccwCp, this.mesh_);
