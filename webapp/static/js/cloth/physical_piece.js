@@ -70,9 +70,12 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
-  var subdivider = new THREE.SubdivisionModifier(3);
-  subdivider.modify(geometry);
-
+  if (!geometry.subdivided) {
+    var subdivider = new THREE.SubdivisionModifier(3);
+    subdivider.modify(geometry);
+    geometry.subdivided = true;
+    goog.asserts.assert(geometry.vertices.length < 100000);
+  }
   var numVertices = geometry.vertices.length;
   var numFaces = geometry.faces.length;
 

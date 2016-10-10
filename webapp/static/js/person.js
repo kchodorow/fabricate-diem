@@ -68,6 +68,25 @@ diem.Person.prototype.move = function(dir) {
     }
     break;
   }
+
+  // Update physics.
+  this.physicalBody_.setWorldTransform(this.getTransform_());
+};
+
+/**
+ * Updates the given btTransform to match the mesh's position and rotation.
+ * @returns {Ammo.btTransform}
+ * @private
+ */
+diem.Person.prototype.getTransform_ = function() {
+  var transform = new Ammo.btTransform();
+  transform.setOrigin(new Ammo.btVector3(
+    this.mesh_.position.x, this.mesh_.position.y, this.mesh_.position.z));
+  var meshQuat = this.mesh_.getWorldQuaternion();
+  var quaternion = new Ammo.btQuaternion(
+    meshQuat.x, meshQuat.y, meshQuat.z, meshQuat.w);
+  transform.setRotation(quaternion);
+  return transform;
 };
 
 /**
@@ -75,13 +94,8 @@ diem.Person.prototype.move = function(dir) {
  * @private
  */
 diem.Person.prototype._addPhysics = function(scene) {
-  var transform = new Ammo.btTransform();
-  transform.setOrigin(new Ammo.btVector3(0, 0, 0));
-  var meshQuat = this.mesh_.getWorldQuaternion();
-  var quaternion = new Ammo.btQuaternion(
-    meshQuat.x, meshQuat.y, meshQuat.z, meshQuat.w);
-  transform.setRotation(quaternion);
-  var bodyMotionState = new Ammo.btDefaultMotionState(transform);
+  var bodyMotionState = new Ammo.btDefaultMotionState(
+    this.getTransform_());
   var bodyShape = new Ammo.btConvexHullShape();
   var vertices = this.mesh_.geometry.vertices;
   for (var i = 0; i < vertices.length; ++i) {
@@ -92,9 +106,9 @@ diem.Person.prototype._addPhysics = function(scene) {
   var mass = 0;
   var bodyInfo = new Ammo.btRigidBodyConstructionInfo(
     mass, bodyMotionState, bodyShape, inertia);
-  var rigidBody = new Ammo.btRigidBody(bodyInfo);
+  this.physicalBody_ = new Ammo.btRigidBody(bodyInfo);
 
-  diem.Physics.get().getWorld().addRigidBody(rigidBody);
+  diem.Physics.get().getWorld().addRigidBody(this.physicalBody_);
 };
 
 /**

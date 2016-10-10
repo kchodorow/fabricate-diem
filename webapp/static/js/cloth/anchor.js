@@ -2,7 +2,6 @@
 
 goog.provide('diem.cloth.Anchor');
 
-goog.require('diem.Fabric');
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.ControlPoint');
@@ -19,7 +18,7 @@ goog.require('diem.tools.RemoveAnchorPoint');
 diem.cloth.Anchor = function(corner) {
   goog.base(this);
 
-  var color = diem.Fabric.getRandomColor();
+  var color = 0x000000;
   var geometry = new THREE.BoxGeometry(
     diem.cloth.Anchor.ANCHOR_SIZE,
     diem.cloth.Anchor.ANCHOR_SIZE,

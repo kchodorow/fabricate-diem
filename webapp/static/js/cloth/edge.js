@@ -1,13 +1,11 @@
 /* global THREE */
 goog.provide('diem.cloth.Edge');
 
-goog.require('diem.Fabric');
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
-goog.require('diem.storage.Edge');
 goog.require('diem.tools.AddAnchorPoint');
 
 goog.require('goog.asserts');
@@ -43,8 +41,7 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   for (var i = 0; i < points.length; ++i) {
     geometry.vertices.push(points[i]);
   }
-  var material = new THREE.LineBasicMaterial(
-    {color : diem.Fabric.getRandomColor()});
+  var material = new THREE.LineBasicMaterial({color : 0x000000});
   this.mesh_ = new THREE.Line(geometry, material);
 };
 
