@@ -3,6 +3,7 @@
 goog.provide('diem.cloth.Workboard');
 
 goog.require('diem.Fabric');
+goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
@@ -12,6 +13,7 @@ goog.require('diem.storage.Anchor');
 goog.require('diem.storage.Edge');
 goog.require('diem.storage.Storage');
 goog.require('diem.tools.DragPiece');
+goog.require('diem.tools.MovePiece');
 
 /**
  * @constructor
@@ -119,7 +121,10 @@ diem.cloth.Workboard.prototype.getAnchor_ = function(uuid, storageAnchors) {
  * @override
  */
 diem.cloth.Workboard.prototype.getIntersectables = function() {
-  var intersects = [diem.tools.DragPiece.createIntersectable(
+  var intersects = [
+    diem.tools.DragPiece.createIntersectable(
+      diem.events.DRAGGABLE, this),
+    diem.tools.MovePiece.createIntersectable(
       diem.events.DRAGGABLE, this)];
   for (var i = 0; i < this.anchors_.length; ++i) {
     intersects = intersects
@@ -139,7 +144,11 @@ diem.cloth.Workboard.prototype.getEdges = function() {
 /**
  * @returns {Array}
  */
-diem.cloth.Workboard.prototype.onDragStart = function() {
+diem.cloth.Workboard.prototype.onDragStart = function(tool) {
+  if (tool.getName() == diem.tools.MovePiece.NAME) {
+    this.prevMouse_ = diem.Globals.mouse.clone();
+    return [];
+  }
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_, this.w, this.h);
   physicalPiece.addToParent(this.mesh_.parent);
   physicalPiece.onDragStart();
@@ -150,7 +159,12 @@ diem.cloth.Workboard.prototype.onDragStart = function() {
 /**
  * Moves the fabric.
  */
-diem.cloth.Workboard.prototype.onDrag = function() {
+diem.cloth.Workboard.prototype.onDrag = function(tool) {
+  if (tool.getName() == diem.tools.MovePiece.NAME) {
+    this.mesh_.position.add(diem.Globals.mouse.clone().sub(this.prevMouse_));
+    this.prevMouse_ = diem.Globals.mouse.clone();
+    return [];
+  }
   // We have to delegate this for the initial drag to work, since there's
   // no piece to drag when the drag starts.
   this.currentPiece_.onDrag();
@@ -159,6 +173,9 @@ diem.cloth.Workboard.prototype.onDrag = function() {
 /**
  * @returns {Array}
  */
-diem.cloth.Workboard.prototype.onDragEnd = function() {
+diem.cloth.Workboard.prototype.onDragEnd = function(tool) {
+  if (tool.getName() == diem.tools.MovePiece.NAME) {
+    return [];
+  }
   return this.currentPiece_.onDragEnd();
 };

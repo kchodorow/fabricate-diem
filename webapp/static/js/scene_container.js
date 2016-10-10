@@ -11,6 +11,7 @@ goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.DragPiece');
+goog.require('diem.tools.MovePiece');
 goog.require('diem.tools.PersonTool');
 goog.require('diem.tools.RemoveAnchorPoint');
 goog.require('diem.tools.ToolManager');
@@ -38,10 +39,11 @@ diem.SceneContainer = function() {
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
 
   this.toolManager_ = new diem.tools.ToolManager();
-  this.toolManager_.registerTool(new diem.tools.AddPiece(this.scene));
   this.toolManager_.registerTool(new diem.tools.AddAnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.AddPiece(this.scene));
   this.toolManager_.registerTool(new diem.tools.AnchorPoint());
   this.toolManager_.registerTool(new diem.tools.DragPiece());
+  this.toolManager_.registerTool(new diem.tools.MovePiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
 
   this.drawAxes_();

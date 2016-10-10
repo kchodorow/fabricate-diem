@@ -7,6 +7,7 @@ closure_js_library(
         ":add-piece",
         ":anchor-point",
         ":drag-piece",
+        ":move-piece",
         ":person",
     ],
 )
@@ -53,6 +54,16 @@ closure_js_library(
 closure_js_library(
     name = "drag-piece",
     srcs = ["drag_piece.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":tool",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "move-piece",
+    srcs = ["move_piece.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":tool",

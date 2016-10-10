@@ -111,7 +111,7 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var object = intersects[0].object;
   this.clicked_ = tool.getMeshWrapper(object);
   if (this.clicked_.onDragStart) {
-    var intersectables = this.clicked_.onDragStart();
+    var intersectables = this.clicked_.onDragStart(tool);
     this.toolManager_.handleIntersectables(intersectables);
   }
 };
@@ -124,7 +124,7 @@ diem.EventHandler.prototype.dragAction = function() {
     var x = this.dragger_.clientX;
     var y = this.dragger_.clientY;
     this.updateMouseCoordinates_(x, y);
-    this.clicked_.onDrag();
+    this.clicked_.onDrag(this.toolManager_.getTool());
   }
 };
 
@@ -133,7 +133,7 @@ diem.EventHandler.prototype.dragAction = function() {
  */
 diem.EventHandler.prototype.dragEnd = function() {
   if (this.clicked_ != null && this.clicked_.onDragEnd) {
-    this.clicked_.onDragEnd();
+    this.clicked_.onDragEnd(this.toolManager_.getTool());
   }
   this.clicked_ = null;
 };

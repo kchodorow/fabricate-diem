@@ -26,6 +26,7 @@ closure_js_library(
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js/storage",
         "//webapp/static/js/tools:drag-piece",
+        "//webapp/static/js/tools:move-piece",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
