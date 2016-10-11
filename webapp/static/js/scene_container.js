@@ -92,24 +92,43 @@ diem.SceneContainer.prototype.load = function(model) {
  * @private
  */
 diem.SceneContainer.prototype.drawAxes_ = function() {
-  var xm = new THREE.LineBasicMaterial({color : 0xff0000});
-  var xg = new THREE.Geometry();
-  xg.vertices.push(new THREE.Vector3(-10, 0, 0), new THREE.Vector3(10, 0, 0));
-  var xAxis = new THREE.Line(xg, xm);
+  var color = 0xACCFCC;
+  var material = new THREE.LineBasicMaterial({color : color});
+  var x = new THREE.Line();
+  var geometry1 = new THREE.Geometry();
+  geometry1.vertices.push(
+    new THREE.Vector3(-.15, -.15, 0),
+    new THREE.Vector3(.15, .15, 0)
+  );
+  var geometry2 = new THREE.Geometry();
+  geometry2.vertices.push(
+    new THREE.Vector3(-.15, .15, 0),
+    new THREE.Vector3(.15, -.15, 0)
+  );
 
-  var ym = new THREE.LineBasicMaterial({color : 0x00ff00});
-  var yg = new THREE.Geometry();
-  yg.vertices.push(new THREE.Vector3(0, -10, 0), new THREE.Vector3(0, 10, 0));
-  var yAxis = new THREE.Line(yg, ym);
-
-  var zm = new THREE.LineBasicMaterial({color : 0x0000ff});
-  var zg = new THREE.Geometry();
-  zg.vertices.push(new THREE.Vector3(0, 0, -10), new THREE.Vector3(0, 0, 10));
-  var zAxis = new THREE.Line(zg, zm);
-
-  this.scene.add(xAxis);
-  this.scene.add(yAxis);
-  this.scene.add(zAxis);
+  var lineMaterial = new THREE.LineBasicMaterial({color: color, linewidth: 2});
+  var line1 = new THREE.Line(geometry1, lineMaterial);
+  var line2 = new THREE.Line(geometry2, lineMaterial);
+  var og = new THREE.CircleGeometry(.2, 8);
+  var odd = false;
+  for (var i = -20; i < 20; i++) {
+    odd = !odd;
+    for (var j = -20; j < 20; j++) {
+      var dot = Math.abs(j) % 2 == (odd ? 1 : 0);
+      if (dot) {
+        this.scene.add(new THREE.Mesh(
+          og.clone().translate(2 * i, 2 * j, -.1),
+          material));
+      } else {
+        this.scene.add(new THREE.Line(
+          geometry1.clone().translate(2 * i, 2 * j, -.1),
+          lineMaterial));
+        this.scene.add(new THREE.Line(
+          geometry2.clone().translate(2 * i, 2 * j, -.1),
+          lineMaterial));
+      }
+    }
+  }
 };
 
 /**
