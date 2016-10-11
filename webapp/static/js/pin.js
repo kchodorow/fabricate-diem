@@ -10,7 +10,7 @@ goog.require('diem.MeshWrapper');
  */
 diem.Pin = function(position) {
   goog.base(this);
-  var geometry = new THREE.BoxGeometry(.5, .5, 0);
+  var geometry = new THREE.CircleGeometry(.2, 8);
   var material = new THREE.MeshBasicMaterial({color : 0x000000});
   this.mesh_ = new THREE.Mesh(geometry, material);
   this.mesh_.position.set(position.x, position.y, position.z + 1);
