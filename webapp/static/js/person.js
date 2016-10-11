@@ -40,32 +40,12 @@ diem.Person.prototype.move = function(dir) {
   var modified = dir.length == 2;
   switch (dir[0]) {
   case goog.events.KeyCodes.LEFT:
-    if (modified) {
-      this.mesh_.rotateZ(-.1);
-    } else {
-      this.mesh_.position.setX(this.mesh_.position.x - 1);
-    }
+    goog.asserts.assert(modified);
+    this.mesh_.rotateZ(-.1);
     break;
   case goog.events.KeyCodes.RIGHT:
-    if (modified) {
-      this.mesh_.rotateZ(.1);
-    } else {
-      this.mesh_.position.setX(this.mesh_.position.x + 1);
-    }
-    break;
-  case goog.events.KeyCodes.UP:
-    if (modified) {
-      this.mesh_.position.setZ(this.mesh_.position.z + 1);
-    } else {
-      this.mesh_.position.setY(this.mesh_.position.y + 1);
-    }
-    break;
-  case goog.events.KeyCodes.DOWN:
-    if (modified) {
-      this.mesh_.position.setZ(this.mesh_.position.z - 1);
-    } else {
-      this.mesh_.position.setY(this.mesh_.position.y - 1);
-    }
+    goog.asserts.assert(modified);
+    this.mesh_.rotateZ(.1);
     break;
   }
 

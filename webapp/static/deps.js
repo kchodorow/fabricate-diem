@@ -16,12 +16,13 @@ goog.addDependency('../../../../js/person.js', ['diem.Person'], ['diem.MeshWrapp
 goog.addDependency('../../../../js/physics.js', ['diem.Physics'], [], false);
 goog.addDependency('../../../../js/pin.js', ['diem.Pin'], ['diem.MeshWrapper'], false);
 goog.addDependency('../../../../js/ruler.js', ['diem.Ruler'], [], false);
-goog.addDependency('../../../../js/scene_container.js', ['diem.SceneContainer'], ['diem.EventHandler', 'diem.Globals', 'diem.Person', 'diem.Physics', 'diem.storage.Storage', 'diem.tools.AddAnchorPoint', 'diem.tools.AddPiece', 'diem.tools.AnchorPoint', 'diem.tools.DragPiece', 'diem.tools.MovePiece', 'diem.tools.PersonTool', 'diem.tools.RemoveAnchorPoint', 'diem.tools.ToolManager', 'goog.events.KeyCodes'], false);
+goog.addDependency('../../../../js/scene_container.js', ['diem.SceneContainer'], ['diem.EventHandler', 'diem.Globals', 'diem.Person', 'diem.Physics', 'diem.storage.Storage', 'diem.tools.AddAnchorPoint', 'diem.tools.AddPiece', 'diem.tools.AnchorPoint', 'diem.tools.CameraTool', 'diem.tools.DragPiece', 'diem.tools.MovePiece', 'diem.tools.PersonTool', 'diem.tools.RemoveAnchorPoint', 'diem.tools.ToolManager', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/storage/model.js', ['diem.storage.Anchor', 'diem.storage.Edge', 'diem.storage.Model', 'diem.storage.Piece'], ['goog.asserts', 'goog.crypt.Md5'], false);
 goog.addDependency('../../../../js/storage/storage.js', ['diem.storage.Storage'], ['diem.storage.Model', 'goog.asserts', 'goog.events', 'goog.net.XhrIo'], false);
 goog.addDependency('../../../../js/tools/add_anchor_pt.js', ['diem.tools.AddAnchorPoint'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/add_piece.js', ['diem.tools.AddPiece'], ['diem.Pattern', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/anchor_pt.js', ['diem.tools.AnchorPoint'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
+goog.addDependency('../../../../js/tools/camera_tool.js', ['diem.tools.CameraTool'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/drag_piece.js', ['diem.tools.DragPiece'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/move_piece.js', ['diem.tools.MovePiece'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/person_tool.js', ['diem.tools.PersonTool'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);

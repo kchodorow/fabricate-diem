@@ -6,6 +6,7 @@ closure_js_library(
     exports = [
         ":add-piece",
         ":anchor-point",
+        ":camera",
         ":drag-piece",
         ":move-piece",
         ":person",
@@ -38,6 +39,15 @@ closure_js_library(
     deps = [
         ":tool",
         "//webapp/static/js:pattern",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "camera",
+    srcs = ["camera_tool.js"],
+    deps = [
+        ":tool",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
