@@ -115,3 +115,9 @@ closure_js_library(
         ":globals",
     ],
 )
+
+closure_js_library(
+    name = "seam",
+    srcs = ["seam.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+)

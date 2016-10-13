@@ -153,6 +153,6 @@ diem.EventHandler.prototype.handleClick = function(event) {
   var object = intersects[0].object;
   // Not persisted.
   var clicked = tool.getMeshWrapper(object);
-  var newInteractables = clicked.onClick(intersects[0]);
+  var newInteractables = clicked.onClick(intersects[0], tool);
   this.toolManager_.handleIntersectables(newInteractables);
 };

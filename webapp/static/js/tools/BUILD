@@ -10,6 +10,7 @@ closure_js_library(
         ":drag-piece",
         ":move-piece",
         ":person",
+        ":seam",
     ],
 )
 
@@ -77,6 +78,17 @@ closure_js_library(
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":tool",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "seam",
+    srcs = ["seam_tool.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":tool",
+        "//webapp/static/js:seam",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

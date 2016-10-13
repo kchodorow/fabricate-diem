@@ -6,6 +6,7 @@ goog.require('diem.EventHandler');
 goog.require('diem.Globals');
 goog.require('diem.Person');
 goog.require('diem.Physics');
+goog.require('diem.cloth.PhysicalPiece');
 goog.require('diem.storage.Storage');
 goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
@@ -15,6 +16,7 @@ goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.MovePiece');
 goog.require('diem.tools.PersonTool');
 goog.require('diem.tools.RemoveAnchorPoint');
+goog.require('diem.tools.SeamTool');
 goog.require('diem.tools.ToolManager');
 goog.require('goog.events.KeyCodes');
 
@@ -46,6 +48,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.DragPiece());
   this.toolManager_.registerTool(new diem.tools.MovePiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.SeamTool());
   this.toolManager_.registerTool(
     new diem.tools.CameraTool(this.camera, [goog.events.KeyCodes.LEFT]));
   this.toolManager_.registerTool(
@@ -156,9 +159,9 @@ diem.SceneContainer.prototype.render = function(now) {
   diem.Physics.get().update();
   this.renderer.render(this.scene, this.camera);
   var tool = this.toolManager_.getTool();
-  var simulations = tool.getIntersectable(diem.events.TIME);
-  for (var i = 0; i < simulations.length; ++i) {
-    tool.getMeshWrapper(simulations[i]).simulate();
+  var physicalPieces = diem.cloth.PhysicalPiece.getPieces();
+  for (var i = 0; i < physicalPieces.length; ++i) {
+    physicalPieces[i].simulate();
   }
   diem.storage.Storage.get().send();
 };

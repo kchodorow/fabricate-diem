@@ -90,6 +90,8 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
   this.mesh_.uuid = piece.uuid;
   this.mesh_.shape = this.shape_;
   this.mesh_.name = 'workboard' + diem.cloth.Workboard.INDEX++;
+  // A list of all physical representations of this pattern piece.
+  this.mesh_.userData.physicalPieces = [];
 
   for (i = 0; i < this.anchors_.length; ++i) {
     this.anchors_[i].addToParent(this.mesh_);
@@ -153,6 +155,7 @@ diem.cloth.Workboard.prototype.onDragStart = function(tool) {
   physicalPiece.addToParent(this.mesh_.parent);
   physicalPiece.onDragStart();
   this.currentPiece_ = physicalPiece;
+  this.mesh_.userData.physicalPieces.push(physicalPiece);
   return physicalPiece.getIntersectables();
 };
 
@@ -167,7 +170,7 @@ diem.cloth.Workboard.prototype.onDrag = function(tool) {
   }
   // We have to delegate this for the initial drag to work, since there's
   // no piece to drag when the drag starts.
-  this.currentPiece_.onDrag();
+  return this.currentPiece_.onDrag();
 };
 
 /**

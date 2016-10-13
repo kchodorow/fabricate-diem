@@ -76,7 +76,10 @@ diem.cloth.ControlPoint.prototype.onDrag = function() {
 };
 
 /**
- * @param {number} [opt_multiplier]
+ * @param {number} [opt_multiplier] On the initial anchor point drag, the
+ * control points are dragged in opposite directions instead of the anchor point
+ * itself being dragged. So this multiplier is set to -1 on this drag, so that
+ * one anchor point goes the "opposite" direction of the drag.
  */
 diem.cloth.ControlPoint.prototype.onDragImpl = function(opt_multiplier) {
   opt_multiplier = opt_multiplier || 1;

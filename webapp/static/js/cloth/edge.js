@@ -3,10 +3,12 @@ goog.provide('diem.cloth.Edge');
 
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
+goog.require('diem.Seam');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
 goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.SeamTool');
 
 goog.require('goog.asserts');
 
@@ -63,8 +65,11 @@ diem.cloth.Edge.prototype.addToParent = function(parent) {
  * @override
  */
 diem.cloth.Edge.prototype.getIntersectables = function() {
-  return [diem.tools.AddAnchorPoint.createIntersectable(
-    diem.events.CLICKABLE, this)];
+  return [
+    diem.tools.AddAnchorPoint.createIntersectable(
+      diem.events.CLICKABLE, this),
+    diem.tools.SeamTool.createIntersectable(
+      diem.events.CLICKABLE, this)];
 };
 
 /**
@@ -100,7 +105,25 @@ diem.cloth.Edge.prototype.generateAction = function() {
  * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
  * @returns {Array}
  */
-diem.cloth.Edge.prototype.onClick = function() {
+diem.cloth.Edge.prototype.onClick = function(intersects, tool) {
+  if (tool.getName() == diem.tools.SeamTool.NAME) {
+    return this.addSeam();
+  } else if (tool.getName() == diem.tools.AddAnchorPoint.NAME) {
+    return this.addAnchorPoint();
+  }
+  goog.asserts.fail();
+  return [];
+};
+
+diem.cloth.Edge.prototype.addSeam = function() {
+  this.mesh_.material = new THREE.LineBasicMaterial({
+    color : 0x8A0917,
+    linewidth: 4});
+  diem.tools.SeamTool.getCurrent().addEdge(this);
+  return [];
+};
+
+diem.cloth.Edge.prototype.addAnchorPoint = function() {
   // Create a new anchor point where the mouse is.
   var workboardMesh = this.mesh_.parent;
   var oldEndAnchor = this.endAnchor_;

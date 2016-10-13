@@ -17,6 +17,7 @@ goog.require('diem.tools.DragPiece');
  */
 diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   goog.base(this);
+  diem.cloth.PhysicalPiece.pieces_.push(this);
   this.pinned_ = [];
 
   var clothPos = new THREE.Vector3().copy(piece.position);
@@ -63,6 +64,8 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
+
+diem.cloth.PhysicalPiece.pieces_ = [];
 
 /**
  * @param {THREE.Geometry} geometry
@@ -260,4 +263,8 @@ diem.cloth.PhysicalPiece.prototype.onDragEnd = function() {
   this.pinned_.push(this.handle_);
   this.handle_ = null;
   return [];
+};
+
+diem.cloth.PhysicalPiece.getPieces = function() {
+  return diem.cloth.PhysicalPiece.pieces_;
 };
