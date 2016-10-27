@@ -1,17 +1,50 @@
 workspace(name = "com_fabdm")
 
-local_repository(
+git_repository(
     name = "io_bazel_rules_appengine",
-    path = "/Users/k/gitroot/rules_appengine",
+    remote = "https://github.com/bazelbuild/rules_appengine.git",
+    commit = "a645e2c",
 )
 
-load("@io_bazel_rules_appengine//appengine:appengine.bzl",
-        "APPENGINE_BUILD_FILE")
-new_local_repository(
+APPENGINE_BUILD_FILE="""
+# BUILD file to use the Java AppEngine SDK with a remote repository.
+java_import(
+    name = "jars",
+    jars = glob(["appengine-java-sdk-1.9.44/lib/**/*.jar"]),
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "user",
+    jars = glob(["appengine-java-sdk-1.9.44/lib/user/*-1.9.44.jar"]),
+    visibility = ["//visibility:public"],
+)
+
+java_import(
+    name = "api",
+    jars = [
+        "appengine-java-sdk-1.9.44/lib/agent/appengine-agent.jar",
+        "appengine-java-sdk-1.9.44/lib/appengine-tools-api.jar",
+        "appengine-java-sdk-1.9.44/lib/impl/appengine-api.jar",
+    ],
+    visibility = ["//visibility:public"],
+    neverlink = 1,
+)
+
+filegroup(
+    name = "sdk",
+    srcs = glob(["appengine-java-sdk-1.9.44/**"]),
+    visibility = ["//visibility:public"],
+    path = "appengine-java-sdk-1.9.44",
+)
+"""
+new_http_archive(
     name = "com_google_appengine_java",
-    path = "/Users/k/Downloads",
+    url = "http://central.maven.org/maven2/com/google/appengine/appengine-java-sdk/1.9.44/appengine-java-sdk-1.9.44.zip",
+    sha256 = "70fd66b394348fbb6d6e1863447b3629364e049aca8dd4c1af507051b9411b44",
     build_file_content = APPENGINE_BUILD_FILE,
 )
+
 maven_jar(
     name = "javax_servlet_api",
     artifact = "javax.servlet:servlet-api:2.5",

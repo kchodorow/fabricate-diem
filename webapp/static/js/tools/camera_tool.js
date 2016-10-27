@@ -1,6 +1,7 @@
 goog.provide('diem.tools.CameraTool');
 
 goog.require('diem.tools.Tool');
+goog.require('goog.asserts');
 goog.require('goog.events.KeyCodes');
 
 /**
