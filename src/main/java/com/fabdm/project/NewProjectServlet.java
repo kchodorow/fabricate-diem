@@ -35,7 +35,10 @@ public class NewProjectServlet extends HttpServlet {
         }
 
         Account account = AccountStorage.getById(user.getUserId());
-        Preconditions.checkNotNull(account);
+        if (account == null) {
+            response.sendRedirect("/set-username");
+            return;
+        }
 
         Project project = Project.createProject(account.getUsername());
         if (account.getProject(project.getUri()) != null) {

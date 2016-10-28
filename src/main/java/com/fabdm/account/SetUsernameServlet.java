@@ -62,6 +62,9 @@ public class SetUsernameServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String redirect = request.getParameter("redirect");
+        if (redirect == null) {
+            redirect = "";
+        }
         Escaper formEscaper = UrlEscapers.urlFormParameterEscaper();
         builder.put("uri", formEscaper.escape(redirect));
         String error = request.getParameter("error");
