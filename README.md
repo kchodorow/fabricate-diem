@@ -28,3 +28,14 @@ $ python -m SimpleHTTPServer
 ```
 
 Then visit localhost:8000/debug.html.
+
+## Deploying
+
+```
+$ bazel build --java_toolchain=//:jdk7 //:diem.war
+$ mkdir ~/deploy-dir
+$ cd ~/deploy-dir
+$ unzip $FABDM/bazel-bin/diem.war
+$ cd $FABDM
+$ bazel-fabricate-diem/external/com_google_appengine_java/appengine-java-sdk-1.9.44/bin/appcfg.sh --enable_jar_splitting update ~/deploy-dir
+```
