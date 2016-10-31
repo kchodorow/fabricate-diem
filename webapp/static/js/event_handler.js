@@ -62,8 +62,8 @@ diem.EventHandler.prototype.setupDraggable_ = function() {
  */
 diem.EventHandler.prototype.getRaycasterCoordinates_ = function(x, y) {
   return new THREE.Vector3(
-    ((x - this.offsetLeft_) / diem.Globals.WIDTH) * 2 - 1,
-    -((y - this.offsetTop_) / diem.Globals.HEIGHT) * 2 + 1,
+    ((x - this.offsetLeft_) / window.innerWidth) * 2 - 1,
+    -((y - this.offsetTop_) / window.innerHeight) * 2 + 1,
     0.5);
 };
 

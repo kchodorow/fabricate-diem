@@ -1,4 +1,3 @@
-
 /* global THREE, requestAnimationFrame */
 goog.provide('diem.SceneContainer');
 
@@ -20,20 +19,17 @@ goog.require('diem.tools.SeamTool');
 goog.require('diem.tools.ToolManager');
 goog.require('goog.events.KeyCodes');
 
-// TODO: more dynamic.
-var WIDTH = 800;
-var HEIGHT = 600;
-
 /**
  * @constructor
  */
 diem.SceneContainer = function() {
   this.scene = new THREE.Scene();
-  this.camera = new THREE.PerspectiveCamera(75, WIDTH / HEIGHT, 0.1, 50);
+  this.camera = new THREE.PerspectiveCamera(
+    75, window.innerWidth / window.innerHeight, 0.1, 50);
 
   this.renderer = new THREE.WebGLRenderer();
-  this.renderer.setClearColor(0xf0f0f0);
-  this.renderer.setSize(WIDTH, HEIGHT);
+  this.renderer.setClearColor(0xffffff);
+  this.renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById(diem.Globals.WEBGL_DIV_ID).appendChild(
     this.renderer.domElement);
 
@@ -82,6 +78,13 @@ diem.SceneContainer = function() {
   this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
 
   diem.storage.Storage.get().request(goog.bind(this.load, this));
+
+  var holder = this;
+  window.addEventListener('resize', function() {
+    holder.camera.aspect = window.innerWidth / window.innerHeight;
+    holder.camera.updateProjectionMatrix();
+    holder.renderer.setSize(window.innerWidth, window.innerHeight);
+  }, false);
 };
 
 diem.SceneContainer.prototype.load = function(model) {
