@@ -84,3 +84,15 @@ maven_jar(
     name = "org_mockito",
     artifact = "org.mockito:mockito-all:1.9.5",
 )
+
+new_local_repository(
+    name = "itext",
+    path = "/users/k/Downloads/itext5-5.5.10",
+    build_file_content = """
+java_import(
+    name = "jar",
+    jars = ["itextpdf-5.5.10.jar"],
+    visibility = ["//visibility:public"],
+)
+""",
+)

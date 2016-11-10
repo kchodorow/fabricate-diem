@@ -4,9 +4,9 @@ import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
-import com.google.appengine.repackaged.com.google.common.base.Preconditions;
 import com.google.appengine.repackaged.com.google.gson.Gson;
 import com.google.appengine.repackaged.com.google.gson.JsonSyntaxException;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import javax.servlet.http.HttpServlet;

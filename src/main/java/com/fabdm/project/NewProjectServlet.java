@@ -5,7 +5,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.common.base.Preconditions;
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 
