@@ -1,9 +1,11 @@
 package com.fabdm.editor.pdf;
 
-import com.fabdm.editor.Model;
-import com.fabdm.editor.Model.Anchor;
-import com.fabdm.editor.Model.Piece;
+import com.fabdm.project.Model;
+import com.fabdm.project.Anchor;
+import com.fabdm.project.Piece;
+import com.fabdm.project.Vector2;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
@@ -29,27 +31,27 @@ public class Exporter {
     }
 
     void drawPattern(Model model, PdfContentByte canvas) {
-        Piece pieces[] = model.getPieces();
+        ImmutableList<Piece> pieces = model.pieces();
         for (Piece piece : pieces) {
-            Anchor anchors[] = piece.getAnchors();
-            Preconditions.checkState(anchors.length >= 1);
-            Anchor start = anchors[0];
+            ImmutableList<Anchor> anchors = piece.anchors();
+            Preconditions.checkState(anchors.size() >= 1);
+            Anchor start = anchors.get(0);
             Anchor end;
-            canvas.moveTo(start.getAnchor().x, start.getAnchor().y);
-            for (int i = 0; i < anchors.length - 1; ++i) {
-                start = anchors[i];
-                end = anchors[i + 1];
+            canvas.moveTo(start.anchor().x(), start.anchor().y());
+            for (int i = 0; i < anchors.size() - 1; ++i) {
+                start = anchors.get(i);
+                end = anchors.get(i + 1);
                 canvas.curveTo(
-                        start.getCcwcp().x, start.getCcwcp().y,
-                        end.getCwcp().x, end.getCwcp().y,
-                        end.getAnchor().x, end.getAnchor().y);
+                        start.ccwcp().x(), start.ccwcp().y(),
+                        end.cwcp().x(), end.cwcp().y(),
+                        end.anchor().x(), end.anchor().y());
             }
-            start = anchors[anchors.length - 1];
-            end = anchors[0];
+            start = anchors.get(anchors.size() - 1);
+            end = anchors.get(0);
             canvas.curveTo(
-                    start.getCcwcp().x, start.getCcwcp().y,
-                    end.getCwcp().x, end.getCwcp().y,
-                    end.getAnchor().x, end.getAnchor().y);
+                    start.ccwcp().x(), start.ccwcp().y(),
+                    end.cwcp().x(), end.cwcp().y(),
+                    end.anchor().x(), end.anchor().y());
 
         }
         canvas.stroke();
@@ -63,12 +65,13 @@ public class Exporter {
         }
         canvas.fill();
 
-        Model model = new Model(new Piece[]{
-                new Piece(new Anchor[]{
-                        new Anchor(
-                                new Model.Vector2(100, 100),
-                                new Model.Vector2(20, 200),
-                                new Model.Vector2(180, 200))})});
+        Model model = Model.create(ImmutableList.of(
+                Piece.create("piece", ImmutableList.of(
+                        Anchor.create(
+                                "whatever",
+                                Vector2.create(100, 100),
+                                Vector2.create(20, 200),
+                                Vector2.create(180, 200))), ImmutableList.of())));
         drawPattern(model, canvas);
     }
 

@@ -80,10 +80,12 @@ diem.storage.Storage.prototype.request = function(callback) {
   // TODO: handle errors.
   goog.events.listen(request, goog.net.EventType.COMPLETE, function(e) {
     var xhr = e.target;
-    var obj = xhr.getResponseJson();
-    // If this is a new pattern, there won't be a model to load.
-    if (obj.model != null) {
-      callback(obj.model);
+    if (xhr.getResponseText() != "") {
+      var obj = xhr.getResponseJson();
+      // If this is a new pattern, there won't be a model to load.
+      if (obj.model != null) {
+        callback(obj.model);
+      }
     }
     storage.patternLoaded_ = true;
   });

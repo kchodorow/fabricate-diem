@@ -1,13 +1,21 @@
 java_library(
     name = "project",
     srcs = [
+        "Anchor.java",
+        "GsonFactory.java",
+        "Model.java",
+        "Piece.java",
         "Project.java",
         "RandomName.java",
+        "Vector2.java",
     ],
     deps = [
+        "@auto_value_gson//:processor",
         "@com_google_appengine_java//:api",
+        "@com_google_gson//jar",
         "@com_google_objectify//jar",
         "@guava//jar",
+        "@jsr305//jar",
     ],
     visibility = [
         "//src/main/java/com/fabdm:__subpackages__",

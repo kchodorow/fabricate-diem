@@ -2,10 +2,13 @@ package com.fabdm.editor;
 
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
+import com.fabdm.project.GsonFactory;
+import com.fabdm.project.Model;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
-import com.google.appengine.repackaged.com.google.gson.Gson;
-import com.google.appengine.repackaged.com.google.gson.JsonSyntaxException;
+import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
@@ -45,7 +48,12 @@ public class EditorServlet extends HttpServlet {
         }
         String format = request.getParameter("format");
         if (format != null && format.equals(JSON)) {
-            response.getWriter().write("{\"model\":" + project.getModel() + "}");
+            if (project.getModel() != null) {
+                Gson gson = new GsonBuilder().registerTypeAdapterFactory(GsonFactory.create())
+                        .create();
+                Model model = gson.fromJson(project.getModel(), Model.class);
+                response.getWriter().write("{\"model\":" + model.toJson() + "}");
+            }
             return;
         }
         builder.put("description", project.getDescription());
@@ -60,14 +68,6 @@ public class EditorServlet extends HttpServlet {
             return;
         }
         String data = request.getParameter("data");
-        try {
-            new Gson().fromJson(data, Model.class);
-        } catch (JsonSyntaxException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("text/json");
-            response.getWriter().write("{\"msg\":\"" + e.getMessage() + "\"}");
-            return;
-        }
         project.setModel(data);
         ofy().save().entity(project).now();
         response.setStatus(HttpServletResponse.SC_OK);

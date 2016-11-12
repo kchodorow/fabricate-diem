@@ -73,6 +73,87 @@ java_import(
     jars = ["itextpdf-5.5.10.jar"],
     visibility = ["//visibility:public"],
 )
+"""
+)
+
+new_http_archive(
+    name = "auto_value",
+    url = "http://repo1.maven.org/maven2/com/google/auto/value/auto-value/1.3/auto-value-1.3.jar",
+    build_file_content = """
+java_import(
+    name = "jar",
+    jars = ["auto-value-1.3.jar"],
+    visibility = ["//visibility:public"],
+)
+
+java_plugin(
+    name = "autovalue-plugin",
+    generates_api = 1,
+    processor_class = "com.google.auto.value.processor.AutoValueProcessor",
+    deps = [":jar"],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "processor",
+    exported_plugins = [":autovalue-plugin"],
+    exports = [":jar"],
+    visibility = ["//visibility:public"],
+)
+""",
+)
+
+# This is repackaged by AppEngine, but we're not using that one!
+maven_jar(
+    name = "com_google_gson",
+    artifact = "com.google.code.gson:gson:jar:2.8.0",
+)
+
+maven_jar(
+    name = "java_poet",
+    artifact = "com.squareup:javapoet:1.7.0",
+)
+
+maven_jar(
+    name = "com_google_auto_common",
+    artifact = "com.google.auto:auto-common:0.8",
+)
+
+new_http_archive(
+    name = "auto_value_gson",
+    url = "http://repo1.maven.org/maven2/com/ryanharter/auto/value/auto-value-gson/0.4.4/auto-value-gson-0.4.4.jar",
+    build_file_content = """
+java_import(
+    name = "jar",
+    jars = ["auto-value-gson-0.4.4.jar"],
+)
+
+java_plugin(
+    name = "autovalue-plugin",
+    generates_api = 1,
+    processor_class = "com.ryanharter.auto.value.gson.AutoValueGsonAdapterFactoryProcessor",
+    deps = [
+        ":jar",
+        "@auto_value//:processor",
+        "@com_google_auto_common//jar",
+        "@com_google_gson//jar",
+        "@guava//jar",
+        "@java_poet//jar",
+    ],
+)
+
+java_library(
+    name = "processor",
+    exported_plugins = [
+        "@auto_value//:autovalue-plugin",
+        ":autovalue-plugin",
+    ],
+    exports = [
+        ":jar",
+        "@auto_value//:jar",
+    ],
+    visibility = ["//visibility:public"],
+)
 """,
 )
 
@@ -100,3 +181,4 @@ maven_jar(
     name = "com_google_truth",
     artifact = "com.google.truth:truth:0.30",
 )
+
