@@ -1,5 +1,8 @@
 package com.fabdm.project;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
+
 /**
  * Generate a random article of clothing.
  */
@@ -30,6 +33,8 @@ class RandomName {
             "underwear"
     };
 
+    private static final ImmutableList<String> PLURALS = ImmutableList.of("underwear");
+
     private static final String[] ADJECTIVES = {
             "bohemian",
             "boho",
@@ -57,12 +62,19 @@ class RandomName {
     private final String adjective;
 
     RandomName() {
-        this.article = ARTICLES[(int) Math.floor(Math.random() * ARTICLES.length)];
-        this.adjective = ADJECTIVES[(int) Math.floor(Math.random() * ADJECTIVES.length)];
+        this(ARTICLES[(int) Math.floor(Math.random() * ARTICLES.length)],
+                ADJECTIVES[(int) Math.floor(Math.random() * ADJECTIVES.length)]);
+    }
+
+    @VisibleForTesting
+    RandomName(String article, String adjective) {
+        this.article = article;
+        this.adjective = adjective;
     }
 
     String getDescription() {
-        boolean plural = article.endsWith("s") && ! article.endsWith("ss");
+        boolean plural = PLURALS.contains(article)
+                || (article.endsWith("s") && ! article.endsWith("ss"));
         String aOrAn = "A" + (adjective.matches("^[aeiou].*") && !plural ? "n" : "");
         return aOrAn + (plural ? " pair of " : " ") + adjective + " " + article;
     }

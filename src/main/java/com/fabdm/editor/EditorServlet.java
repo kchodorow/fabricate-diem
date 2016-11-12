@@ -29,8 +29,8 @@ public class EditorServlet extends HttpServlet {
     public EditorServlet() {
         super();
         this.builder = new DataBuilder(
-                "diem.editor.editor",
-                ImmutableList.of("templates/editor.soy", "templates/main.soy"));
+                "diem.pattern.editor",
+                ImmutableList.of("templates/pattern.soy", "templates/main.soy"));
         this.errorBuilder = new DataBuilder(
                 "diem.errors.project_not_found",
                 ImmutableList.of("templates/errors.soy", "templates/main.soy"));
