@@ -1,11 +1,14 @@
-{namespace diem.editor}
+{namespace diem.pattern}
 
 /**
  * @param description
  */
 {template .editor}
     {call diem.header data="all" /}
-      <div>{$description}</div>
+      <div>
+        {$description}
+        <a href="/+/favorite" title="Favorite"><img src="/assets/icons/favorite.png"></a>
+      </div>
       <div id="model-box">
       </div>
 

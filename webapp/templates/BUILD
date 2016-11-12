@@ -1,5 +1,5 @@
 SOY_FILES = [
-    "editor.soy",
+    "pattern.soy",
     "errors.soy",
     "main.soy",
     "user.soy",
@@ -38,7 +38,7 @@ DEPS = [
 java_library(
     name = "java-template",
     srcs = [
-        ":EditorSoyInfo.java",
+        ":PatternSoyInfo.java",
         ":ErrorsSoyInfo.java",
         ":MainSoyInfo.java",
         ":UserSoyInfo.java",
