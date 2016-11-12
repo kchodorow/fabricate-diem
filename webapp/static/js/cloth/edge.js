@@ -3,7 +3,6 @@ goog.provide('diem.cloth.Edge');
 
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
-goog.require('diem.Seam');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');

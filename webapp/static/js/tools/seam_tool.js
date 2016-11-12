@@ -1,6 +1,7 @@
 goog.provide('diem.tools.SeamTool');
 
 goog.require('diem.tools.Tool');
+goog.require('diem.Seam');
 
 goog.require('goog.events.KeyCodes');
 
