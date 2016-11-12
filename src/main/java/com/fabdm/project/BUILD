@@ -10,7 +10,8 @@ java_library(
         "@guava//jar",
     ],
     visibility = [
-        "//src/main/java/com/fabdm:__subpackages__"
+        "//src/main/java/com/fabdm:__subpackages__",
+        "//src/test/java/com/fabdm:__subpackages__",
     ],
 )
 

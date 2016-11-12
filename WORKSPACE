@@ -84,3 +84,7 @@ maven_jar(
     name = "org_mockito",
     artifact = "org.mockito:mockito-all:1.9.5",
 )
+maven_jar(
+    name = "com_google_truth",
+    artifact = "com.google.truth:truth:0.30",
+)
