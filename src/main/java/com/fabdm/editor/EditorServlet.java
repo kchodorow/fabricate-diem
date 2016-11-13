@@ -1,11 +1,13 @@
 package com.fabdm.editor;
 
-import com.fabdm.project.GsonFactory;
-import com.fabdm.project.Model;
+import com.fabdm.account.Account;
+import com.fabdm.account.AccountStorage;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
-import com.google.gson.GsonBuilder;
-import com.google.gson.Gson;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import javax.servlet.http.HttpServlet;
@@ -54,9 +56,22 @@ public class EditorServlet extends HttpServlet {
         builder.build(request, response);
     }
 
+    // TODO: test logged in -> edit -> save.
+    // TODO: test logged out -> edit -> login -> save
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        if (!userService.isUserLoggedIn()) {
+            response.sendRedirect(userService.createLoginURL(request.getRequestURI()));
+            return;
+        }
+        User user = userService.getCurrentUser();
+        Preconditions.checkNotNull(user);
+        Account account = AccountStorage.getById(user.getUserId());
+        Preconditions.checkNotNull(account);
+        Preconditions.checkNotNull(account.getUsername());
+
         ProjectLoader loader = new ProjectLoader(request);
         Project project = loader.getProject();
         if (project == null) {
@@ -64,8 +79,19 @@ public class EditorServlet extends HttpServlet {
             errorBuilder.build(request, response);
             return;
         }
+
         String data = request.getParameter("data");
-        project.setModel(data);
+        if (account.getUsername().equals(loader.getUsername())) {
+            project.setModel(data);
+        } else {  // fork.
+            project = Project.builder()
+                .setForkedFrom(project.getId())
+                .setUsername(account.getUsername())
+                .setModel(data)
+                .setDescription(project.getDescription())
+                .setUri(project.getUri())
+                .build();
+        }
         ofy().save().entity(project).now();
         response.setStatus(HttpServletResponse.SC_OK);
     }

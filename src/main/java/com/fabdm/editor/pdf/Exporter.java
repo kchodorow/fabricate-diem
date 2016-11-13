@@ -40,21 +40,21 @@ public class Exporter {
             Preconditions.checkState(anchors.size() >= 1);
             Anchor start = anchors.get(0);
             Anchor end;
-            canvas.moveTo(start.anchor().x(), start.anchor().y());
+            canvas.moveTo(start.anchor().xAsPixels(), start.anchor().yAsPixels());
             for (int i = 0; i < anchors.size() - 1; ++i) {
                 start = anchors.get(i);
                 end = anchors.get(i + 1);
                 canvas.curveTo(
-                        start.ccwCp().x(), start.ccwCp().y(),
-                        end.cwCp().x(), end.cwCp().y(),
-                        end.anchor().x(), end.anchor().y());
+                        start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
+                        end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
+                        end.anchor().xAsPixels(), end.anchor().yAsPixels());
             }
             start = anchors.get(anchors.size() - 1);
             end = anchors.get(0);
             canvas.curveTo(
-                    start.ccwCp().x(), start.ccwCp().y(),
-                    end.cwCp().x(), end.cwCp().y(),
-                    end.anchor().x(), end.anchor().y());
+                    start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
+                    end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
+                    end.anchor().xAsPixels(), end.anchor().yAsPixels());
 
         }
         canvas.stroke();

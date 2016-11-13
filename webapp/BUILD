@@ -1,7 +1,6 @@
 filegroup(
     name = "webapp",
     srcs = [
-        "foo.pdf",
         ":xml",
         "//webapp/static",
         "//webapp/templates",

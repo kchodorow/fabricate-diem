@@ -40,4 +40,8 @@ public class ProjectLoader {
     String getProjectName() {
         return projectName;
     }
+
+    public String getUsername() {
+        return username;
+    }
 }

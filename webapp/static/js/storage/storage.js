@@ -57,6 +57,7 @@ diem.storage.Storage.prototype.send = function() {
   if (now - this.lastSend_ < 10000) {
     return;
   }
+  this.lastSend_ = now;
 
   // Don't send if it's the exact same model we sent last time.
   var json = this.model_.getStorable();
@@ -70,8 +71,7 @@ diem.storage.Storage.prototype.send = function() {
   var request = new goog.net.XhrIo();
   request.send(
     window.location.pathname, 'POST', "data=" + json);
-  // TODO: wait until send was successful.
-  this.lastSend_ = Date.now();
+  // TODO: update lastSend_ when the send returns success.
 };
 
 diem.storage.Storage.prototype.request = function(callback) {
