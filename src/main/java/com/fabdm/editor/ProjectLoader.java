@@ -7,8 +7,6 @@ import com.google.common.base.Preconditions;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Arrays;
-
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
@@ -23,7 +21,6 @@ public class ProjectLoader {
         // URI: /+/project/foo/bar
         String parts[] = request.getRequestURI().split("/");
         Preconditions.checkState(parts.length >= 4);
-        System.out.println("Pieces: " + Arrays.toString(parts));
         this.username = parts[3];
         this.projectName = parts[4];
     }
