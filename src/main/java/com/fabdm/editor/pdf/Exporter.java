@@ -14,6 +14,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * Exports a pattern to a PDF.
@@ -31,9 +32,9 @@ public class Exporter {
     }
 
     void drawPattern(Model model, PdfContentByte canvas) {
-        ImmutableList<Piece> pieces = model.pieces();
+        List<Piece> pieces = model.pieces();
         for (Piece piece : pieces) {
-            ImmutableList<Anchor> anchors = piece.anchors();
+            List<Anchor> anchors = piece.anchors();
             Preconditions.checkState(anchors.size() >= 1);
             Anchor start = anchors.get(0);
             Anchor end;
@@ -42,15 +43,15 @@ public class Exporter {
                 start = anchors.get(i);
                 end = anchors.get(i + 1);
                 canvas.curveTo(
-                        start.ccwcp().x(), start.ccwcp().y(),
-                        end.cwcp().x(), end.cwcp().y(),
+                        start.ccwCp().x(), start.ccwCp().y(),
+                        end.cwCp().x(), end.cwCp().y(),
                         end.anchor().x(), end.anchor().y());
             }
             start = anchors.get(anchors.size() - 1);
             end = anchors.get(0);
             canvas.curveTo(
-                    start.ccwcp().x(), start.ccwcp().y(),
-                    end.cwcp().x(), end.cwcp().y(),
+                    start.ccwCp().x(), start.ccwCp().y(),
+                    end.cwCp().x(), end.cwCp().y(),
                     end.anchor().x(), end.anchor().y());
 
         }

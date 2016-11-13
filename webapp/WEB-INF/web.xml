@@ -47,6 +47,10 @@
     <servlet-name>NewProject</servlet-name>
     <servlet-class>com.fabdm.project.NewProjectServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>Exporter</servlet-name>
+    <servlet-class>com.fabdm.editor.pdf.PdfServlet</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>Index</servlet-name>
@@ -67,6 +71,10 @@
   <servlet-mapping>
     <servlet-name>NewProject</servlet-name>
     <url-pattern>/+/new</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Exporter</servlet-name>
+    <url-pattern>/+/export</url-pattern>
   </servlet-mapping>
 
 </web-app>
