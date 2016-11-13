@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UserServlet extends HttpServlet {
-    private static final int USERNAME_IDX = 6;
+    private static final int USERNAME_IDX = 7;
 
     private final DataBuilder dataBuilder;
     private final DataBuilder errorBuilder;
@@ -42,7 +42,7 @@ public class UserServlet extends HttpServlet {
     }
 
     private String getUsername(String requestURI) {
-        // "/account/someone"
+        // "/+/user/someone"
         String username = requestURI.substring(USERNAME_IDX);
         if (username.contains("/")) {
             username = username.substring(0, username.indexOf('/'));

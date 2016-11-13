@@ -1,17 +1,22 @@
 package com.fabdm.editor.pdf;
 
-import com.fabdm.project.Model;
 import com.fabdm.project.Anchor;
+import com.fabdm.project.Model;
 import com.fabdm.project.Piece;
+import com.fabdm.project.Project;
 import com.fabdm.project.Vector2;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -20,18 +25,15 @@ import java.util.List;
  * Exports a pattern to a PDF.
  */
 public class Exporter {
-    private final Document document = new Document(PageSize.LETTER);
-    private PdfWriter writer;
+    private final Document document;
+    private final Project project;
 
-    Exporter() {
-        try {
-            this.writer = PdfWriter.getInstance(document, new FileOutputStream("foo.pdf"));
-        } catch (DocumentException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    Exporter(Project project) {
+        this.document = new Document(PageSize.LETTER);
+        this.project = project;
     }
 
-    void drawPattern(Model model, PdfContentByte canvas) {
+    private void drawPattern(Model model, PdfContentByte canvas) {
         List<Piece> pieces = model.pieces();
         for (Piece piece : pieces) {
             List<Anchor> anchors = piece.anchors();
@@ -58,32 +60,71 @@ public class Exporter {
         canvas.stroke();
     }
 
-    void drawGrid(PdfContentByte canvas) {
-        for (float x = 0; x < PageSize.LETTER.getWidth(); x+=72f) {
-            for (float y = 0; y < PageSize.LETTER.getHeight(); y+=72f) {
-                canvas.circle(x, y, 1f);
-            }
+    String generate(Model model) throws PdfException {
+        String filename = project.getUri() + ".pdf";
+        try (CloseablePdf pdf = new CloseablePdf(document, filename)) {
+            addPreamble(document);
+            drawPattern(model, pdf.getWriter().getDirectContent());
         }
-        canvas.fill();
+        return filename;
+    }
 
+    private void addPreamble(Document document) throws PdfException {
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLDITALIC);
+        Chunk fabdm = new Chunk("Fabricate Diem", titleFont);
+        Chunk title = new Chunk(project.getDescription(), titleFont);
+        try {
+            document.add(fabdm);
+            document.add(title);
+        } catch (DocumentException e) {
+            throw new PdfException(e.getMessage());
+        }
+    }
+
+    private class CloseablePdf implements Closeable {
+        private final Document document;
+        private final PdfWriter writer;
+
+        CloseablePdf(Document document, String filename) throws PdfException {
+            this.document = document;
+            FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(filename);
+            } catch (FileNotFoundException e) {
+                throw new PdfException(e.getMessage());
+            }
+            try {
+                this.writer = PdfWriter.getInstance(document, fos);
+            } catch (DocumentException e) {
+                throw new PdfException(e.getMessage());
+            }
+            document.open();
+        }
+
+        PdfWriter getWriter() {
+            return writer;
+        }
+
+        @Override
+        public void close() {
+            document.close();
+        }
+    }
+
+    class PdfException extends Exception {
+        PdfException(String message) {
+            super("Error generating PDF: " + message);
+        }
+    }
+
+    public static void main(String args[]) throws PdfException {
         Model model = Model.create(ImmutableList.of(
-                Piece.create("piece", ImmutableList.of(
-                        Anchor.create(
-                                "whatever",
-                                Vector2.create(100, 100),
-                                Vector2.create(20, 200),
-                                Vector2.create(180, 200))), ImmutableList.of())));
-        drawPattern(model, canvas);
+            Piece.create("piece", ImmutableList.of(
+                Anchor.create(
+                    "whatever",
+                    Vector2.create(100, 100),
+                    Vector2.create(20, 200),
+                    Vector2.create(180, 200))), ImmutableList.of())));
+        new Exporter(new Project()).generate(model);
     }
-
-    void generate() {
-        document.open();
-        drawGrid(writer.getDirectContent());
-        document.close();
-    }
-
-    public static void main(String args[]) {
-        new Exporter().generate();
-    }
-
 }

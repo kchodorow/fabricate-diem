@@ -5,7 +5,7 @@ java_binary(
     runtime_deps = [
         "//src/main/java/com/fabdm",
         "//src/main/java/com/fabdm/account:servlet",
-        "//src/main/java/com/fabdm/editor",
+        "//src/main/java/com/fabdm/editor:servlet",
         "//src/main/java/com/fabdm/project:servlet",
         "@org_tuckey_urlrewritefilter//jar",
     ],

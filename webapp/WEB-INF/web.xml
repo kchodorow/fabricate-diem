@@ -58,11 +58,11 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Editor</servlet-name>
-    <url-pattern>/project/*</url-pattern>
+    <url-pattern>/+/project/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>User</servlet-name>
-    <url-pattern>/user/*</url-pattern>
+    <url-pattern>/+/user/*</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>SetUsername</servlet-name>
@@ -74,7 +74,7 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>Exporter</servlet-name>
-    <url-pattern>/+/export</url-pattern>
+    <url-pattern>/+/export/*</url-pattern>
   </servlet-mapping>
 
 </web-app>
