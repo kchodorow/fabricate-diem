@@ -16,23 +16,22 @@ public abstract class Vector2 {
         return new AutoValue_Vector2.GsonTypeAdapter(gson);
     }
 
-    public static Vector2 create(int x, int y) {
+    public static Vector2 create(double x, double y) {
         return new AutoValue_Vector2(x, y);
     }
 
-    public abstract int x();
-    public abstract int y();
+    public abstract double x();
+    public abstract double y();
 
     public String toJson() {
         return "{x : " + x() + ", y : " + y() + "}";
     }
 
-    // THREE.js: 1 unit -> 6"
     public int xAsPixels() {
-        return x() * PIXELS_PER_INCH * INCHES_PER_THREE_UNIT;
+        return (int) (x() * PIXELS_PER_INCH * INCHES_PER_THREE_UNIT);
     }
 
     public int yAsPixels() {
-        return y() * PIXELS_PER_INCH * INCHES_PER_THREE_UNIT;
+        return (int) (y() * PIXELS_PER_INCH * INCHES_PER_THREE_UNIT);
     }
 }
