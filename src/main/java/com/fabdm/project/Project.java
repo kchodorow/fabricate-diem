@@ -10,6 +10,7 @@ import com.googlecode.objectify.annotation.Id;
 public class Project {
     @Id
     Long id;
+    // TODO: this should probably be more human-readable.
     Long forkedFrom;
     String username;
     String description;

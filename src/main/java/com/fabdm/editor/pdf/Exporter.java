@@ -25,6 +25,10 @@ import java.util.List;
  * Exports a pattern to a PDF.
  */
 public class Exporter {
+    private static double PIXELS_TO_THREE = 1 / (72 * 6);
+    private static int MAX_WIDTH = (int) (PageSize.LETTER.getWidth() * PIXELS_TO_THREE);
+    private static int MAX_HEIGHT = (int) (PageSize.LETTER.getHeight() * PIXELS_TO_THREE);
+
     private final Document document;
     private final Project project;
 
@@ -36,27 +40,33 @@ public class Exporter {
     private void drawPattern(Model model, PdfContentByte canvas) {
         List<Piece> pieces = model.pieces();
         for (Piece piece : pieces) {
-            List<Anchor> anchors = piece.anchors();
-            Preconditions.checkState(anchors.size() >= 1);
-            Anchor start = anchors.get(0);
-            Anchor end;
-            canvas.moveTo(start.anchor().xAsPixels(), start.anchor().yAsPixels());
-            for (int i = 0; i < anchors.size() - 1; ++i) {
-                start = anchors.get(i);
-                end = anchors.get(i + 1);
-                canvas.curveTo(
-                        start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
-                        end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
-                        end.anchor().xAsPixels(), end.anchor().yAsPixels());
+            PdfPieceIterator pdfIterator = new PdfPieceIterator(piece);
+            for (PdfPage page : pdfIterator) {
+                drawPieceOnPage(piece, page, canvas);
             }
-            start = anchors.get(anchors.size() - 1);
-            end = anchors.get(0);
-            canvas.curveTo(
-                    start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
-                    end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
-                    end.anchor().xAsPixels(), end.anchor().yAsPixels());
-
         }
+    }
+
+    private void drawPieceOnPage(Piece piece, PdfPage page, PdfContentByte canvas) {
+        List<Anchor> anchors = piece.anchors();
+        Preconditions.checkState(anchors.size() >= 1);
+        Anchor start = anchors.get(0);
+        Anchor end;
+        canvas.moveTo(start.anchor().xAsPixels(), start.anchor().yAsPixels());
+        for (int i = 0; i < anchors.size() - 1; ++i) {
+            start = anchors.get(i);
+            end = anchors.get(i + 1);
+            canvas.curveTo(
+                start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
+                end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
+                end.anchor().xAsPixels(), end.anchor().yAsPixels());
+        }
+        start = anchors.get(anchors.size() - 1);
+        end = anchors.get(0);
+        canvas.curveTo(
+            start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
+            end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
+            end.anchor().xAsPixels(), end.anchor().yAsPixels());
         canvas.stroke();
     }
 
