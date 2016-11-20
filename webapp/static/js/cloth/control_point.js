@@ -110,6 +110,11 @@ diem.cloth.ControlPoint.updateWorkboardGeometry = function(workboardMesh) {
   for (var i = 0; i < workboardMesh.children.length; ++i) {
     workboardMesh.children[i].geometry.verticesNeedUpdate = true;
   }
+  var physicalPieces = workboardMesh.userData.physicalPieces;
+  for (i = 0; i < physicalPieces.length; ++i) {
+    var piece = physicalPieces[i];
+    piece.updateGeometry(workboardMesh);
+  }
 };
 
 /**

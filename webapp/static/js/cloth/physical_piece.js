@@ -20,15 +20,12 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   diem.cloth.PhysicalPiece.pieces_.push(this);
   this.pinned_ = [];
 
-  var clothPos = new THREE.Vector3().copy(piece.position);
-
   // Make a grid of vertices.
-  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
-  clothGeometry.translate(clothPos.x, clothPos.y, 0);
   var clothMaterial = new THREE.MeshLambertMaterial({
     color: 0xFFFFFF,
     side: THREE.DoubleSide
   });
+  var clothGeometry = this.from2dMesh(piece);
   this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
@@ -66,6 +63,19 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 diem.cloth.PhysicalPiece.pieces_ = [];
+
+diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
+  this.mesh_.geometry = this.from2dMesh(mesh);
+  this.mesh_.geometry.verticesNeedUpdate = true;
+  this.mapIndices_();
+};
+
+diem.cloth.PhysicalPiece.prototype.from2dMesh = function(mesh) {
+  var clothGeometry = this.createIndexedBufferGeometry_(mesh.geometry);
+  var clothPos = new THREE.Vector3().copy(mesh.position);
+  clothGeometry.translate(clothPos.x, clothPos.y, 0);
+  return clothGeometry;
+};
 
 /**
  * @param {THREE.Geometry} geometry

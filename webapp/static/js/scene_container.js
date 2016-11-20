@@ -164,7 +164,6 @@ diem.SceneContainer.prototype.render = function(now) {
   requestAnimationFrame(render);
   diem.Physics.get().update();
   this.renderer.render(this.scene, this.camera);
-  var tool = this.toolManager_.getTool();
   var physicalPieces = diem.cloth.PhysicalPiece.getPieces();
   for (var i = 0; i < physicalPieces.length; ++i) {
     physicalPieces[i].simulate();

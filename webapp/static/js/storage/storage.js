@@ -81,7 +81,13 @@ diem.storage.Storage.prototype.request = function(callback) {
   goog.events.listen(request, goog.net.EventType.COMPLETE, function(e) {
     var xhr = e.target;
     if (xhr.getResponseText() != "") {
-      var obj = xhr.getResponseJson();
+      try {
+        var obj = xhr.getResponseJson();
+      } catch (e) {
+        // TODO: don't ignore.
+        console.log(e);
+        return;
+      }
       // If this is a new pattern, there won't be a model to load.
       if (obj.model != null) {
         callback(obj.model);
