@@ -25,37 +25,27 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
     color: 0xFFFFFF,
     side: THREE.DoubleSide
   });
-  var clothGeometry = this.from2dMesh(piece);
+  var clothGeometry = this.from2dMesh_(piece);
   this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
 
-  // The btSoftBody is centered at (0,0), so its corners should be offset
-  // by the position of the cloth.
-  // Weirdness: why is 1,0 the llc?
-  this.mapIndices_();
+  this.helper_ = new Ammo.btSoftBodyHelpers();
+  this.softBody_ = this.getSoftBody_();
 
-  var softBodyHelpers = new Ammo.btSoftBodyHelpers();
-  var clothSoftBody = softBodyHelpers.CreateFromTriMesh(
-    diem.Physics.get().getWorld().getWorldInfo(),
-    this.mesh_.geometry.ammoVertices,
-    this.mesh_.geometry.ammoIndices,
-    this.mesh_.geometry.ammoIndices.length / 3,
-    true);
-
-  var sbConfig = clothSoftBody.get_m_cfg();
+  var sbConfig = this.softBody_.get_m_cfg();
   sbConfig.set_viterations(10);
   sbConfig.set_piterations(10);
 
   var margin = 0.05;
-  clothSoftBody.setTotalMass(0.9, false);
-  Ammo.castObject(clothSoftBody, Ammo.btCollisionObject).getCollisionShape()
+  this.softBody_.setTotalMass(0.9, false);
+  Ammo.castObject(this.softBody_, Ammo.btCollisionObject).getCollisionShape()
     .setMargin(margin * 3);
   // TODO: what are the last couple args?
-  diem.Physics.get().getWorld().addSoftBody(clothSoftBody, 1, -1);
-  this.mesh_.userData.physicsBody = clothSoftBody;
+  diem.Physics.get().getWorld().addSoftBody(this.softBody_, 1, -1);
+  this.mesh_.userData.physicsBody = this.softBody_;
   // Disable deactivation
-  clothSoftBody.setActivationState(4);
+  this.softBody_.setActivationState(4);
 
   this.handle_ = 0;
 };
@@ -65,13 +55,28 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 diem.cloth.PhysicalPiece.pieces_ = [];
 
 diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
-  this.mesh_.geometry = this.from2dMesh(mesh);
-  this.mapIndices_();
+  this.mesh_.geometry = this.from2dMesh_(mesh);
+  var softBody = this.getSoftBody_();
+  var m_nodes = softBody.get_m_nodes();
+  this.softBody_.set_m_nodes(m_nodes);
   this.mesh_.geometry.verticesNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
 };
 
-diem.cloth.PhysicalPiece.prototype.from2dMesh = function(mesh) {
+diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
+  this.mapIndices_();
+  // The btSoftBody is centered at (0,0), so its corners should be offset
+  // by the position of the cloth.
+  // Weirdness: why is 1,0 the llc?
+  return this.helper_.CreateFromTriMesh(
+    diem.Physics.get().getWorld().getWorldInfo(),
+    this.mesh_.geometry.ammoVertices,
+    this.mesh_.geometry.ammoIndices,
+    this.mesh_.geometry.ammoIndices.length / 3,
+    true);
+};
+
+diem.cloth.PhysicalPiece.prototype.from2dMesh_ = function(mesh) {
   var clothGeometry = this.createIndexedBufferGeometry_(mesh.geometry);
   var clothPos = new THREE.Vector3().copy(mesh.position);
   clothGeometry.translate(clothPos.x, clothPos.y, 0);
