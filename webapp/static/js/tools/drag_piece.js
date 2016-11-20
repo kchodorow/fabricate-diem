@@ -39,21 +39,19 @@ diem.tools.DragPiece.createIntersectable = function(action, meshWrapper) {
  * @override
  */
 diem.tools.DragPiece.prototype.onDragStart = function(meshWrapper) {
-  meshWrapper.drag3dStart();
-  return [];
+  return meshWrapper.drag3dStart();
 };
 
 /**
  * @override
  */
 diem.tools.DragPiece.prototype.onDrag = function(meshWrapper) {
-  meshWrapper.drag3d();
-  return [];
+  return meshWrapper.drag3d();
 };
 
 /**
  * @override
  */
 diem.tools.DragPiece.prototype.onDragEnd = function(meshWrapper) {
-  meshWrapper.drag3dEnd();
+  return meshWrapper.drag3dEnd();
 };

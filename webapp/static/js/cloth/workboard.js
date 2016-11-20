@@ -158,7 +158,7 @@ diem.cloth.Workboard.prototype.move = function() {
 diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_, this.w, this.h);
   physicalPiece.addToParent(this.mesh_.parent);
-  physicalPiece.onDragStart();
+  physicalPiece.drag3dStart();
   this.currentPiece_ = physicalPiece;
   this.mesh_.userData.physicalPieces.push(physicalPiece);
   return physicalPiece.getIntersectables();
@@ -170,12 +170,12 @@ diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
 diem.cloth.Workboard.prototype.drag3d = function(tool) {
   // We have to delegate this for the initial drag to work, since there's
   // no piece to drag when the drag starts.
-  return this.currentPiece_.onDrag();
+  return this.currentPiece_.drag3d();
 };
 
 /**
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
-  return this.currentPiece_.onDragEnd();
+  return this.currentPiece_.drag3dEnd();
 };

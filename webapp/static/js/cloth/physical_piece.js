@@ -66,8 +66,9 @@ diem.cloth.PhysicalPiece.pieces_ = [];
 
 diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
   this.mesh_.geometry = this.from2dMesh(mesh);
-  this.mesh_.geometry.verticesNeedUpdate = true;
   this.mapIndices_();
+  this.mesh_.geometry.verticesNeedUpdate = true;
+  this.mesh_.geometry.boundingSphere = null;
 };
 
 diem.cloth.PhysicalPiece.prototype.from2dMesh = function(mesh) {
@@ -177,7 +178,6 @@ diem.cloth.PhysicalPiece.prototype.mapIndices_ = function() {
  */
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
   return [
-    diem.tools.DragPiece.createIntersectable(diem.events.TIME, this),
     diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this)
   ];
 };
@@ -229,7 +229,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
 /**
  * @override
  */
-diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
+diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
   this.handle_ = -1;
   var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;
   var minDistance = Number.MAX_VALUE;
@@ -258,7 +258,7 @@ diem.cloth.PhysicalPiece.prototype.onDragStart = function() {
  * Set one vertex to the current mouse posisiton.
  * @returns {Array}
  */
-diem.cloth.PhysicalPiece.prototype.onDrag = function() {
+diem.cloth.PhysicalPiece.prototype.drag3d = function() {
   var mousePos = new THREE.Vector3().copy(diem.Globals.mouse);
   this.mouse.getWorldTransform().setOrigin(
     new Ammo.btVector3(mousePos.x, mousePos.y, 0));
@@ -268,7 +268,7 @@ diem.cloth.PhysicalPiece.prototype.onDrag = function() {
 /**
  * @returns {Array}
  */
-diem.cloth.PhysicalPiece.prototype.onDragEnd = function() {
+diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
   goog.asserts.assert(this.handle_ != -1);
   this.pinned_.push(this.handle_);
   this.handle_ = null;
