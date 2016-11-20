@@ -23,7 +23,8 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   // Make a grid of vertices.
   var clothMaterial = new THREE.MeshLambertMaterial({
     color: 0xFFFFFF,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    wireframe: true
   });
   var clothGeometry = this.from2dMesh_(piece);
   this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
@@ -55,7 +56,14 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 diem.cloth.PhysicalPiece.pieces_ = [];
 
 diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
+  if (this.pinned_.length == 0 || this.mouse == null) {
+    // If there are no pins, don't bother changing the geometry.
+    return;
+  }
+  // Get a pin and offset the piece by the pin position.
+  var pos = this.mouse.getWorldTransform().getOrigin();
   this.mesh_.geometry = this.from2dMesh_(mesh);
+  this.mesh_.geometry.translate(pos.x(), pos.y(), 0);
   var softBody = this.getSoftBody_();
   var m_nodes = softBody.get_m_nodes();
   this.softBody_.set_m_nodes(m_nodes);
@@ -68,12 +76,16 @@ diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
   // The btSoftBody is centered at (0,0), so its corners should be offset
   // by the position of the cloth.
   // Weirdness: why is 1,0 the llc?
-  return this.helper_.CreateFromTriMesh(
+  var softBody = this.helper_.CreateFromTriMesh(
     diem.Physics.get().getWorld().getWorldInfo(),
     this.mesh_.geometry.ammoVertices,
     this.mesh_.geometry.ammoIndices,
     this.mesh_.geometry.ammoIndices.length / 3,
     true);
+  // Set damping and drag coefficients.
+  softBody.get_m_cfg().set_kDP(.001);
+  softBody.get_m_cfg().set_kDG(.001);
+  return softBody;
 };
 
 diem.cloth.PhysicalPiece.prototype.from2dMesh_ = function(mesh) {
