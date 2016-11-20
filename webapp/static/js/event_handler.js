@@ -110,10 +110,8 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   }
   var object = intersects[0].object;
   this.clicked_ = tool.getMeshWrapper(object);
-  if (this.clicked_.onDragStart) {
-    var intersectables = this.clicked_.onDragStart(tool);
-    this.toolManager_.handleIntersectables(intersectables);
-  }
+  var intersectables = tool.onDragStart(this.clicked_);
+  this.toolManager_.handleIntersectables(intersectables);
 };
 
 /**
@@ -124,7 +122,7 @@ diem.EventHandler.prototype.dragAction = function() {
     var x = this.dragger_.clientX;
     var y = this.dragger_.clientY;
     this.updateMouseCoordinates_(x, y);
-    this.clicked_.onDrag(this.toolManager_.getTool());
+    this.toolManager_.getTool().onDrag(this.clicked_);
   }
 };
 
@@ -132,8 +130,8 @@ diem.EventHandler.prototype.dragAction = function() {
  * Does cleanup and unsets the dragged object.
  */
 diem.EventHandler.prototype.dragEnd = function() {
-  if (this.clicked_ != null && this.clicked_.onDragEnd) {
-    this.clicked_.onDragEnd(this.toolManager_.getTool());
+  if (this.clicked_ != null) {
+    this.toolManager_.getTool().onDragEnd(this.clicked_);
   }
   this.clicked_ = null;
 };
@@ -150,9 +148,8 @@ diem.EventHandler.prototype.handleClick = function(event) {
   if (intersects.length == 0) {
     return;
   }
-  var object = intersects[0].object;
-  // Not persisted.
-  var clicked = tool.getMeshWrapper(object);
-  var newInteractables = clicked.onClick(intersects[0], tool);
+  // Intersection points are used to figure out where the pin should go on the
+  // person.
+  var newInteractables = tool.onClick(intersects);
   this.toolManager_.handleIntersectables(newInteractables);
 };

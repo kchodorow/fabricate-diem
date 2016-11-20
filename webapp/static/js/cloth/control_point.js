@@ -68,11 +68,11 @@ diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable
  * mouse:   (11, 6, 0)
  * ->       (1, -1, 0)
  */
-diem.cloth.ControlPoint.prototype.onDrag = function() {
+diem.cloth.ControlPoint.prototype.move = function() {
   if (!this.independentlyDraggable_) {
     return;
   }
-  this.onDragImpl();
+  this.moveImpl();
 };
 
 /**
@@ -81,7 +81,7 @@ diem.cloth.ControlPoint.prototype.onDrag = function() {
  * itself being dragged. So this multiplier is set to -1 on this drag, so that
  * one anchor point goes the "opposite" direction of the drag.
  */
-diem.cloth.ControlPoint.prototype.onDragImpl = function(opt_multiplier) {
+diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier) {
   opt_multiplier = opt_multiplier || 1;
   var patternPiece = this.mesh_.parent;
   // Get the offsets from the origin

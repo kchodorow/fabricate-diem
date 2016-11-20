@@ -40,3 +40,31 @@ diem.tools.AnchorPoint.createIntersectable = function(action, meshWrapper) {
   return diem.tools.Tool.createIntersectable(
     diem.tools.AnchorPoint.NAME, action, meshWrapper);
 };
+
+/**
+ * @override
+ */
+diem.tools.AnchorPoint.prototype.onDragStart = function(meshWrapper) {
+  if ('moveStart' in meshWrapper) {
+    meshWrapper.moveStart();
+  }
+  return [];
+};
+
+/**
+ * @override
+ */
+diem.tools.AnchorPoint.prototype.onDrag = function(meshWrapper) {
+  meshWrapper.move();
+  return [];
+};
+
+/**
+ * @override
+ */
+diem.tools.AnchorPoint.prototype.onDragEnd = function(meshWrapper) {
+  if ('moveEnd' in meshWrapper) {
+    meshWrapper.moveEnd();
+  }
+  return [];
+};

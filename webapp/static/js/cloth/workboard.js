@@ -143,14 +143,19 @@ diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_['edges_'];
 };
 
+diem.cloth.Workboard.prototype.moveStart = function() {
+    this.prevMouse_ = diem.Globals.mouse.clone();
+};
+
+diem.cloth.Workboard.prototype.move = function() {
+  this.mesh_.position.add(diem.Globals.mouse.clone().sub(this.prevMouse_));
+  this.prevMouse_ = diem.Globals.mouse.clone();
+};
+
 /**
  * @returns {Array}
  */
-diem.cloth.Workboard.prototype.onDragStart = function(tool) {
-  if (tool.getName() == diem.tools.MovePiece.NAME) {
-    this.prevMouse_ = diem.Globals.mouse.clone();
-    return [];
-  }
+diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_, this.w, this.h);
   physicalPiece.addToParent(this.mesh_.parent);
   physicalPiece.onDragStart();
@@ -162,12 +167,7 @@ diem.cloth.Workboard.prototype.onDragStart = function(tool) {
 /**
  * Moves the fabric.
  */
-diem.cloth.Workboard.prototype.onDrag = function(tool) {
-  if (tool.getName() == diem.tools.MovePiece.NAME) {
-    this.mesh_.position.add(diem.Globals.mouse.clone().sub(this.prevMouse_));
-    this.prevMouse_ = diem.Globals.mouse.clone();
-    return [];
-  }
+diem.cloth.Workboard.prototype.drag3d = function(tool) {
   // We have to delegate this for the initial drag to work, since there's
   // no piece to drag when the drag starts.
   return this.currentPiece_.onDrag();
@@ -176,9 +176,6 @@ diem.cloth.Workboard.prototype.onDrag = function(tool) {
 /**
  * @returns {Array}
  */
-diem.cloth.Workboard.prototype.onDragEnd = function(tool) {
-  if (tool.getName() == diem.tools.MovePiece.NAME) {
-    return [];
-  }
+diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
   return this.currentPiece_.onDragEnd();
 };

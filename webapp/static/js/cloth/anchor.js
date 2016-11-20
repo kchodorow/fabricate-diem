@@ -139,23 +139,21 @@ diem.cloth.Anchor.prototype.onClick = function() {
 /**
  * Determines if the drag should mirror the control points or move the anchor
  * point.
- * @returns {Array}
  */
-diem.cloth.Anchor.prototype.onDragStart = function() {
+diem.cloth.Anchor.prototype.moveStart = function() {
   this.dragAllCp_ = this.controlPointsAtOrigin_();
-  return [];
 };
 
 /**
  * Actually performs the drag.
  * TODO: prevent edges from crossing.
  */
-diem.cloth.Anchor.prototype.onDrag = function() {
+diem.cloth.Anchor.prototype.move = function() {
   if (this.dragAllCp_) {
     // When the anchor points and control points are in the same position,
     // dragging moves both control points.
-    this.cwCp_.onDragImpl();
-    this.ccwCp_.onDragImpl(-1);
+    this.cwCp_.moveImpl();
+    this.ccwCp_.moveImpl(-1);
   } else {
     this.mesh_.position.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
     this.cwCp_.updateLine();
@@ -166,9 +164,8 @@ diem.cloth.Anchor.prototype.onDrag = function() {
 
 /**
  * Resets the control points' drag behavior, depending on the drag result.
- * @returns {diem.events.Event}
  */
-diem.cloth.Anchor.prototype.onDragEnd = function() {
+diem.cloth.Anchor.prototype.moveEnd = function() {
   var freeCps = !this.controlPointsAtOrigin_();
   this.cwCp_.setIndependentlyDraggable(freeCps);
   this.ccwCp_.setIndependentlyDraggable(freeCps);

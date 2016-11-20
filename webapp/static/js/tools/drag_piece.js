@@ -34,3 +34,26 @@ diem.tools.DragPiece.createIntersectable = function(action, meshWrapper) {
   return diem.tools.Tool.createIntersectable(
     diem.tools.DragPiece.NAME, action, meshWrapper);
 };
+
+/**
+ * @override
+ */
+diem.tools.DragPiece.prototype.onDragStart = function(meshWrapper) {
+  meshWrapper.drag3dStart();
+  return [];
+};
+
+/**
+ * @override
+ */
+diem.tools.DragPiece.prototype.onDrag = function(meshWrapper) {
+  meshWrapper.drag3d();
+  return [];
+};
+
+/**
+ * @override
+ */
+diem.tools.DragPiece.prototype.onDragEnd = function(meshWrapper) {
+  meshWrapper.drag3dEnd();
+};

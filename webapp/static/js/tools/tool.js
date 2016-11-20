@@ -57,6 +57,40 @@ diem.tools.Tool.prototype.onDeselect = function(opt_newTool) {
 };
 
 /**
+ * @param {diem.MeshWrapper} [meshWrapper] The selected mesh
+ * @returns {Array} an array of new diem.MeshWrappers
+ */
+diem.tools.Tool.prototype.onClick = function(intersections) {
+  goog.asserts.assert(intersections.length > 0);
+  var meshWrapper = this.getMeshWrapper(intersections[0].object);
+  return meshWrapper.onClick(intersections);
+};
+
+/**
+ * @param {diem.MeshWrapper} [meshWrapper] The selected mesh
+ * @returns {Array} an array of new diem.MeshWrappers
+ */
+diem.tools.Tool.prototype.onDragStart = function(meshWrapper) {
+  return meshWrapper.onDragStart();
+};
+
+/**
+ * @param {diem.MeshWrapper} [meshWrapper] The selected mesh
+ * @returns {Array} an array of new diem.MeshWrappers
+ */
+diem.tools.Tool.prototype.onDrag = function(meshWrapper) {
+  return meshWrapper.onDrag();
+};
+
+/**
+ * @param {diem.MeshWrapper} [meshWrapper] The selected mesh
+ * @returns {Array} an array of new diem.MeshWrappers
+ */
+diem.tools.Tool.prototype.onDragEnd = function(meshWrapper) {
+  return meshWrapper.onDragEnd();
+};
+
+/**
  * @returns {string} a unique string for this tool.
  */
 diem.tools.Tool.prototype.getName = function() {
