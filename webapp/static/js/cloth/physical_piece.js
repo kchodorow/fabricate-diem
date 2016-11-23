@@ -26,7 +26,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
     side: THREE.DoubleSide,
     wireframe: true
   });
-  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
+  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry.clone());
   var clothPos = new THREE.Vector3().copy(piece.position);
   clothGeometry.translate(clothPos.x, clothPos.y, 0);
   this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
@@ -52,7 +52,8 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
     // If there are no pins, don't bother changing the geometry.
     return;
   }
-  this.mesh_.geometry = this.createIndexedBufferGeometry_(mesh.geometry);
+  this.mesh_.geometry = this.createIndexedBufferGeometry_(
+    mesh.geometry.clone());
   // Get a pin and offset the piece by the pin position.
   var pos = this.mouse.getWorldTransform().getOrigin();
   this.mesh_.geometry.translate(pos.x(), pos.y(), 0);
