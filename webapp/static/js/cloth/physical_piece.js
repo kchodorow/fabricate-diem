@@ -26,27 +26,19 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
     side: THREE.DoubleSide,
     wireframe: true
   });
-  var clothGeometry = this.from2dMesh_(piece);
+  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
+  var clothPos = new THREE.Vector3().copy(piece.position);
+  clothGeometry.translate(clothPos.x, clothPos.y, 0);
   this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
 
   this.helper_ = new Ammo.btSoftBodyHelpers();
-  this.softBody_ = this.getSoftBody_();
+  this.mesh_.userData.physicsBody = this.getSoftBody_();
 
-  var sbConfig = this.softBody_.get_m_cfg();
-  sbConfig.set_viterations(10);
-  sbConfig.set_piterations(10);
-
-  var margin = 0.05;
-  this.softBody_.setTotalMass(0.9, false);
-  Ammo.castObject(this.softBody_, Ammo.btCollisionObject).getCollisionShape()
-    .setMargin(margin * 3);
   // TODO: what are the last couple args?
-  diem.Physics.get().getWorld().addSoftBody(this.softBody_, 1, -1);
-  this.mesh_.userData.physicsBody = this.softBody_;
-  // Disable deactivation
-  this.softBody_.setActivationState(4);
+  diem.Physics.get().getWorld().addSoftBody(
+    this.mesh_.userData.physicsBody, 1, -1);
 
   this.handle_ = 0;
 };
@@ -60,13 +52,15 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
     // If there are no pins, don't bother changing the geometry.
     return;
   }
+  this.mesh_.geometry = this.createIndexedBufferGeometry_(mesh.geometry);
   // Get a pin and offset the piece by the pin position.
   var pos = this.mouse.getWorldTransform().getOrigin();
-  this.mesh_.geometry = this.from2dMesh_(mesh);
   this.mesh_.geometry.translate(pos.x(), pos.y(), 0);
   var softBody = this.getSoftBody_();
-  var m_nodes = softBody.get_m_nodes();
-  this.softBody_.set_m_nodes(m_nodes);
+  diem.Physics.get().getWorld().removeSoftBody(this.softBody_);
+  diem.Physics.get().getWorld().addSoftBody(softBody, 1, -1);
+  this.mesh_.userData.physicsBody = softBody;
+
   this.mesh_.geometry.verticesNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
 };
@@ -82,17 +76,17 @@ diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
     this.mesh_.geometry.ammoIndices,
     this.mesh_.geometry.ammoIndices.length / 3,
     true);
-  // Set damping and drag coefficients.
-  softBody.get_m_cfg().set_kDP(.001);
-  softBody.get_m_cfg().set_kDG(.001);
-  return softBody;
-};
+  softBody.setTotalMass(0.9, false);
+  // Disable deactivation
+  softBody.setActivationState(4);
 
-diem.cloth.PhysicalPiece.prototype.from2dMesh_ = function(mesh) {
-  var clothGeometry = this.createIndexedBufferGeometry_(mesh.geometry);
-  var clothPos = new THREE.Vector3().copy(mesh.position);
-  clothGeometry.translate(clothPos.x, clothPos.y, 0);
-  return clothGeometry;
+  var sbConfig = softBody.get_m_cfg();
+  sbConfig.set_viterations(10);
+  sbConfig.set_piterations(10);
+  // Set damping and drag coefficients.
+  sbConfig.set_kDP(.001);
+  sbConfig.set_kDG(.001);
+  return softBody;
 };
 
 /**
@@ -195,7 +189,8 @@ diem.cloth.PhysicalPiece.prototype.mapIndices_ = function() {
  */
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
   return [
-    diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this)
+    diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this),
+    diem.tools.MovePiece.createIntersectable(diem.events.CLICKABLE, this)
   ];
 };
 
