@@ -37,9 +37,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.helper_ = new Ammo.btSoftBodyHelpers();
   this.mesh_.userData.physicsBody = this.getSoftBody_();
 
-  // TODO: what are the last couple args?
-  diem.Physics.get().getWorld().addSoftBody(
-    this.mesh_.userData.physicsBody, 1, -1);
+  diem.Physics.get().getWorld().addSoftBody(this.mesh_.userData.physicsBody);
 
   this.handle_ = 0;
   this.mouse_ = null;
@@ -58,16 +56,12 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
     mesh.geometry.clone());
   var softBody = this.getSoftBody_();
   diem.Physics.get().getWorld().removeSoftBody(this.softBody_);
-  diem.Physics.get().getWorld().addSoftBody(softBody, 1, -1);
+  diem.Physics.get().getWorld().addSoftBody(softBody);
   this.mesh_.userData.physicsBody = softBody;
 
   this.mesh_.geometry.verticesNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
 
-  // Get a pin and offset the piece by the pin position.
-  var firstPin = this.pinned_[0];
-  var pos = firstPin.rigidBody().getWorldTransform().getOrigin();
-  this.mesh_.geometry.translate(pos.x(), pos.y(), 0);
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
     this.mesh_.userData.physicsBody.appendAnchor(
@@ -76,15 +70,15 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
 };
 
 diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
-  this.mapIndices_();
+  var geometry = this.mesh_.geometry;
   // The btSoftBody is centered at (0,0), so its corners should be offset
   // by the position of the cloth.
   // Weirdness: why is 1,0 the llc?
   var softBody = this.helper_.CreateFromTriMesh(
     diem.Physics.get().getWorld().getWorldInfo(),
-    this.mesh_.geometry.ammoVertices,
-    this.mesh_.geometry.ammoIndices,
-    this.mesh_.geometry.ammoIndices.length / 3,
+    geometry.attributes.position.array,
+    geometry.index.array,
+    geometry.index.array.length / 3,
     true);
   softBody.setTotalMass(0.9, false);
   // Disable deactivation
@@ -163,38 +157,6 @@ diem.cloth.PhysicalPiece.isEqual_ = function(n1, n2) {
 };
 
 /**
- * @private
- */
-diem.cloth.PhysicalPiece.prototype.mapIndices_ = function() {
-  var geometry = this.mesh_.geometry;
-  var vertices = geometry.attributes.position.array;
-  var idxVertices = geometry.attributes.position.array;
-  var indices = geometry.index.array;
-
-  var numIdxVertices = idxVertices.length / 3;
-  var numVertices = vertices.length / 3;
-
-  geometry.ammoVertices = idxVertices;
-  geometry.ammoIndices = indices;
-  geometry.ammoIndexAssociation = [];
-
-  for ( var i = 0; i < numIdxVertices; i++ ) {
-    var association = [];
-    geometry.ammoIndexAssociation.push( association );
-
-    var i3 = i * 3;
-    for ( var j = 0; j < numVertices; j++ ) {
-      var j3 = j * 3;
-      if (diem.cloth.PhysicalPiece.isEqual_(idxVertices[i3], vertices[j3])
-          && diem.cloth.PhysicalPiece.isEqual_(idxVertices[i3 + 1], vertices[j3 + 1])
-          && diem.cloth.PhysicalPiece.isEqual_(idxVertices[i3 + 2], vertices[j3 + 2])) {
-        association.push(j3);
-      }
-    }
-  }
-};
-
-/**
  * @override
  */
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
@@ -212,12 +174,11 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var geometry = this.mesh_.geometry;
   var volumePositions = geometry.attributes.position.array;
   var volumeNormals = geometry.attributes.normal.array;
-  var association = geometry.ammoIndexAssociation;
-  var numVerts = association.length;
+  var numVerts = geometry.attributes.position.array.length / 3;
 
   var softBody = this.mesh_.userData.physicsBody;
   var nodes = softBody.get_m_nodes();
-  for ( var j = 0; j < numVerts; j ++ ) {
+  for (var j = 0; j < numVerts; ++j) {
     var node = nodes.at( j );
     var nodePos = node.get_m_x();
     var x = nodePos.x();
@@ -228,19 +189,15 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
     var ny = nodeNormal.y();
     var nz = nodeNormal.z();
 
-    var assocVertex = association[ j ];
-
-    for ( var k = 0, kl = assocVertex.length; k < kl; k++ ) {
-      var indexVertex = assocVertex[ k ];
-      volumePositions[ indexVertex ] = x;
-      volumeNormals[ indexVertex ] = nx;
-      indexVertex++;
-      volumePositions[ indexVertex ] = y;
-      volumeNormals[ indexVertex ] = ny;
-      indexVertex++;
-      volumePositions[ indexVertex ] = z;
-      volumeNormals[ indexVertex ] = nz;
-    }
+    var indexVertex = j * 3;
+    volumePositions[indexVertex] = x;
+    volumeNormals[indexVertex] = nx;
+    indexVertex++;
+    volumePositions[indexVertex] = y;
+    volumeNormals[indexVertex] = ny;
+    indexVertex++;
+    volumePositions[indexVertex] = z;
+    volumeNormals[indexVertex] = nz;
   }
 
   geometry.attributes.position.needsUpdate = true;
