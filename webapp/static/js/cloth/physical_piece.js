@@ -5,6 +5,7 @@ goog.provide('diem.cloth.PhysicalPiece.Constraint');
 goog.require('diem.MeshWrapper');
 goog.require('diem.Physics');
 goog.require('diem.Pin');
+goog.require('diem.cloth.GeometryMapper');
 goog.require('diem.events');
 goog.require('diem.tools.DragPiece');
 
@@ -21,9 +22,8 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   diem.cloth.PhysicalPiece.pieces_.push(this);
   this.pinned_ = [];
 
-  // Make a grid of vertices.
   var clothMaterial = new THREE.MeshLambertMaterial({
-    color: 0xFFFFFF,
+    color: piece.material.color,
     side: THREE.DoubleSide,
     wireframe: true
   });
@@ -35,9 +35,10 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.mesh_.receiveShadow = true;
 
   this.helper_ = new Ammo.btSoftBodyHelpers();
-  this.mesh_.userData.physicsBody = this.getSoftBody_();
-
-  diem.Physics.get().getWorld().addSoftBody(this.mesh_.userData.physicsBody);
+  var softBody = this.getSoftBody_();
+  this.mesh_.userData.physicsBody = softBody;
+  this.geometryMapper_ = new diem.cloth.GeometryMapper(clothGeometry, softBody);
+  diem.Physics.get().getWorld().addSoftBody(softBody);
 
   this.handle_ = 0;
   this.mouse_ = null;
@@ -52,13 +53,15 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
     // If there are no pins, don't bother changing the geometry.
     return;
   }
+  var oldGeometry = this.mesh_.geometry;
   this.mesh_.geometry = this.createIndexedBufferGeometry_(
     mesh.geometry.clone());
-  var softBody = this.getSoftBody_();
+  var oldSoftBody = this.mesh_.userData.physicsBody;
+  var newSoftBody = this.getSoftBody_();
+  this.geometryMapper_.flip(this.mesh_.geometry, newSoftBody);
   diem.Physics.get().getWorld().removeSoftBody(this.softBody_);
-  diem.Physics.get().getWorld().addSoftBody(softBody);
-  this.mesh_.userData.physicsBody = softBody;
-
+  diem.Physics.get().getWorld().addSoftBody(newSoftBody);
+  this.mesh_.userData.physicsBody = newSoftBody;
   this.mesh_.geometry.verticesNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
 

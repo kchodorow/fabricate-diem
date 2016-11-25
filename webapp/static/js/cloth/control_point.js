@@ -105,6 +105,7 @@ diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier) {
 diem.cloth.ControlPoint.updateWorkboardGeometry = function(workboardMesh) {
   // Use the parent's shape to update the fabric's curves.
   diem.cloth.ControlPoint.updateActions(workboardMesh.shape);
+  // TODO: add divisions option so that small shapes aren't as finely divided.
   workboardMesh.geometry = workboardMesh.shape.makeGeometry();
   // Update edges.
   for (var i = 0; i < workboardMesh.children.length; ++i) {
