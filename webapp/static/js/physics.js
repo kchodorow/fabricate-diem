@@ -36,7 +36,8 @@ diem.Physics.get = function() {
  * Updates world by one timestep.
  */
 diem.Physics.prototype.update = function() {
-  this.physicsWorld.stepSimulation(this.clock.getDelta(), 10);
+  var delta = this.clock.getDelta();
+  this.physicsWorld.stepSimulation(delta);
 };
 
 /**

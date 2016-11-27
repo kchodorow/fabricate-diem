@@ -27,7 +27,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
     side: THREE.DoubleSide,
     wireframe: true
   });
-  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry.clone());
+  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
   var clothPos = new THREE.Vector3().copy(piece.position);
   clothGeometry.translate(clothPos.x, clothPos.y, 0);
   this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
@@ -37,7 +37,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.helper_ = new Ammo.btSoftBodyHelpers();
   var softBody = this.getSoftBody_();
   this.mesh_.userData.physicsBody = softBody;
-  this.geometryMapper_ = new diem.cloth.GeometryMapper(clothGeometry, softBody);
+  this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
   diem.Physics.get().getWorld().addSoftBody(softBody);
 
   this.handle_ = 0;
@@ -49,16 +49,27 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 diem.cloth.PhysicalPiece.pieces_ = [];
 
 diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
+  var softBody = this.mesh_.userData.physicsBody;
+  var nodes = softBody.get_m_nodes();
+  var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;
+  for (var j = 0; j < numVerts; ++j) {
+    var node = nodes.at(j);
+    var nodePos = node.get_m_x();
+    var x = nodePos.x();
+    var y = nodePos.y();
+    var z = nodePos.z();
+    node.set_m_x(new Ammo.btVector3(x + .1, y, z));
+  }
+/*
   if (this.pinned_.length == 0) {
     // If there are no pins, don't bother changing the geometry.
     return;
   }
   var oldGeometry = this.mesh_.geometry;
-  this.mesh_.geometry = this.createIndexedBufferGeometry_(
-    mesh.geometry.clone());
+  this.mesh_.geometry = this.createIndexedBufferGeometry_(mesh.geometry);
   var oldSoftBody = this.mesh_.userData.physicsBody;
   var newSoftBody = this.getSoftBody_();
-  this.geometryMapper_.flip(this.mesh_.geometry, newSoftBody);
+  this.geometryMapper_.flip(newSoftBody);
   diem.Physics.get().getWorld().removeSoftBody(this.softBody_);
   diem.Physics.get().getWorld().addSoftBody(newSoftBody);
   this.mesh_.userData.physicsBody = newSoftBody;
@@ -68,8 +79,8 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
     this.mesh_.userData.physicsBody.appendAnchor(
-      pin.index(), pin.rigidBody(), false, 1 /* influence */);
-  }
+      pin.index(), pin.rigidBody(), false, 1);
+  }*/
 };
 
 diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
@@ -102,8 +113,9 @@ diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
-  if (!geometry.subdivided) {
-    var subdivider = new THREE.SubdivisionModifier(3);
+  geometry = geometry.clone();
+  if (geometry.vertices.length < 100) {
+    var subdivider = new THREE.SubdivisionModifier(1);
     subdivider.modify(geometry);
     geometry.subdivided = true;
     goog.asserts.assert(geometry.vertices.length < 100000);
@@ -114,12 +126,7 @@ diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geome
   var bufferGeom = new THREE.BufferGeometry().fromGeometry(geometry);
   var vertices = new Float32Array(numVertices * 3);
   var normals = new Float32Array(numVertices * 3);
-  var indices;
-  if (numFaces * 3 > 65535) {
-    indices = new Uint32Array(numFaces * 3);
-  } else {
-    indices = new Uint16Array(numFaces * 3);
-  }
+  var indices = new Uint16Array(numFaces * 3);
 
   for (var i = 0; i < numVertices; i++) {
     var p = geometry.vertices[ i ];
@@ -182,7 +189,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var softBody = this.mesh_.userData.physicsBody;
   var nodes = softBody.get_m_nodes();
   for (var j = 0; j < numVerts; ++j) {
-    var node = nodes.at( j );
+    var node = nodes.at(j);
     var nodePos = node.get_m_x();
     var x = nodePos.x();
     var y = nodePos.y();
@@ -213,6 +220,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
  */
 diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
   this.handle_ = -1;
+
   var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;
   var minDistance = Number.MAX_VALUE;
   var nodes = this.mesh_.userData.physicsBody.get_m_nodes();
@@ -221,7 +229,7 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
     var nodePos = node.get_m_x();
     var testHandle = new THREE.Vector3(
       nodePos.x(), nodePos.y(), nodePos.z());
-    var testDistance = testHandle.distanceTo(diem.Globals.mouse);
+    var testDistance = testHandle.distanceToSquared(diem.Globals.mouse);
     if (testDistance < minDistance) {
       this.handle_ = i;
       minDistance = testDistance;
