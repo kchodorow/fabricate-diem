@@ -5,7 +5,7 @@ goog.require('goog.asserts');
 goog.require('goog.structs.QuadTree');
 
 diem.cloth.GeometryMapper = function(softBody) {
-  this.ammo_ = softBody;
+  this.softBody_ = softBody;
   this.quadTree_ = this.setupQuadTree_(softBody);
 };
 
@@ -20,7 +20,7 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   var quadTree = this.setupQuadTree_(softBody);
   var newNodes = softBody.get_m_nodes();
   for (var newIndex = 0; newIndex < newNodes.size(); ++newIndex) {
-    var oldNode = this.ammo_.get_m_nodes().at(newIndex);
+    var oldNode = this.softBody_.get_m_nodes().at(newIndex);
     var oldPos = oldNode.get_m_x();
     var oldNormal = oldNode.get_m_n();
     var newPos = new Ammo.btVector3(oldPos.x(), oldPos.y(), oldPos.z());
@@ -29,7 +29,7 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
     newNode.set_m_x(newPos);
     newNode.set_m_n(newNormal);
   }
-  this.ammo_ = softBody;
+  this.softBody_ = softBody;
   this.quadTree = quadTree;
 };
 
@@ -39,7 +39,7 @@ diem.cloth.GeometryMapper.prototype.getEquivalentOldNode_ = function(newNode, id
   if (oldIndex != idx) {
     console.log("Different indexes: " + idx);
   }
-  return this.ammo_.get_m_nodes().at(oldIndex);
+  return this.softBody_.get_m_nodes().at(oldIndex);
 };
 
 diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {

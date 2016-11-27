@@ -48,29 +48,18 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 diem.cloth.PhysicalPiece.pieces_ = [];
 
-diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
-  var softBody = this.mesh_.userData.physicsBody;
-  var nodes = softBody.get_m_nodes();
-  var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;
-  for (var j = 0; j < numVerts; ++j) {
-    var node = nodes.at(j);
-    var nodePos = node.get_m_x();
-    var x = nodePos.x();
-    var y = nodePos.y();
-    var z = nodePos.z();
-    node.set_m_x(new Ammo.btVector3(x + .1, y, z));
-  }
-/*
+diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   if (this.pinned_.length == 0) {
     // If there are no pins, don't bother changing the geometry.
     return;
   }
+
   var oldGeometry = this.mesh_.geometry;
-  this.mesh_.geometry = this.createIndexedBufferGeometry_(mesh.geometry);
   var oldSoftBody = this.mesh_.userData.physicsBody;
+  this.mesh_.geometry = this.createIndexedBufferGeometry_(newMesh.geometry);
   var newSoftBody = this.getSoftBody_();
   this.geometryMapper_.flip(newSoftBody);
-  diem.Physics.get().getWorld().removeSoftBody(this.softBody_);
+  diem.Physics.get().getWorld().removeSoftBody(oldSoftBody);
   diem.Physics.get().getWorld().addSoftBody(newSoftBody);
   this.mesh_.userData.physicsBody = newSoftBody;
   this.mesh_.geometry.verticesNeedUpdate = true;
@@ -80,7 +69,7 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(mesh) {
     var pin = this.pinned_[i];
     this.mesh_.userData.physicsBody.appendAnchor(
       pin.index(), pin.rigidBody(), false, 1);
-  }*/
+  }
 };
 
 diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
