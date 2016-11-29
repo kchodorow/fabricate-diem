@@ -19,13 +19,16 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   // previous geometry's positions.
   var quadTree = this.setupQuadTree_(softBody);
   var newNodes = softBody.get_m_nodes();
+  var oldNodes = this.softBody_.get_m_nodes();
   for (var newIndex = 0; newIndex < newNodes.size(); ++newIndex) {
-    var oldNode = this.softBody_.get_m_nodes().at(newIndex);
+    // TODO: make this a field function.
+    var newNode = newNodes.at(newIndex);
+    var oldNode = this.getEquivalentOldNode_(newNode, newIndex);
+//    var oldNode = this.softBody_.get_m_nodes().at(oldIndex);
     var oldPos = oldNode.get_m_x();
     var oldNormal = oldNode.get_m_n();
     var newPos = new Ammo.btVector3(oldPos.x(), oldPos.y(), oldPos.z());
     var newNormal = new Ammo.btVector3(oldNormal.x(), oldNormal.y(), oldNormal.z());
-    var newNode = newNodes.at(newIndex);
     newNode.set_m_x(newPos);
     newNode.set_m_n(newNormal);
   }
@@ -35,11 +38,10 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
 
 diem.cloth.GeometryMapper.prototype.getEquivalentOldNode_ = function(newNode, idx) {
   var newPos = newNode.get_m_x();
-  var oldIndex = this.quadTree_.getValue(newPos.x(), newPos.y());
-  if (oldIndex != idx) {
-    console.log("Different indexes: " + idx);
-  }
-  return this.softBody_.get_m_nodes().at(oldIndex);
+  var node = this.quadTree_.getValue(newPos.x(), newPos.y());
+  var oldPos = node.get_m_x();
+  console.log(idx + ": " + newPos.x() + "," + newPos.y() + " -> " + oldPos.x() + "," + oldPos.y());
+  return node;
 };
 
 diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
@@ -48,8 +50,9 @@ diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
   this.quadTree_ = new diem.cloth.QueryableQuadTree(-1000, -1000, 1000, 1000);
   var nodes = softBody.get_m_nodes();
   for (var i = 0; i < nodes.size(); ++i) {
-    var node = nodes.at(i).get_m_x();
-    this.quadTree_.set(node.x(), node.y(), i);
+    var node = nodes.at(i);
+    var pos = node.get_m_x();
+    this.quadTree_.set(pos.x(), pos.y(), node);
   }
 };
 

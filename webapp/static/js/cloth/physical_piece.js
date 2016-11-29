@@ -21,49 +21,52 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   goog.base(this);
   diem.cloth.PhysicalPiece.pieces_.push(this);
   this.pinned_ = [];
-
-  var clothMaterial = new THREE.MeshLambertMaterial({
-    color: piece.material.color,
-    side: THREE.DoubleSide,
-    wireframe: true
-  });
-  var clothGeometry = this.createIndexedBufferGeometry_(piece.geometry);
-  var clothPos = new THREE.Vector3().copy(piece.position);
-  clothGeometry.translate(clothPos.x, clothPos.y, 0);
-  this.mesh_ = new THREE.Mesh(clothGeometry, clothMaterial);
-  this.mesh_.castShadow = true;
-  this.mesh_.receiveShadow = true;
-
-  this.helper_ = new Ammo.btSoftBodyHelpers();
-  var softBody = this.getSoftBody_();
-  this.mesh_.userData.physicsBody = softBody;
-  this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
-  diem.Physics.get().getWorld().addSoftBody(softBody);
-
   this.handle_ = 0;
   this.mouse_ = null;
+
+  this.mesh_ = this.createMesh_(piece);
+  var softBody = this.createSoftBody_(this.mesh_.geometry);
+  this.mesh_.userData.physicsBody = softBody;
+  this.geometryMapper_ = new diem.cloth.GeometryMapper(
+    this.mesh_.userData.physicsBody);
+  diem.Physics.get().getWorld().addSoftBody(softBody);
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 diem.cloth.PhysicalPiece.pieces_ = [];
 
-diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
-  if (this.pinned_.length == 0) {
-    // If there are no pins, don't bother changing the geometry.
-    return;
-  }
+diem.cloth.PhysicalPiece.prototype.createMesh_ = function(mesh) {
+  var clothGeometry = this.createIndexedBufferGeometry_(mesh.geometry);
+  var clothPos = new THREE.Vector3().copy(mesh.position);
+  clothGeometry.translate(clothPos.x, clothPos.y, 0);
+  var clothMaterial = new THREE.MeshBasicMaterial({
+    color: mesh.material.color,
+    side: THREE.DoubleSide,
+    wireframe: true
+  });
 
-  var oldGeometry = this.mesh_.geometry;
+  var newMesh = new THREE.Mesh(clothGeometry, clothMaterial);
+  newMesh.castShadow = true;
+  newMesh.receiveShadow = true;
+  return newMesh;
+};
+
+diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   var oldSoftBody = this.mesh_.userData.physicsBody;
-  this.mesh_.geometry = this.createIndexedBufferGeometry_(newMesh.geometry);
-  var newSoftBody = this.getSoftBody_();
-  this.geometryMapper_.flip(newSoftBody);
   diem.Physics.get().getWorld().removeSoftBody(oldSoftBody);
+
+  var buffMesh = this.createMesh_(newMesh);
+  var newSoftBody = this.createSoftBody_(buffMesh.geometry);
+  this.geometryMapper_.flip(newSoftBody);
   diem.Physics.get().getWorld().addSoftBody(newSoftBody);
+
+  var material = this.mesh_.material;
+  var parent = this.mesh_.parent;
+  parent.remove(this.mesh_);
+  this.mesh_ = buffMesh;
   this.mesh_.userData.physicsBody = newSoftBody;
-  this.mesh_.geometry.verticesNeedUpdate = true;
-  this.mesh_.geometry.boundingSphere = null;
+  parent.add(this.mesh_);
 
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
@@ -72,12 +75,12 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   }
 };
 
-diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
-  var geometry = this.mesh_.geometry;
+diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function(geometry) {
+  var helper = new Ammo.btSoftBodyHelpers();
   // The btSoftBody is centered at (0,0), so its corners should be offset
   // by the position of the cloth.
   // Weirdness: why is 1,0 the llc?
-  var softBody = this.helper_.CreateFromTriMesh(
+  var softBody = helper.CreateFromTriMesh(
     diem.Physics.get().getWorld().getWorldInfo(),
     geometry.attributes.position.array,
     geometry.index.array,
@@ -93,6 +96,11 @@ diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
   // Set damping and drag coefficients.
   sbConfig.set_kDP(.001);
   sbConfig.set_kDG(.001);
+
+  // Update geometry's faces.
+//  goog.asserts.assert(
+  //  geometry.index.array.length == this.mesh_.geometry.index.array.length);
+// IDEA: I'm overwriting/reusing 'this' somewhere that I think I'm writing to a copy of this
   return softBody;
 };
 
@@ -103,27 +111,29 @@ diem.cloth.PhysicalPiece.prototype.getSoftBody_ = function() {
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
   geometry = geometry.clone();
-  if (geometry.vertices.length < 100) {
-    var subdivider = new THREE.SubdivisionModifier(1);
-    subdivider.modify(geometry);
-    geometry.subdivided = true;
-    goog.asserts.assert(geometry.vertices.length < 100000);
-  }
+  var subdivider = new THREE.SubdivisionModifier(1);
+  subdivider.modify(geometry);
+  geometry.subdivided = true;
+  goog.asserts.assert(geometry.vertices.length < 100000);
+
   var numVertices = geometry.vertices.length;
   var numFaces = geometry.faces.length;
 
-  var bufferGeom = new THREE.BufferGeometry().fromGeometry(geometry);
+  var bufferGeom = new THREE.BufferGeometry();
   var vertices = new Float32Array(numVertices * 3);
   var normals = new Float32Array(numVertices * 3);
   var indices = new Uint16Array(numFaces * 3);
 
+  var jitter = .01;
   for (var i = 0; i < numVertices; i++) {
     var p = geometry.vertices[ i ];
     var i3 = i * 3;
 
     vertices[i3] = p.x;
     vertices[i3 + 1] = p.y;
-    vertices[i3 + 2] = p.z;
+    // Offset z slightly, so the cloth isn't stuck on the plane.
+    vertices[i3 + 2] = jitter;
+    jitter *= -1;
     normals[i3] = 0;
     normals[i3 + 1] = 0;
     normals[i3 + 2] = 1;
@@ -138,7 +148,7 @@ diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geome
     indices[ i3 + 2 ] = f.c;
   }
 
-  bufferGeom.setIndex(new THREE.BufferAttribute(indices, 1));
+  bufferGeom.setIndex(new THREE.BufferAttribute(indices, 3));
   bufferGeom.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
   bufferGeom.addAttribute('normal', new THREE.BufferAttribute(normals, 3));
   return bufferGeom;
@@ -173,11 +183,10 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   var geometry = this.mesh_.geometry;
   var volumePositions = geometry.attributes.position.array;
   var volumeNormals = geometry.attributes.normal.array;
-  var numVerts = geometry.attributes.position.array.length / 3;
 
   var softBody = this.mesh_.userData.physicsBody;
   var nodes = softBody.get_m_nodes();
-  for (var j = 0; j < numVerts; ++j) {
+  for (var j = 0; j < nodes.size(); ++j) {
     var node = nodes.at(j);
     var nodePos = node.get_m_x();
     var x = nodePos.x();
@@ -210,10 +219,9 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
 diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
   this.handle_ = -1;
 
-  var numVerts = this.mesh_.geometry.attributes.position.array.length / 3;
   var minDistance = Number.MAX_VALUE;
   var nodes = this.mesh_.userData.physicsBody.get_m_nodes();
-  for (var i = 0; i < numVerts; i++) {
+  for (var i = 0; i < nodes.size(); i++) {
     var node = nodes.at(i);
     var nodePos = node.get_m_x();
     var testHandle = new THREE.Vector3(
