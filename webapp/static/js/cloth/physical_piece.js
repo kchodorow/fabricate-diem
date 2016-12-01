@@ -70,8 +70,7 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
 
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
-    this.mesh_.userData.physicsBody.appendAnchor(
-      pin.index(), pin.rigidBody(), false, 1);
+    newSoftBody.appendAnchor(pin.index(), pin.rigidBody(), false, 1);
   }
 };
 

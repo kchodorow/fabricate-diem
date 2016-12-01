@@ -24,7 +24,6 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
     // TODO: make this a field function.
     var newNode = newNodes.at(newIndex);
     var oldNode = this.getEquivalentOldNode_(newNode, newIndex);
-//    var oldNode = this.softBody_.get_m_nodes().at(oldIndex);
     var oldPos = oldNode.get_m_x();
     var oldNormal = oldNode.get_m_n();
     var newPos = new Ammo.btVector3(oldPos.x(), oldPos.y(), oldPos.z());
@@ -32,28 +31,30 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
     newNode.set_m_x(newPos);
     newNode.set_m_n(newNormal);
   }
+
   this.softBody_ = softBody;
   this.quadTree = quadTree;
 };
 
 diem.cloth.GeometryMapper.prototype.getEquivalentOldNode_ = function(newNode, idx) {
   var newPos = newNode.get_m_x();
-  var node = this.quadTree_.getValue(newPos.x(), newPos.y());
+  var oldIdx = this.quadTree_.getValue(newPos.x(), newPos.y());
+  var node = this.softBody_.get_m_nodes().at(oldIdx);
   var oldPos = node.get_m_x();
-  console.log(idx + ": " + newPos.x() + "," + newPos.y() + " -> " + oldPos.x() + "," + oldPos.y());
   return node;
 };
 
 diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
   // Recreate quad tree each time so that there are no "dead" quadrants where
   // all the points have been removed.
-  this.quadTree_ = new diem.cloth.QueryableQuadTree(-1000, -1000, 1000, 1000);
+  var quadTree = new diem.cloth.QueryableQuadTree(-1, -1, 12, 12);
   var nodes = softBody.get_m_nodes();
   for (var i = 0; i < nodes.size(); ++i) {
     var node = nodes.at(i);
     var pos = node.get_m_x();
-    this.quadTree_.set(pos.x(), pos.y(), node);
+    quadTree.set(pos.x(), pos.y(), i);
   }
+  return quadTree;
 };
 
 /**
@@ -101,5 +102,22 @@ diem.cloth.QueryableQuadTree.prototype.getValue = function(x, y) {
     return current;
   }
   current = this.findNearest_(x, y);
-  return current.point.value;
+  if (current.point) {
+    return current.point.value;
+  }
+  var value = null;
+  while (value == null) {
+    current = current.parent;
+    var arr = [];
+    this.traverse_(current, function(node) {
+      if (node.point) {
+        arr.push(node);
+      }
+    });
+    if (arr.length > 0) {
+      return arr[0].point.value;
+    }
+  }
+  goog.asserts.fail("No points in quadtree.");
+  return null;
 };
