@@ -26,10 +26,9 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 
   this.mesh_ = this.createMesh_(piece);
   var softBody = this.createSoftBody_(this.mesh_.geometry);
-  this.mesh_.userData.physicsBody = softBody;
-  this.geometryMapper_ = new diem.cloth.GeometryMapper(
-    this.mesh_.userData.physicsBody);
+  this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
   diem.Physics.get().getWorld().addSoftBody(softBody);
+  this.mesh_.userData.physicsBody = softBody;
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
@@ -61,7 +60,6 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   this.geometryMapper_.flip(newSoftBody);
   diem.Physics.get().getWorld().addSoftBody(newSoftBody);
 
-  var material = this.mesh_.material;
   var parent = this.mesh_.parent;
   parent.remove(this.mesh_);
   this.mesh_ = buffMesh;
@@ -96,10 +94,6 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function(geometry) {
   sbConfig.set_kDP(.001);
   sbConfig.set_kDG(.001);
 
-  // Update geometry's faces.
-//  goog.asserts.assert(
-  //  geometry.index.array.length == this.mesh_.geometry.index.array.length);
-// IDEA: I'm overwriting/reusing 'this' somewhere that I think I'm writing to a copy of this
   return softBody;
 };
 
@@ -110,7 +104,7 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function(geometry) {
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
   geometry = geometry.clone();
-  var subdivider = new THREE.SubdivisionModifier(1);
+  var subdivider = new THREE.SubdivisionModifier(2);
   subdivider.modify(geometry);
   geometry.subdivided = true;
   goog.asserts.assert(geometry.vertices.length < 100000);

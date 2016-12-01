@@ -2,6 +2,7 @@
 goog.provide('diem.cloth.GeometryMapper');
 
 goog.require('goog.asserts');
+goog.require('goog.structs.PriorityQueue');
 goog.require('goog.structs.QuadTree');
 
 diem.cloth.GeometryMapper = function(softBody) {
@@ -23,7 +24,8 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   for (var newIndex = 0; newIndex < newNodes.size(); ++newIndex) {
     // TODO: make this a field function.
     var newNode = newNodes.at(newIndex);
-    var oldNode = this.getEquivalentOldNode_(newNode, newIndex);
+    var oldIndex = this.getEquivalentIndex_(newNode);
+    var oldNode = oldNodes.at(oldIndex);
     var oldPos = oldNode.get_m_x();
     var oldNormal = oldNode.get_m_n();
     var newPos = new Ammo.btVector3(oldPos.x(), oldPos.y(), oldPos.z());
@@ -36,18 +38,15 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   this.quadTree = quadTree;
 };
 
-diem.cloth.GeometryMapper.prototype.getEquivalentOldNode_ = function(newNode, idx) {
+diem.cloth.GeometryMapper.prototype.getEquivalentIndex_ = function(newNode) {
   var newPos = newNode.get_m_x();
-  var oldIdx = this.quadTree_.getValue(newPos.x(), newPos.y());
-  var node = this.softBody_.get_m_nodes().at(oldIdx);
-  var oldPos = node.get_m_x();
-  return node;
+  return this.quadTree_.getValue(newPos.x(), newPos.y());
 };
 
 diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
   // Recreate quad tree each time so that there are no "dead" quadrants where
   // all the points have been removed.
-  var quadTree = new diem.cloth.QueryableQuadTree(-1, -1, 12, 12);
+  var quadTree = new diem.cloth.QueryableQuadTree(-100, -100, 100, 100);
   var nodes = softBody.get_m_nodes();
   for (var i = 0; i < nodes.size(); ++i) {
     var node = nodes.at(i);
@@ -106,18 +105,18 @@ diem.cloth.QueryableQuadTree.prototype.getValue = function(x, y) {
     return current.point.value;
   }
   var value = null;
-  while (value == null) {
+  var vector = new THREE.Vector2(x, y);
+  var queue = new goog.structs.PriorityQueue();
+  while (queue.isEmpty()) {
     current = current.parent;
-    var arr = [];
     this.traverse_(current, function(node) {
       if (node.point) {
-        arr.push(node);
+        queue.enqueue(
+          vector.distanceToSquared(
+            new THREE.Vector2(node.point.x, node.point.y)),
+          node.point.value);
       }
     });
-    if (arr.length > 0) {
-      return arr[0].point.value;
-    }
   }
-  goog.asserts.fail("No points in quadtree.");
-  return null;
+  return queue.dequeue();
 };
