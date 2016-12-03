@@ -35,7 +35,7 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   }
 
   this.softBody_ = softBody;
-  this.quadTree = quadTree;
+  this.quadTree_ = quadTree;
 };
 
 diem.cloth.GeometryMapper.prototype.getEquivalentIndex_ = function(newNode) {
@@ -119,4 +119,12 @@ diem.cloth.QueryableQuadTree.prototype.getValue = function(x, y) {
     });
   }
   return queue.dequeue();
+};
+
+diem.cloth.QueryableQuadTree.prototype.toJSON = function() {
+  var arr = new Array(this.getCount());
+  this.forEach(function(idx, coord) {
+    arr[idx] = idx + ": (" + coord.x + "," + coord.y + ")";
+  });
+  return arr.join(" ");
 };

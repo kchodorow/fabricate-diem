@@ -44,7 +44,6 @@ diem.cloth.PhysicalPiece.prototype.createMesh_ = function(mesh) {
     side: THREE.DoubleSide,
     wireframe: true
   });
-
   var newMesh = new THREE.Mesh(clothGeometry, clothMaterial);
   newMesh.castShadow = true;
   newMesh.receiveShadow = true;
@@ -104,7 +103,7 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function(geometry) {
  */
 diem.cloth.PhysicalPiece.prototype.createIndexedBufferGeometry_ = function(geometry) {
   geometry = geometry.clone();
-  var subdivider = new THREE.SubdivisionModifier(2);
+  var subdivider = new THREE.SubdivisionModifier(3);
   subdivider.modify(geometry);
   geometry.subdivided = true;
   goog.asserts.assert(geometry.vertices.length < 100000);
