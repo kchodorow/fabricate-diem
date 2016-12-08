@@ -5,7 +5,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.net.UrlEscapers;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.template.soy.SoyFileSet;
@@ -79,7 +78,6 @@ public class DataBuilder {
 
     public static String getSetUsernameUri(String uri) throws IOException {
         // No username set, finish setting up account.
-        uri = UrlEscapers.urlFragmentEscaper().escape(uri);
         return "/set-username?redirect=" + uri;
     }
 }

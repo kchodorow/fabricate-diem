@@ -87,6 +87,9 @@ diem.SceneContainer = function() {
   }, false);
 };
 
+/**
+ * @param {Array<diem.cloth.Workboard>} model
+ */
 diem.SceneContainer.prototype.load = function(model) {
   var tool = this.toolManager_.getTool(diem.tools.AddPiece.NAME);
   for (var i = 0; i < model.pieces.length; ++i) {

@@ -1,9 +1,12 @@
-java_binary(
-    name = "exporter",
-    srcs = ["Exporter.java"],
-    main_class = "com.fabdm.editor.pdf.Exporter",
+java_library(
+    name = "pdf",
+    srcs = [
+        "Exporter.java",
+        "PdfPieceIterator.java",
+    ],
     deps = [
         "//src/main/java/com/fabdm/project",
+        "@auto_value//:processor",
         "@itext//:jar",
         "@guava//jar",
     ],
@@ -12,10 +15,10 @@ java_binary(
 java_library(
     name = "servlet",
     srcs = [
-        "Exporter.java",
         "PdfServlet.java",
     ],
     deps = [
+        ":pdf",
         "//src/main/java/com/fabdm/editor",
         "//src/main/java/com/fabdm/project",
         "@com_google_gson//jar",

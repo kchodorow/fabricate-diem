@@ -7,12 +7,12 @@ import com.fabdm.project.Project;
 import com.fabdm.project.Vector2;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -25,9 +25,6 @@ import java.util.List;
  * Exports a pattern to a PDF.
  */
 public class Exporter {
-    private static double PIXELS_TO_THREE = 1 / (72 * 6);
-    private static int MAX_WIDTH = (int) (PageSize.LETTER.getWidth() * PIXELS_TO_THREE);
-    private static int MAX_HEIGHT = (int) (PageSize.LETTER.getHeight() * PIXELS_TO_THREE);
 
     private final Document document;
     private final Project project;
@@ -42,6 +39,7 @@ public class Exporter {
         for (Piece piece : pieces) {
             PdfPieceIterator pdfIterator = new PdfPieceIterator(piece);
             for (PdfPage page : pdfIterator) {
+                document.newPage();
                 drawPieceOnPage(piece, page, canvas);
             }
         }
@@ -52,21 +50,28 @@ public class Exporter {
         Preconditions.checkState(anchors.size() >= 1);
         Anchor start = anchors.get(0);
         Anchor end;
-        canvas.moveTo(start.anchor().xAsPixels(), start.anchor().yAsPixels());
-        for (int i = 0; i < anchors.size() - 1; ++i) {
-            start = anchors.get(i);
-            end = anchors.get(i + 1);
+        canvas.moveTo(
+            start.anchor().xAsPixels() + page.offsetX(),
+            start.anchor().yAsPixels() + page.offsetY());
+        for (int i = 1; i < anchors.size(); ++i) {
+            end = anchors.get(i);
             canvas.curveTo(
-                start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
-                end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
-                end.anchor().xAsPixels(), end.anchor().yAsPixels());
+                start.cwCp().xAsPixels() + page.offsetX(),
+                start.cwCp().yAsPixels() + page.offsetY(),
+                end.ccwCp().xAsPixels() + page.offsetX(),
+                end.ccwCp().yAsPixels() + page.offsetY(),
+                end.anchor().xAsPixels() + page.offsetX(),
+                end.anchor().yAsPixels() + page.offsetY());
+            start = end;
         }
-        start = anchors.get(anchors.size() - 1);
         end = anchors.get(0);
         canvas.curveTo(
-            start.ccwCp().xAsPixels(), start.ccwCp().yAsPixels(),
-            end.cwCp().xAsPixels(), end.cwCp().yAsPixels(),
-            end.anchor().xAsPixels(), end.anchor().yAsPixels());
+            start.cwCp().xAsPixels() + page.offsetX(),
+            start.cwCp().yAsPixels() + page.offsetY(),
+            end.ccwCp().xAsPixels() + page.offsetX(),
+            end.ccwCp().yAsPixels() + page.offsetY(),
+            end.anchor().xAsPixels() + page.offsetX(),
+            end.anchor().yAsPixels() + page.offsetY());
         canvas.stroke();
     }
 
@@ -81,11 +86,9 @@ public class Exporter {
 
     private void addPreamble(Document document) throws PdfException {
         Font titleFont = FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLDITALIC);
-        Chunk fabdm = new Chunk("Fabricate Diem", titleFont);
-        Chunk title = new Chunk(project.getDescription(), titleFont);
         try {
-            document.add(fabdm);
-            document.add(title);
+            document.add(new Paragraph("Fabricate Diem", titleFont));
+            document.add(new Paragraph(project.getDescription(), titleFont));
         } catch (DocumentException e) {
             throw new PdfException(e.getMessage());
         }

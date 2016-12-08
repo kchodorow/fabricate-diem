@@ -2,6 +2,7 @@ package com.fabdm.project;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.fabdm.template.DataBuilder;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -35,7 +36,7 @@ public class NewProjectServlet extends HttpServlet {
 
         Account account = AccountStorage.getById(user.getUserId());
         if (account == null) {
-            response.sendRedirect("/set-username");
+            response.sendRedirect(DataBuilder.getSetUsernameUri(request.getRequestURI()));
             return;
         }
 

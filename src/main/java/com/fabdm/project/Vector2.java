@@ -23,6 +23,10 @@ public abstract class Vector2 {
     public abstract double x();
     public abstract double y();
 
+    public double length() {
+        return Math.sqrt(x() * x() + y() * y());
+    }
+
     public String toJson() {
         return "{x : " + x() + ", y : " + y() + "}";
     }

@@ -6,8 +6,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.escape.Escaper;
-import com.google.common.net.UrlEscapers;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServlet;
@@ -65,8 +63,7 @@ public class SetUsernameServlet extends HttpServlet {
         if (redirect == null) {
             redirect = "";
         }
-        Escaper formEscaper = UrlEscapers.urlFormParameterEscaper();
-        builder.put("uri", formEscaper.escape(redirect));
+        builder.put("uri", redirect);
         String error = request.getParameter("error");
         if (error != null
                 && !UsernameError.INVALID.matches(error) && !UsernameError.TAKEN.matches(error)) {
@@ -80,7 +77,7 @@ public class SetUsernameServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String uri = UrlEscapers.urlFragmentEscaper().escape(request.getParameter("redirect"));
+        String uri = request.getParameter("redirect");
         UserService userService = UserServiceFactory.getUserService();
         if (!userService.isUserLoggedIn()) {
             response.sendRedirect(userService.createLoginURL(uri));

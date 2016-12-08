@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UserServlet extends HttpServlet {
-    private static final int USERNAME_IDX = 7;
+    private static final String USERNAME_PREFIX = "/+/user/";
+    private static final int USERNAME_IDX = USERNAME_PREFIX.length();
 
     private final DataBuilder dataBuilder;
     private final DataBuilder errorBuilder;

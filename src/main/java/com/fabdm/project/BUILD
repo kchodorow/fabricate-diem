@@ -28,7 +28,8 @@ java_library(
     srcs = ["NewProjectServlet.java"],
     deps = [
         ":project",
-        "//src/main/java/com/fabdm/account",        
+        "//src/main/java/com/fabdm/account",
+        "//src/main/java/com/fabdm/template",
         "@com_google_appengine_java//:user",
         "@com_google_objectify//jar",
         "@guava//jar",
