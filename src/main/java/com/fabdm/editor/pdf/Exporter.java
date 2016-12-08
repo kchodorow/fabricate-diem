@@ -4,9 +4,7 @@ import com.fabdm.project.Anchor;
 import com.fabdm.project.Model;
 import com.fabdm.project.Piece;
 import com.fabdm.project.Project;
-import com.fabdm.project.Vector2;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -86,9 +84,11 @@ public class Exporter {
 
     private void addPreamble(Document document) throws PdfException {
         Font titleFont = FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLDITALIC);
+        Font descFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.ITALIC);
         try {
-            document.add(new Paragraph("Fabricate Diem", titleFont));
+            document.add(new Paragraph("Fabricate Diem", descFont));
             document.add(new Paragraph(project.getDescription(), titleFont));
+            document.add(new Paragraph("http://www.fabdm.com/TODO/" + project.getUri(), descFont));
         } catch (DocumentException e) {
             throw new PdfException(e.getMessage());
         }
@@ -128,16 +128,5 @@ public class Exporter {
         PdfException(String message) {
             super("Error generating PDF: " + message);
         }
-    }
-
-    public static void main(String args[]) throws PdfException {
-        Model model = Model.create(ImmutableList.of(
-            Piece.create("piece", ImmutableList.of(
-                Anchor.create(
-                    "whatever",
-                    Vector2.create(100, 100),
-                    Vector2.create(20, 200),
-                    Vector2.create(180, 200))), ImmutableList.of())));
-        new Exporter(new Project()).generate(model);
     }
 }
