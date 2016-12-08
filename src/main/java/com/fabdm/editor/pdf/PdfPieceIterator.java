@@ -25,12 +25,9 @@ class PdfPieceIterator implements Iterable<PdfPage>, Iterator<PdfPage> {
         Vector2 max = getMax(piece.anchors());
         double width = max.xAsPixels() - min.xAsPixels();
         double height = max.yAsPixels() - min.yAsPixels();
-        System.out.println("width: " + width + " height: " + height);
-        System.out.println("letter width: " + PageSize.LETTER.getWidth() + " height: " + PageSize.LETTER.getHeight());
         int pagesWide = (int) Math.ceil(width / PageSize.LETTER.getWidth());
         this.pagesHigh = (int) Math.ceil(height / PageSize.LETTER.getHeight());
         this.total = pagesWide * pagesHigh;
-        System.out.println("Num pages: " + total + " wide: " + pagesWide + " tall: " + pagesHigh);
     }
 
     @Override
