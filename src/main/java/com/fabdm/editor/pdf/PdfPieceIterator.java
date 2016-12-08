@@ -28,6 +28,7 @@ class PdfPieceIterator implements Iterable<PdfPage>, Iterator<PdfPage> {
         int pagesWide = (int) Math.ceil(width / PageSize.LETTER.getWidth());
         this.pagesHigh = (int) Math.ceil(height / PageSize.LETTER.getHeight());
         this.total = pagesWide * pagesHigh;
+        currentPageY = pagesHigh - 1;
     }
 
     @Override
@@ -46,10 +47,10 @@ class PdfPieceIterator implements Iterable<PdfPage>, Iterator<PdfPage> {
             -currentPageX * PageSize.LETTER.getWidth(),
             -currentPageY * PageSize.LETTER.getHeight());
 
-        currentPageY++;
-        if (currentPageY == pagesHigh) {
+        currentPageY--;
+        if (currentPageY == 0) {
             currentPageX++;
-            currentPageY = 0;
+            currentPageY = pagesHigh - 1;
         }
         current++;
         return page;

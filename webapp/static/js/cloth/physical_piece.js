@@ -8,6 +8,7 @@ goog.require('diem.Pin');
 goog.require('diem.cloth.GeometryMapper');
 goog.require('diem.events');
 goog.require('diem.tools.DragPiece');
+goog.require('diem.tools.MovePiece');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.

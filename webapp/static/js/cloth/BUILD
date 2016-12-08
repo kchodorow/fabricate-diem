@@ -55,12 +55,21 @@ closure_js_library(
     name = "physical-piece",
     srcs = ["physical_piece.js"],
     deps = [
+        ":geometry-mapper",
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js:physics",
+        "//webapp/static/js:pin",
         "//webapp/static/js/events",
         "//webapp/static/js/tools:drag-piece",
+        "//webapp/static/js/tools:move-piece",
     ],
+)
+
+closure_js_library(
+    name = "geometry-mapper",
+    srcs = ["geometry_mapper.js"],
+    deps = ["@io_bazel_rules_closure//closure/library"],
 )
 
 closure_js_test(

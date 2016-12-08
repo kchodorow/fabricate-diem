@@ -82,6 +82,7 @@ closure_js_library(
 closure_js_library(
     name = "pin",
     srcs = ["pin.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
     deps = [":mesh-wrapper"],
 )
 
