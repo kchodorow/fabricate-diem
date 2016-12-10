@@ -28,6 +28,8 @@ diem.tools.Tool = function() {
   this.intersectableList_ = {};
   // Mapping of THREE.Mesh ids -> MeshWrappers
   this.wrapperMap_ = {};
+  // Optional HTML toolbar button.
+  this.button_ = null;
 };
 
 /**
@@ -173,6 +175,14 @@ diem.tools.Tool.prototype.updateIntersectable = function() {
       }
     }
   }
+};
+
+/**
+ * If this tool should have a toolbar button, this creates it.
+ * @returns {HTMLButtonElement} Or null, if no such button should be created.
+ */
+diem.tools.Tool.prototype.getButton = function() {
+  return this.button_;
 };
 
 /**

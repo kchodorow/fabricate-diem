@@ -59,19 +59,26 @@ diem.tools.ToolManager.prototype.setupShortcuts_ = function() {
 diem.tools.ToolManager.prototype.handleKeypress = function(event) {
   if (!(event.identifier in this.toolMap_)) {
     console.log('no tool matches ' + event.identifier);
-    this.activeTool_ = diem.tools.ToolManager.BASE_TOOL;
+    this.selectTool(diem.tools.ToolManager.BASE_TOOL);
     return;
   }
   var newTool = this.toolMap_[event.identifier];
+  this.selectTool(newTool);
+};
+
+/**
+ * @param {diem.tools.Tool}
+ */
+diem.tools.ToolManager.prototype.selectTool = function(tool) {
   // Note that this fires even if newTool == activeTool (for creating new
   // pattern pieces).
   // TODO: should there be a separate registration for non-stateful tools?
   if (this.activeTool_ != null) {
-    this.activeTool_.onDeselect(newTool);
+    this.activeTool_.onDeselect(tool);
   }
-  var responses = newTool.onSelect(this.activeTool_);
+  var responses = tool.onSelect(this.activeTool_);
   this.handleIntersectables(responses);
-  this.activeTool_ = newTool;
+  this.activeTool_ = tool;
 };
 
 /**
@@ -98,4 +105,12 @@ diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   for (i in this.toolMap_) {
     this.toolMap_[i].updateIntersectable();
   }
+};
+
+diem.tools.ToolManager.prototype.getTools = function() {
+  var tools = [];
+  for (var i in this.toolMap_) {
+    tools.push(this.toolMap_[i]);
+  }
+  return tools;
 };

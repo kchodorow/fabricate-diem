@@ -1,5 +1,6 @@
 goog.provide('diem.tools.AddPiece');
 
+goog.require('diem.Button');
 goog.require('diem.Pattern');
 goog.require('diem.tools.Tool');
 
@@ -16,6 +17,10 @@ diem.tools.AddPiece = function(scene) {
   this.scene_ = scene;
   this.pattern_ = new diem.Pattern();
   this.name_ = diem.tools.AddPiece.NAME;
+  this.button_ = new diem.Button.builder()
+    .setInnerHtml('C')
+    .setTooltip('New pattern piece [C]')
+    .build();
 };
 
 goog.inherits(diem.tools.AddPiece, diem.tools.Tool);

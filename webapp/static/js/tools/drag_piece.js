@@ -1,6 +1,7 @@
 /* global THREE */
 goog.provide('diem.tools.DragPiece');
 
+goog.require('diem.Button');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -12,6 +13,10 @@ goog.require('goog.events.KeyCodes');
 diem.tools.DragPiece = function() {
   goog.base(this);
   this.name_ = diem.tools.DragPiece.NAME;
+  this.button_ = new diem.Button.builder()
+    .setInnerHtml('D')
+    .setTooltip('Drag fabric [D]')
+    .build();
 };
 
 goog.inherits(diem.tools.DragPiece, diem.tools.Tool);

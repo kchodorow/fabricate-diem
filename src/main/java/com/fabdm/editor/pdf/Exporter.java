@@ -4,7 +4,9 @@ import com.fabdm.project.Anchor;
 import com.fabdm.project.Model;
 import com.fabdm.project.Piece;
 import com.fabdm.project.Project;
+import com.fabdm.project.Vector2;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
@@ -17,6 +19,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +27,12 @@ import java.util.List;
  */
 public class Exporter {
 
+    private static int inchesToPixels(double inches) {
+        return (int) inches * Vector2.PIXELS_PER_INCH;
+    }
+
+    // TODO: make seam allowance customizable.
+    private final int SEAM_ALLOWANCE = inchesToPixels(5.0 / 8.0);
     private final Document document;
     private final Project project;
 
@@ -35,15 +44,57 @@ public class Exporter {
     private void drawPattern(Model model, PdfContentByte canvas) {
         List<Piece> pieces = model.pieces();
         for (Piece piece : pieces) {
+            List<Vector2> seamAllowance = expand(piece);
+            System.out.println(Arrays.toString(seamAllowance.toArray()));
             PdfPieceIterator pdfIterator = new PdfPieceIterator(piece);
             for (PdfPage page : pdfIterator) {
                 document.newPage();
-                drawPieceOnPage(piece, page, canvas);
+                drawPieceOnPage(piece, page, canvas, seamAllowance);
             }
         }
     }
 
-    private void drawPieceOnPage(Piece piece, PdfPage page, PdfContentByte canvas) {
+    private List<Vector2> expand(Piece piece) {
+        List<Anchor> anchors = piece.anchors();
+        List<Vector2> allowanceAnchors = Lists.newArrayList();
+        int numAnchors = anchors.size();
+        for (int i = 0; i < numAnchors; ++i) {
+            Vector2 anchor = anchors.get(i).anchor();
+            Vector2 normalCw = getNormal(
+                anchors.get(i), anchors.get((i + 1) % numAnchors), Expander.NEAR_P0);
+            Vector2 normalCcw = getNormal(
+                getPrev(anchors, i), anchors.get(i), Expander.NEAR_P3);
+            Vector2 sum = Vector2.create(
+                normalCw.x() + normalCcw.x(), normalCw.y() + normalCcw.y());
+            Vector2 unitVec = Vector2.getNormalizedVector(sum);
+
+            allowanceAnchors.add(Vector2.create(
+                anchor.xAsPixels() + unitVec.x() * SEAM_ALLOWANCE,
+                anchor.yAsPixels() + unitVec.y() * SEAM_ALLOWANCE));
+        }
+        return allowanceAnchors;
+    }
+
+    private Anchor getPrev(List<Anchor> anchors, int i) {
+        if (i == 0) {
+            return anchors.get(anchors.size() - 1);
+        }
+        return anchors.get(i - 1);
+    }
+
+    private Expander createExpander(Anchor start, Anchor end) {
+        Vector2 p0 = start.anchor();
+        Vector2 p1 = start.cwCp();
+        Vector2 p2 = end.ccwCp();
+        Vector2 p3 = end.anchor();
+        return new Expander(p0, p1, p2, p3);
+    }
+
+    private Vector2 getNormal(Anchor start, Anchor end, double t) {
+        return createExpander(start, end).getNormal(t);
+    }
+
+    private void drawPieceOnPage(Piece piece, PdfPage page, PdfContentByte canvas, List<Vector2> seamAllowance) {
         List<Anchor> anchors = piece.anchors();
         Preconditions.checkState(anchors.size() >= 1);
         Anchor start = anchors.get(0);
@@ -70,6 +121,12 @@ public class Exporter {
             end.ccwCp().yAsPixels() + page.offsetY(),
             end.anchor().xAsPixels() + page.offsetX(),
             end.anchor().yAsPixels() + page.offsetY());
+
+        canvas.moveTo(seamAllowance.get(0).x(), seamAllowance.get(0).y());
+        for (int i = 1; i < anchors.size(); ++i) {
+            System.out.println("Anchor point at: " + seamAllowance.get(i).toJson());
+            canvas.lineTo(seamAllowance.get(i).x() + page.offsetX(), seamAllowance.get(i).y() + page.offsetY());
+        }
         canvas.stroke();
     }
 

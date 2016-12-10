@@ -9,7 +9,7 @@ import com.google.auto.value.AutoValue;
  */
 @AutoValue
 public abstract class Vector2 {
-    private static int PIXELS_PER_INCH = 72;
+    public static int PIXELS_PER_INCH = 72;
     private static int INCHES_PER_THREE_UNIT = 6;
 
     public static TypeAdapter<Vector2> typeAdapter(Gson gson) {
@@ -37,5 +37,12 @@ public abstract class Vector2 {
 
     public int yAsPixels() {
         return (int) (y() * PIXELS_PER_INCH * INCHES_PER_THREE_UNIT);
+    }
+
+    public static Vector2 getNormalizedVector(Vector2 vec) {
+        double length = Math.sqrt(vec.x() * vec.x() + vec.y() + vec.y());
+        double x = vec.x() / length;
+        double y = vec.y() / length;
+        return Vector2.create(x, y);
     }
 }

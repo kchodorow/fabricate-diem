@@ -7,10 +7,14 @@ import com.google.common.base.Preconditions;
  * Expands bezier curves.
  */
 public class Expander {
+    static double NEAR_P0 = .1;
+    static double NEAR_P3 = .9;
+
     private final Vector2 p0;
     private final Vector2 p1;
     private final Vector2 p2;
     private final Vector2 p3;
+
     /**
      * Derivative formula:
      * -3*P0*(1 - t)^2 +
@@ -30,8 +34,8 @@ public class Expander {
         this.p3 = p3;
     }
 
-    private Vector2 getNormal(double t) {
-        Vector2 normalizedTangent = getNormalizedTangent(0);
+    Vector2 getNormal(double t) {
+        Vector2 normalizedTangent = getNormalizedTangent(t);
         return Vector2.create(-normalizedTangent.y(), normalizedTangent.x());
     }
 

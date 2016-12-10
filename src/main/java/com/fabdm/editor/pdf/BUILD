@@ -1,6 +1,7 @@
 java_library(
     name = "pdf",
     srcs = [
+        "Expander.java",
         "Exporter.java",
         "PdfPieceIterator.java",
     ],

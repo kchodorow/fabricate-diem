@@ -1,5 +1,6 @@
 goog.provide('diem.tools.MovePiece');
 
+goog.require('diem.Button');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -11,6 +12,10 @@ goog.require('goog.events.KeyCodes');
 diem.tools.MovePiece = function() {
   goog.base(this);
   this.name_ = diem.tools.MovePiece.NAME;
+  this.button_ = new diem.Button.builder()
+    .setInnerHtml('V')
+    .setTooltip('Move pattern piece [V]')
+    .build();
 };
 
 goog.inherits(diem.tools.MovePiece, diem.tools.Tool);

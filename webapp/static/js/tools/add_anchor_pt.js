@@ -1,5 +1,6 @@
 goog.provide('diem.tools.AddAnchorPoint');
 
+goog.require('diem.Button');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -11,6 +12,10 @@ goog.require('goog.events.KeyCodes');
 diem.tools.AddAnchorPoint = function() {
   goog.base(this);
   this.name_ = diem.tools.AddAnchorPoint.NAME;
+  this.button_ = new diem.Button.builder()
+    .setInnerHtml('+')
+    .setTooltip('Add anchor point [+]')
+    .build();
 };
 
 goog.inherits(diem.tools.AddAnchorPoint, diem.tools.Tool);

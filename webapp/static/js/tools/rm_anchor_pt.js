@@ -1,5 +1,6 @@
 goog.provide('diem.tools.RemoveAnchorPoint');
 
+goog.require('diem.Button');
 goog.require('diem.tools.Tool');
 
 goog.require('goog.events.KeyCodes');
@@ -11,6 +12,10 @@ goog.require('goog.events.KeyCodes');
 diem.tools.RemoveAnchorPoint = function() {
   goog.base(this);
   this.name_ = diem.tools.RemoveAnchorPoint.NAME;
+  this.button_ = new diem.Button.builder()
+    .setInnerHtml('-')
+    .setTooltip('Delete anchor point [-]')
+    .build();
 };
 
 goog.inherits(diem.tools.RemoveAnchorPoint, diem.tools.Tool);

@@ -17,6 +17,7 @@ goog.require('diem.tools.PersonTool');
 goog.require('diem.tools.RemoveAnchorPoint');
 goog.require('diem.tools.SeamTool');
 goog.require('diem.tools.ToolManager');
+goog.require('diem.tools.Toolbar');
 goog.require('goog.events.KeyCodes');
 
 /**
@@ -151,6 +152,11 @@ diem.SceneContainer.prototype.initLights_ = function() {
   directionalLight.position.set(0,0,30);
   this.scene.add(directionalLight);
 };
+
+diem.SceneContainer.prototype.getToolbar = function() {
+  return new diem.tools.Toolbar(this.toolManager_);
+};
+
 
 /**
  * @param {Date} now
