@@ -28,7 +28,7 @@ import java.util.List;
 public class Exporter {
 
     private static int inchesToPixels(double inches) {
-        return (int) inches * Vector2.PIXELS_PER_INCH;
+        return (int) (inches * Vector2.PIXELS_PER_INCH);
     }
 
     // TODO: make seam allowance customizable.
@@ -124,7 +124,6 @@ public class Exporter {
 
         canvas.moveTo(seamAllowance.get(0).x(), seamAllowance.get(0).y());
         for (int i = 1; i < anchors.size(); ++i) {
-            System.out.println("Anchor point at: " + seamAllowance.get(i).toJson());
             canvas.lineTo(seamAllowance.get(i).x() + page.offsetX(), seamAllowance.get(i).y() + page.offsetY());
         }
         canvas.stroke();

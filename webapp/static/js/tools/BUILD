@@ -11,6 +11,7 @@ closure_js_library(
         ":move-piece",
         ":person",
         ":seam",
+        ":text",
     ],
 )
 
@@ -39,6 +40,7 @@ closure_js_library(
     visibility = ["//webapp/static/js:__pkg__"],
     deps = [
         ":tool",
+        "//webapp/static/js:button",
         "//webapp/static/js:pattern",
         "@io_bazel_rules_closure//closure/library",
     ],
@@ -68,6 +70,7 @@ closure_js_library(
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":tool",
+        "//webapp/static/js:button",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -78,6 +81,7 @@ closure_js_library(
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":tool",
+        "//webapp/static/js:button",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -103,6 +107,29 @@ closure_js_library(
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":tool",
+        "//webapp/static/js:button",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "text",
+    srcs = ["text.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":tool",
+        "//webapp/static/js:button",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "toolbar",
+    srcs = ["toolbar.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":tool-manager",
+        "//webapp/static/js:button",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

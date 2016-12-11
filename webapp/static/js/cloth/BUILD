@@ -27,6 +27,7 @@ closure_js_library(
         "//webapp/static/js/storage",
         "//webapp/static/js/tools:drag-piece",
         "//webapp/static/js/tools:move-piece",
+        "//webapp/static/js/tools:text",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

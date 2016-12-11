@@ -30,10 +30,18 @@ closure_js_library(
 
 closure_js_library(
     name = "scene",
-    srcs = [
-        "scene.js",
-        "scene_container.js",
+    srcs = ["scene.js"],
+    visibility = ["//webapp/static:__pkg__"],
+    deps = [
+        ":button",
+        ":scene-container",
+        "//webapp/static/js/tools:toolbar",
     ],
+)
+
+closure_js_library(
+    name = "scene-container",
+    srcs = ["scene_container.js"],
     visibility = ["//webapp/static:__pkg__"],
     deps = [
         ":event_handler",
@@ -44,6 +52,7 @@ closure_js_library(
         "//webapp/static/js/storage",
         "//webapp/static/js/tools",
         "//webapp/static/js/tools:tool-manager",
+        "//webapp/static/js/tools:toolbar",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -120,5 +129,11 @@ closure_js_library(
 closure_js_library(
     name = "seam",
     srcs = ["seam.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+)
+
+closure_js_library(
+    name = "button",
+    srcs = ["button.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
 )

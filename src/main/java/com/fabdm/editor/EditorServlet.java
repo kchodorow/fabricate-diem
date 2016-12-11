@@ -2,6 +2,7 @@ package com.fabdm.editor;
 
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
+import com.fabdm.editor.pdf.PdfServlet;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
 import com.google.appengine.api.users.User;
@@ -23,6 +24,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 public class EditorServlet extends HttpServlet {
 
     private final static String JSON = "json";
+    private final static String PDF = "pdf";
 
     private final DataBuilder builder;
     private final DataBuilder errorBuilder;
@@ -48,12 +50,22 @@ public class EditorServlet extends HttpServlet {
             return;
         }
         String format = request.getParameter("format");
-        if (format != null && format.equals(JSON)) {
-            response.getWriter().write("{\"model\":" + project.getModel() + "}");
+        if (format == null) {
+            builder.put("description", project.getDescription());
+            builder.build(request, response);
             return;
         }
-        builder.put("description", project.getDescription());
-        builder.build(request, response);
+        switch (format) {
+            case JSON:
+                response.getWriter().write("{\"model\":" + project.getModel() + "}");
+                break;
+            case PDF:
+                PdfServlet servlet = new PdfServlet();
+                servlet.doGet(request, response);
+                break;
+            default:
+                throw new IllegalStateException("Not supposed to get here.");
+        }
     }
 
     // TODO: test logged in -> edit -> save.

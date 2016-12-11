@@ -1,4 +1,4 @@
-/* global THREE */
+/* global THREE, location */
 goog.provide('diem.Scene');
 
 goog.require('diem.Button');
@@ -26,6 +26,7 @@ function init() {
 
 diem.Scene.addButtons = function(sceneContainer) {
   var div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; left: 30px; top: 150px;');
   var toolbar = sceneContainer.getToolbar();
   var buttons = toolbar.createButtons();
   for (var i = 0; i < buttons.length; ++i) {
@@ -36,6 +37,11 @@ diem.Scene.addButtons = function(sceneContainer) {
         .setInnerHtml('PDF')
         .setTooltip('Export to PDF')
         .build();
+  button.onclick = diem.Scene.toPDF;
   div.appendChild(button);
   document.getElementById('model-box').appendChild(div);
+};
+
+diem.Scene.toPDF = function() {
+  location.href = location.pathname + '?format=pdf';
 };

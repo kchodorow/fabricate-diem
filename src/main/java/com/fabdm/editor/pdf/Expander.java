@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 /**
  * Expands bezier curves.
  */
-public class Expander {
+class Expander {
     static double NEAR_P0 = .1;
     static double NEAR_P3 = .9;
 
@@ -36,7 +36,7 @@ public class Expander {
 
     Vector2 getNormal(double t) {
         Vector2 normalizedTangent = getNormalizedTangent(t);
-        return Vector2.create(-normalizedTangent.y(), normalizedTangent.x());
+        return Vector2.create(normalizedTangent.y(), -normalizedTangent.x());
     }
 
     private Vector2 getNormalizedTangent(double t) {

@@ -14,6 +14,7 @@ goog.require('diem.storage.Edge');
 goog.require('diem.storage.Storage');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.MovePiece');
+goog.require('diem.tools.Text');
 
 /**
  * @constructor
