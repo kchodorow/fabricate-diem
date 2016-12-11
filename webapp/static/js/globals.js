@@ -7,7 +7,7 @@ diem.Globals.WEBGL_DIV_ID = 'model-box';
 diem.Globals.raycaster = new THREE.Raycaster();
 diem.Globals.renderList = [];
 diem.Globals.textureLoader = new THREE.TextureLoader();
-diem.Globals.mouse = new THREE.Vector3();
+diem.Globals.mouse = new THREE.Vector2();
 
 /**
  * Changes the mesh's position to be relative to the parent's position.

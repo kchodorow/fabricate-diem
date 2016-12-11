@@ -80,6 +80,8 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   var distance = -this.camera_.position.z / dir.z;
   diem.Globals.mouse = this.camera_.position.clone().add(dir.multiplyScalar(distance));
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
+  diem.Globals.clientX = x;
+  diem.Globals.clientY = y;
 };
 
 /**

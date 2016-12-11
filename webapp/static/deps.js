@@ -32,6 +32,7 @@ goog.addDependency('../../../../js/tools/move_piece.js', ['diem.tools.MovePiece'
 goog.addDependency('../../../../js/tools/person_tool.js', ['diem.tools.PersonTool'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/rm_anchor_pt.js', ['diem.tools.RemoveAnchorPoint'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/seam_tool.js', ['diem.tools.SeamTool'], ['diem.Seam', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
+goog.addDependency('../../../../js/tools/text.js', ['diem.tools.Text'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/tool.js', ['diem.tools.Tool'], ['diem.events.Intersectable'], false);
 goog.addDependency('../../../../js/tools/tool_manager.js', ['diem.tools.ToolManager'], ['diem.tools.Tool', 'goog.events', 'goog.ui.KeyboardShortcutHandler'], false);
 goog.addDependency('../../../../js/tools/toolbar.js', ['diem.tools.Toolbar'], [], false);

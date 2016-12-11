@@ -26,6 +26,14 @@ diem.cloth.Workboard = function() {
 
   // The physical piece currently being dragged.
   this.currentPiece_ = null;
+
+  this.description_ = document.createElement('div');
+  this.description_.setAttribute('contenteditable', true);
+  this.description_.setAttribute(
+    'style', 'position: absolute; top: ' + diem.Globals.clientY
+      + 'px; left: ' + diem.Globals.clientX + 'px;');
+  this.description_.innerHTML = "Description";
+  document.body.appendChild(this.description_);
 };
 
 goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
@@ -56,6 +64,7 @@ diem.cloth.Workboard.createNew = function(w, h) {
 diem.cloth.Workboard.load = function(piece) {
   var workboard = new diem.cloth.Workboard();
   workboard.initMeshes_(piece);
+  workboard.description_.innerHTML = piece.description;
   return workboard;
 };
 
@@ -124,6 +133,8 @@ diem.cloth.Workboard.prototype.getAnchor_ = function(uuid, storageAnchors) {
  */
 diem.cloth.Workboard.prototype.getIntersectables = function() {
   var intersects = [
+    diem.tools.Text.createIntersectable(
+      diem.events.CLICKABLE, this),
     diem.tools.DragPiece.createIntersectable(
       diem.events.DRAGGABLE, this),
     diem.tools.MovePiece.createIntersectable(
@@ -178,4 +189,15 @@ diem.cloth.Workboard.prototype.drag3d = function(tool) {
  */
 diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
   return this.currentPiece_.drag3dEnd();
+};
+
+diem.cloth.Workboard.prototype.getDescription = function() {
+  return this.description_;
+};
+
+diem.cloth.Workboard.prototype.editText = function(intersection) {
+  if (this.description_.innerHTML == "") {
+    this.description_.innerHTML = "Description";
+  }
+  return [];
 };

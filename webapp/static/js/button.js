@@ -14,6 +14,7 @@ diem.Button.builder = function() {
 diem.Button.Builder = function() {
   this.button_ = document.createElement('button');
   this.button_.className = 'btn btn-default';
+  this.button_.setAttribute('style', 'float: left;');
   // TODO: setup CSS positioning.
 };
 

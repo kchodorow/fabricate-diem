@@ -14,6 +14,7 @@ class RandomName {
             "boy shorts",
             "bra",
             "cape",
+            "cloak",
             "coat",
             "corset",
             "dress",
@@ -38,8 +39,10 @@ class RandomName {
     private static final String[] ADJECTIVES = {
             "bohemian",
             "boho",
+            "business",
             "cargo",
             "comfy",
+            "dancer's",
             "delicate",
             "earth mother",
             "elegant",
@@ -55,7 +58,8 @@ class RandomName {
             "sexy",
             "slouchy",
             "superhero",
-            "Victorian"
+            "Victorian",
+            "vintage"
     };
 
     private final String article;
@@ -80,6 +84,7 @@ class RandomName {
     }
 
     String getUri() {
-        return adjective.replaceAll(" ", "-") + "-" + article.replaceAll(" ", "-");
+        return adjective.replaceAll(" ", "-").replaceAll("'", "") + "-"
+                + article.replaceAll(" ", "-");
     }
 }

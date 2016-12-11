@@ -16,6 +16,7 @@ goog.require('diem.tools.MovePiece');
 goog.require('diem.tools.PersonTool');
 goog.require('diem.tools.RemoveAnchorPoint');
 goog.require('diem.tools.SeamTool');
+goog.require('diem.tools.Text');
 goog.require('diem.tools.ToolManager');
 goog.require('diem.tools.Toolbar');
 goog.require('goog.events.KeyCodes');
@@ -46,6 +47,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.MovePiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
   this.toolManager_.registerTool(new diem.tools.SeamTool());
+  this.toolManager_.registerTool(new diem.tools.Text());
   this.toolManager_.registerTool(
     new diem.tools.CameraTool(this.camera, [goog.events.KeyCodes.LEFT]));
   this.toolManager_.registerTool(

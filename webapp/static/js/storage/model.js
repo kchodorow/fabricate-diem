@@ -44,6 +44,7 @@ diem.storage.Piece = function() {
   this.position = null;
   this.anchors = [];
   this.edges = [];
+  this.description = null;
 };
 
 /**
@@ -53,6 +54,7 @@ diem.storage.Piece.getStorable = function(workboard) {
   var piece = new diem.storage.Piece();
   piece.uuid = workboard.getUuid();
   piece.position = workboard.getObject().position.clone();
+  piece.description = workboard.getDescription();
   for (var i = 0; i < workboard.anchors_.length; ++i) {
     piece.anchors.push(diem.storage.Anchor.getStorable(workboard.anchors_[i]));
   }

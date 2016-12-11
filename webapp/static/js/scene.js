@@ -25,15 +25,17 @@ function init() {
 }
 
 diem.Scene.addButtons = function(sceneContainer) {
+  var div = document.createElement('div');
   var toolbar = sceneContainer.getToolbar();
   var buttons = toolbar.createButtons();
   for (var i = 0; i < buttons.length; ++i) {
-    document.body.appendChild(buttons[i]);
+    div.appendChild(buttons[i]);
   }
   // Add other, non-tool-related buttons.
   var button = new diem.Button.builder()
         .setInnerHtml('PDF')
         .setTooltip('Export to PDF')
         .build();
-  document.body.appendChild(button);
+  div.appendChild(button);
+  document.getElementById('model-box').appendChild(div);
 };
