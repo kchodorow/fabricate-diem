@@ -1,5 +1,6 @@
 package com.fabdm.project;
 
+import com.google.appengine.labs.repackaged.com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.auto.value.AutoValue;
@@ -40,11 +41,9 @@ public abstract class Vector2 {
     }
 
     public static Vector2 getNormalizedVector(Vector2 vec) {
+        // TOOD: throw non-runtime exception.
+        Preconditions.checkArgument(vec.x() != 0 || vec.y() != 0);
         double length = Math.sqrt(vec.x() * vec.x() + vec.y() * vec.y());
-        if (length == 0) {
-            // TOOD: throw non-runtime exception.
-            throw new IllegalArgumentException("Length of " + vec.toJson() + " cannot be 0");
-        }
         double x = vec.x() / length;
         double y = vec.y() / length;
         return Vector2.create(x, y);
