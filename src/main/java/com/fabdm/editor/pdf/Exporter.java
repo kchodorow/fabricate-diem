@@ -1,6 +1,5 @@
 package com.fabdm.editor.pdf;
 
-import com.fabdm.project.Anchor;
 import com.fabdm.project.Model;
 import com.fabdm.project.Piece;
 import com.fabdm.project.Project;
@@ -19,7 +18,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,22 +42,24 @@ public class Exporter {
     private void drawPattern(Model model, PdfContentByte canvas) {
         List<Piece> pieces = model.pieces();
         for (Piece piece : pieces) {
-            List<Vector2> seamAllowance = expand(piece);
-            System.out.println(Arrays.toString(seamAllowance.toArray()));
+            PixelPiece pixelPiece = PixelPiece.create(piece.anchors());
+            List<PixelAnchor> seamAllowance = expand(pixelPiece);
             PdfPieceIterator pdfIterator = new PdfPieceIterator(piece);
             for (PdfPage page : pdfIterator) {
                 document.newPage();
-                drawPieceOnPage(piece, page, canvas, seamAllowance);
+                drawPieceOnPage(pixelPiece.anchors(), page, canvas);
+                drawPieceOnPage(seamAllowance, page, canvas);
             }
         }
     }
 
-    private List<Vector2> expand(Piece piece) {
-        List<Anchor> anchors = piece.anchors();
-        List<Vector2> allowanceAnchors = Lists.newArrayList();
+    private List<PixelAnchor> expand(PixelPiece piece) {
+        List<PixelAnchor> anchors = piece.anchors();
+        List<PixelAnchor> allowanceAnchors = Lists.newArrayList();
         int numAnchors = anchors.size();
         for (int i = 0; i < numAnchors; ++i) {
-            Vector2 anchor = anchors.get(i).anchor();
+            PixelAnchor anchor = anchors.get(i);
+            Vector2 anchorPt = anchor.anchor();
             Vector2 normalCw = getNormal(
                 anchors.get(i), anchors.get((i + 1) % numAnchors), Expander.NEAR_P0);
             Vector2 normalCcw = getNormal(
@@ -68,21 +68,28 @@ public class Exporter {
                 normalCw.x() + normalCcw.x(), normalCw.y() + normalCcw.y());
             Vector2 unitVec = Vector2.getNormalizedVector(sum);
 
-            allowanceAnchors.add(Vector2.create(
-                anchor.xAsPixels() + unitVec.x() * SEAM_ALLOWANCE,
-                anchor.yAsPixels() + unitVec.y() * SEAM_ALLOWANCE));
+            double offsetX = unitVec.x() * SEAM_ALLOWANCE;
+            double offsetY = unitVec.y() * SEAM_ALLOWANCE;
+            Vector2 newAnchor = Vector2.create(
+                anchorPt.x() + offsetX, anchorPt.y() + offsetY);
+            Vector2 newCwCp = Vector2.create(
+                anchor.cwCp().x() + offsetX, anchor.cwCp().y() + offsetY);
+            Vector2 newCcwCp = Vector2.create(
+                anchor.ccwCp().x() + offsetX, anchor.ccwCp().y() + offsetY);
+            PixelAnchor newAnchorPt = PixelAnchor.create(newAnchor, newCwCp, newCcwCp);
+            allowanceAnchors.add(newAnchorPt);
         }
         return allowanceAnchors;
     }
 
-    private Anchor getPrev(List<Anchor> anchors, int i) {
+    private PixelAnchor getPrev(List<PixelAnchor> anchors, int i) {
         if (i == 0) {
             return anchors.get(anchors.size() - 1);
         }
         return anchors.get(i - 1);
     }
 
-    private Expander createExpander(Anchor start, Anchor end) {
+    private Expander createExpander(PixelAnchor start, PixelAnchor end) {
         Vector2 p0 = start.anchor();
         Vector2 p1 = start.cwCp();
         Vector2 p2 = end.ccwCp();
@@ -90,42 +97,37 @@ public class Exporter {
         return new Expander(p0, p1, p2, p3);
     }
 
-    private Vector2 getNormal(Anchor start, Anchor end, double t) {
+    private Vector2 getNormal(PixelAnchor start, PixelAnchor end, double t) {
         return createExpander(start, end).getNormal(t);
     }
 
-    private void drawPieceOnPage(Piece piece, PdfPage page, PdfContentByte canvas, List<Vector2> seamAllowance) {
-        List<Anchor> anchors = piece.anchors();
+    private void drawPieceOnPage(List<PixelAnchor> anchors, PdfPage page, PdfContentByte canvas) {
         Preconditions.checkState(anchors.size() >= 1);
-        Anchor start = anchors.get(0);
-        Anchor end;
+        PixelAnchor start = anchors.get(0);
+        PixelAnchor end;
         canvas.moveTo(
-            start.anchor().xAsPixels() + page.offsetX(),
-            start.anchor().yAsPixels() + page.offsetY());
+            start.anchor().x() + page.offsetX(),
+            start.anchor().y() + page.offsetY());
         for (int i = 1; i < anchors.size(); ++i) {
             end = anchors.get(i);
             canvas.curveTo(
-                start.cwCp().xAsPixels() + page.offsetX(),
-                start.cwCp().yAsPixels() + page.offsetY(),
-                end.ccwCp().xAsPixels() + page.offsetX(),
-                end.ccwCp().yAsPixels() + page.offsetY(),
-                end.anchor().xAsPixels() + page.offsetX(),
-                end.anchor().yAsPixels() + page.offsetY());
+                start.cwCp().x() + page.offsetX(),
+                start.cwCp().y() + page.offsetY(),
+                end.ccwCp().x() + page.offsetX(),
+                end.ccwCp().y() + page.offsetY(),
+                end.anchor().x() + page.offsetX(),
+                end.anchor().y() + page.offsetY());
             start = end;
         }
         end = anchors.get(0);
         canvas.curveTo(
-            start.cwCp().xAsPixels() + page.offsetX(),
-            start.cwCp().yAsPixels() + page.offsetY(),
-            end.ccwCp().xAsPixels() + page.offsetX(),
-            end.ccwCp().yAsPixels() + page.offsetY(),
-            end.anchor().xAsPixels() + page.offsetX(),
-            end.anchor().yAsPixels() + page.offsetY());
+            start.cwCp().x() + page.offsetX(),
+            start.cwCp().y() + page.offsetY(),
+            end.ccwCp().x() + page.offsetX(),
+            end.ccwCp().y() + page.offsetY(),
+            end.anchor().x() + page.offsetX(),
+            end.anchor().y() + page.offsetY());
 
-        canvas.moveTo(seamAllowance.get(0).x(), seamAllowance.get(0).y());
-        for (int i = 1; i < anchors.size(); ++i) {
-            canvas.lineTo(seamAllowance.get(i).x() + page.offsetX(), seamAllowance.get(i).y() + page.offsetY());
-        }
         canvas.stroke();
     }
 

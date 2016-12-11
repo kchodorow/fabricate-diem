@@ -4,6 +4,7 @@ java_library(
         "Expander.java",
         "Exporter.java",
         "PdfPieceIterator.java",
+        "PixelPiece.java",
     ],
     deps = [
         "//src/main/java/com/fabdm/project",
