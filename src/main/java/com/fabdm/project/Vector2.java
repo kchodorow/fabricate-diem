@@ -1,6 +1,6 @@
 package com.fabdm.project;
 
-import com.google.appengine.labs.repackaged.com.google.common.base.Preconditions;
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.auto.value.AutoValue;

@@ -24,6 +24,10 @@ function init() {
   render();
 }
 
+/**
+ * Add toolbar buttons.
+ * @param {diem.SceneContainer} sceneContainer
+ */
 diem.Scene.addButtons = function(sceneContainer) {
   var div = document.createElement('div');
   div.setAttribute('style', 'position: absolute; left: 30px; top: 150px;');
@@ -42,6 +46,9 @@ diem.Scene.addButtons = function(sceneContainer) {
   document.getElementById('model-box').appendChild(div);
 };
 
+/**
+ * Redirect to the PDF version of this page.
+ */
 diem.Scene.toPDF = function() {
   location.href = location.pathname + '?format=pdf';
 };
