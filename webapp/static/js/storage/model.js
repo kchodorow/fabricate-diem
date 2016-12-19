@@ -14,10 +14,16 @@ diem.storage.Model = function() {
   this.pieces_ = [];
 };
 
+/**
+ * @param {diem.cloth.Workboard} piece
+ */
 diem.storage.Model.prototype.addPiece = function(piece) {
   this.pieces_.push(piece);
 };
 
+/**
+ * @returns {string} JSON representation of the pattern.
+ */
 diem.storage.Model.prototype.getStorable = function() {
   var storable = {pieces : []};
   for (var i = 0; i < this.pieces_.length; ++i) {
@@ -49,6 +55,7 @@ diem.storage.Piece = function() {
 
 /**
  * @param {diem.cloth.Workboard} workboard
+ * @returns {diem.storage.Piece}
  */
 diem.storage.Piece.getStorable = function(workboard) {
   var piece = new diem.storage.Piece();
@@ -77,7 +84,7 @@ diem.storage.Anchor = function() {
 };
 
 /**
- * Returns an achor point in storable format.
+ * @param {diem.cloth.Anchor} inAnchor
  * @returns {diem.storage.Anchor}
  */
 diem.storage.Anchor.getStorable = function(inAnchor) {
@@ -91,6 +98,8 @@ diem.storage.Anchor.getStorable = function(inAnchor) {
 
 /**
  * Returns an achor point in storable format.
+ * @param {THREE.Vector3} vec
+ * @param {string} uuid
  * @returns {diem.storage.Anchor}
  */
 diem.storage.Anchor.fromVector = function(vec, uuid) {
@@ -102,13 +111,17 @@ diem.storage.Anchor.fromVector = function(vec, uuid) {
   return anchor;
 };
 
+/**
+ * @constructor
+ */
 diem.storage.Edge = function() {
   this.startAnchor = null;
   this.endAnchor = null;
 };
 
 /**
- * @param {diem.cloth.Edge} edge
+ * @param {diem.cloth.Edge} inEdge
+ * @returns {diem.storage.Edge}
  */
 diem.storage.Edge.getStorable = function(inEdge) {
   var edge = new diem.storage.Edge();

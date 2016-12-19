@@ -25,6 +25,7 @@ closure_js_library(
     name = "globals",
     srcs = ["globals.js"],
     externs = [":extern.js"],
+    suppress = ["lintChecks"],
     visibility = ["//webapp/static/js:__subpackages__"],
 )
 

@@ -2,8 +2,6 @@ goog.provide('diem.tools.SeamTool');
 
 goog.require('diem.Seam');
 goog.require('diem.tools.Tool');
-goog.require('diem.Seam');
-
 goog.require('goog.events.KeyCodes');
 
 /**
@@ -27,6 +25,9 @@ diem.tools.SeamTool.prototype.getName = function() {
   return diem.tools.SeamTool.NAME;
 };
 
+/**
+ * @override
+ */
 diem.tools.SeamTool.prototype.onSelect = function() {
   return diem.tools.SeamTool.seams_.push(new diem.Seam());
 };
@@ -38,6 +39,9 @@ diem.tools.SeamTool.prototype.getKeys = function() {
   return [goog.events.KeyCodes.S];
 };
 
+/**
+ * @returns {diem.Seam}
+ */
 diem.tools.SeamTool.getCurrent = function() {
   return diem.tools.SeamTool.seams_[diem.tools.SeamTool.seams_.length - 1];
 };

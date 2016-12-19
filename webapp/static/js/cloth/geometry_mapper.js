@@ -4,6 +4,10 @@ goog.provide('diem.cloth.GeometryMapper');
 goog.require('diem.cloth.QueryableQuadTree');
 goog.require('goog.asserts');
 
+/**
+ * @param {Ammo.btSoftBody} softBody
+ * @constructor
+ */
 diem.cloth.GeometryMapper = function(softBody) {
   this.softBody_ = softBody;
   this.quadTree_ = this.setupQuadTree_(softBody);
@@ -25,6 +29,7 @@ diem.cloth.GeometryMapper = function(softBody) {
  * points. E.g., if point 123 is nearest points 45, 6, and 473 in the old 2D
  * rep, then find the "average" 3D point in the old soft body and make that the
  * coordinates of point 123's physical representation.
+ * @param {Ammo.btSoftBody} softBody
  */
 diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   // Store the new geometry, since we want a "pristine" copy of the node
@@ -46,6 +51,9 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
 
 /**
  * Given a position, create an equivalent node from the three nearest points.
+ * @param {Ammo.btSoftBody.Node} newNode
+ * @returns {object}
+ * @private
  */
 diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   // TODO: is the Ammo shape actually in the right place for this to work?
@@ -100,6 +108,11 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   return {position : retPos, normal : retNormal};
 };
 
+/**
+ * @param {Ammo.btSoftBody} softBody
+ * @returns {diem.cloth.QueryableQuadTree}
+ * @private
+ */
 diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
   // Recreate quad tree each time so that there are no "dead" quadrants where
   // all the points have been removed.

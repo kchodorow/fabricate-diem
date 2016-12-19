@@ -155,16 +155,23 @@ diem.cloth.Workboard.prototype.getEdges = function() {
   return this.shape_['edges_'];
 };
 
+/**
+ * Starts the 2D cloth drag.
+ */
 diem.cloth.Workboard.prototype.moveStart = function() {
     this.prevMouse_ = diem.Globals.mouse.clone();
 };
 
+/**
+ * Moves the 2D cloth rep.
+ */
 diem.cloth.Workboard.prototype.move = function() {
   this.mesh_.position.add(diem.Globals.mouse.clone().sub(this.prevMouse_));
   this.prevMouse_ = diem.Globals.mouse.clone();
 };
 
 /**
+ * @param {diem.tools.Tool} tool
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
@@ -178,6 +185,8 @@ diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
 
 /**
  * Moves the fabric.
+ * @param {diem.tools.Tool} tool
+ * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3d = function(tool) {
   // We have to delegate this for the initial drag to work, since there's
@@ -186,16 +195,24 @@ diem.cloth.Workboard.prototype.drag3d = function(tool) {
 };
 
 /**
+ * @param {diem.tools.Tool} tool
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
   return this.currentPiece_.drag3dEnd();
 };
 
+/**
+ * @returns {string}
+ */
 diem.cloth.Workboard.prototype.getDescription = function() {
   return this.description_;
 };
 
+/**
+ * @param {Object} intersection
+ * @returns {array}
+ */
 diem.cloth.Workboard.prototype.editText = function(intersection) {
   if (this.description_.innerHTML == "") {
     this.description_.innerHTML = "Description";

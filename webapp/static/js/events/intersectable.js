@@ -52,6 +52,7 @@ diem.events.Intersectable.Builder = function() {
 
 /**
  * @param {string} toolId
+ * @returns {diem.events.Intersectable.Builder}
  */
 diem.events.Intersectable.Builder.prototype.setTool = function(toolId) {
   this.toolId = toolId;
@@ -60,6 +61,7 @@ diem.events.Intersectable.Builder.prototype.setTool = function(toolId) {
 
 /**
  * @param {string} method
+ * @returns {diem.events.Intersectable.Builder}
  */
 diem.events.Intersectable.Builder.prototype.setMethod = function(method) {
   this.method = method;
@@ -68,6 +70,7 @@ diem.events.Intersectable.Builder.prototype.setMethod = function(method) {
 
 /**
  * @param {diem.MeshWrapper} mesh
+ * @returns {diem.events.Intersectable.Builder}
  */
 diem.events.Intersectable.Builder.prototype.setMeshWrapper = function(mesh) {
   this.meshWrapper = mesh;

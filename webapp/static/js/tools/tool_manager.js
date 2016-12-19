@@ -67,7 +67,7 @@ diem.tools.ToolManager.prototype.handleKeypress = function(event) {
 };
 
 /**
- * @param {diem.tools.Tool}
+ * @param {diem.tools.Tool} tool
  */
 diem.tools.ToolManager.prototype.selectTool = function(tool) {
   // Note that this fires even if newTool == activeTool (for creating new
@@ -107,6 +107,9 @@ diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   }
 };
 
+/**
+ * @returns {array<diem.tools.Tool>}
+ */
 diem.tools.ToolManager.prototype.getTools = function() {
   var tools = [];
   for (var i in this.toolMap_) {

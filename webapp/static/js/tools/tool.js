@@ -59,7 +59,7 @@ diem.tools.Tool.prototype.onDeselect = function(opt_newTool) {
 };
 
 /**
- * @param {diem.MeshWrapper} [meshWrapper] The selected mesh
+ * @param {array} [intersections]
  * @returns {Array} an array of new diem.MeshWrappers
  */
 diem.tools.Tool.prototype.onClick = function(intersections) {

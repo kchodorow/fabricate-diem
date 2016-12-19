@@ -1,8 +1,4 @@
-load(
-    "@io_bazel_rules_closure//closure:defs.bzl",
-    "closure_js_library",
-    "closure_js_test",
-)
+load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 
 closure_js_library(
     name = "cloth",
@@ -69,20 +65,17 @@ closure_js_library(
 
 closure_js_library(
     name = "geometry-mapper",
-    srcs = ["geometry_mapper.js"],
+    srcs = [
+        "geometry_mapper.js",
+        "queryable_quadtree.js",
+    ],
     deps = ["@io_bazel_rules_closure//closure/library"],
 )
 
-closure_js_test(
-    name = "physical_piece_test",
+load("//webapp/static/js/testing:testing.bzl", "js_test")
+
+js_test(
+    name = "physical-piece-test",
     srcs = ["physical_piece_test.js"],
-    compilation_level = "WHITESPACE_ONLY",
-    data = ["//webapp/static/js:three.js"],
-    html = ":testing.html",
-    suppress = ["JSC_MISSING_JSDOC"],
-    deps = [
-        ":cloth",
-        "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library:testing",
-    ],
+    deps = [":cloth"],
 )

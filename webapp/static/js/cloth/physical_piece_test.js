@@ -58,23 +58,3 @@ var testCtor = function() {
   assertEquals(4, geometry.vertices.length);
   assertEquals(2, geometry.faces.length);
 };
-
-var disabled_testSimulate = function() {
-  diem.cloth.PhysicalPiece.TIMESTEP_SQ = 1;
-  diem.cloth.PhysicalPiece.GRAVITY = new THREE.Vector3(0, -2, 0);
-  diem.cloth.PhysicalPiece.DRAG = .8;
-
-  var geo = new THREE.Geometry();
-  geo.vertices.push(new THREE.Vector3(0, 0, 0));
-  geo.vertices.push(new THREE.Vector3(2, 0, 0));
-  geo.vertices.push(new THREE.Vector3(2, 3, 0));
-  geo.vertices.push(new THREE.Vector3(0, 3, 0));
-  var mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial());
-  var piece = diem.cloth.PhysicalPiece(mesh);
-  piece.simulate();
-  var vertices = piece.getObject().geometry.vertices;
-  assertTrue(vertices[0].equals(new THREE.Vector3(0, -2, 0)));
-  assertTrue(vertices[1].equals(new THREE.Vector3(2, -2, 0)));
-  assertTrue(vertices[2].equals(new THREE.Vector3(2, 1, 0)));
-  assertTrue(vertices[3].equals(new THREE.Vector3(0, 1, 0)));
-};

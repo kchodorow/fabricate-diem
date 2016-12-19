@@ -102,27 +102,10 @@ diem.cloth.Edge.prototype.generateAction = function() {
 
 /**
  * Called for clicks when the diem.tools.AddAnchorPoint is enabled.
+ * @param {array} intersects
  * @returns {Array}
  */
-diem.cloth.Edge.prototype.onClick = function(intersects, tool) {
-  if (tool.getName() == diem.tools.SeamTool.NAME) {
-    return this.addSeam();
-  } else if (tool.getName() == diem.tools.AddAnchorPoint.NAME) {
-    return this.addAnchorPoint();
-  }
-  goog.asserts.fail();
-  return [];
-};
-
-diem.cloth.Edge.prototype.addSeam = function() {
-  this.mesh_.material = new THREE.LineBasicMaterial({
-    color : 0x8A0917,
-    linewidth: 4});
-  diem.tools.SeamTool.getCurrent().addEdge(this);
-  return [];
-};
-
-diem.cloth.Edge.prototype.addAnchorPoint = function() {
+diem.cloth.Edge.prototype.onClick = function(intersects) {
   // Create a new anchor point where the mouse is.
   var workboardMesh = this.mesh_.parent;
   var oldEndAnchor = this.endAnchor_;

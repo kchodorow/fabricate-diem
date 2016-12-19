@@ -19,6 +19,9 @@ diem.storage.Storage = function() {
 
 diem.storage.Storage.INSTANCE = null;
 
+/**
+ * @returns {diem.storage.Model}
+ */
 diem.storage.Storage.getCurrent = function() {
   return diem.storage.Storage.get().model_;
 };
@@ -43,7 +46,6 @@ diem.storage.Storage.get = function() {
 
 /**
  * Send a KV-pair struct to the server in the 'data' parameter.
- * @param {Object} obj
  */
 diem.storage.Storage.prototype.send = function() {
   // Until loading the pattern has finished, don't send an empty model
@@ -74,6 +76,9 @@ diem.storage.Storage.prototype.send = function() {
   // TODO: update lastSend_ when the send returns success.
 };
 
+/**
+ * @param {function(Array<diem.cloth.Workboard>)} callback
+ */
 diem.storage.Storage.prototype.request = function(callback) {
   var request = new goog.net.XhrIo();
   var storage = this;

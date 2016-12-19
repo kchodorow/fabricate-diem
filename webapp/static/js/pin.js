@@ -25,10 +25,16 @@ goog.inherits(diem.Pin, diem.MeshWrapper);
 
 diem.Pin.PINS = 0;
 
+/**
+ * @returns {number}
+ */
 diem.Pin.prototype.index = function() {
   return this.index_;
 };
 
+/**
+ * @returns {Ammo.btRigidBody}
+ */
 diem.Pin.prototype.rigidBody = function() {
   return this.rigidBody_;
 };

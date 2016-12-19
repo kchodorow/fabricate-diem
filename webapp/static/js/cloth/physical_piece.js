@@ -36,6 +36,11 @@ goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 diem.cloth.PhysicalPiece.pieces_ = [];
 
+/**
+ * @param {THREE.Mesh} mesh
+ * @returns {THREE.Mesh}
+ * @private
+ */
 diem.cloth.PhysicalPiece.prototype.createMesh_ = function(mesh) {
   var clothGeometry = this.createIndexedBufferGeometry_(mesh.geometry);
   var clothPos = new THREE.Vector3().copy(mesh.position);
@@ -51,6 +56,10 @@ diem.cloth.PhysicalPiece.prototype.createMesh_ = function(mesh) {
   return newMesh;
 };
 
+/**
+ * @param {THREE.Mesh} newMesh
+ * @private
+ */
 diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   var oldSoftBody = this.mesh_.userData.physicsBody;
   diem.Physics.get().getWorld().removeSoftBody(oldSoftBody);
@@ -72,6 +81,11 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   }
 };
 
+/**
+ * @param {THREE.Geometry} geometry
+ * @returns {Ammo.btSoftBody}
+ * @private
+ */
 diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function(geometry) {
   var helper = new Ammo.btSoftBodyHelpers();
   // The btSoftBody is centered at (0,0), so its corners should be offset
@@ -256,6 +270,10 @@ diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
   return [];
 };
 
+/**
+ * @returns {array<diem.clothPhysicalPiece>} A list of physical pieces for
+ *   render to run simulate() on.
+ */
 diem.cloth.PhysicalPiece.getPieces = function() {
   return diem.cloth.PhysicalPiece.pieces_;
 };

@@ -6,6 +6,10 @@ goog.require('goog.structs.QuadTree');
 
 /**
  * Adds querying capabilities to Closure's quad tree.
+ * @param {number} minX
+ * @param {number} minY
+ * @param {number} maxX
+ * @param {number} maxY
  * @constructor
  */
 diem.cloth.QueryableQuadTree = function(minX, minY, maxX, maxY) {
@@ -18,6 +22,7 @@ goog.inherits(diem.cloth.QueryableQuadTree, goog.structs.QuadTree);
  * @param {number} x
  * @param {number} y
  * @return {goog.structs.QuadTree.Node}
+ * @private
  */
 diem.cloth.QueryableQuadTree.prototype.findNearest_ = function(x, y) {
   var current = this.getRootNode();
@@ -31,6 +36,10 @@ diem.cloth.QueryableQuadTree.prototype.findNearest_ = function(x, y) {
   return current;
 };
 
+/**
+ * @param {goog.structs.QuadTree.Node} quadNode
+ * @returns {array<goog.structs.QuadTree.Point>}
+ */
 diem.cloth.QueryableQuadTree.prototype.getPointsInQuadrant = function(quadNode) {
   if (quadNode.nodeType == goog.structs.QuadTree.NodeType.EMPTY) {
     return [];
@@ -76,6 +85,9 @@ diem.cloth.QueryableQuadTree.prototype.getNearest = function(num, vector) {
   return result;
 };
 
+/**
+ * @returns {string}
+ */
 diem.cloth.QueryableQuadTree.prototype.toJSON = function() {
   var arr = new Array(this.getCount());
   this.forEach(function(idx, coord) {

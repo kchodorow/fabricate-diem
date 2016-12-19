@@ -7,5 +7,5 @@ filegroup(
         "jquery-3.1.1.min.js",
         "three.js",
     ],
-    visibility = ["//webapp/static/js:__pkg__"],
+    visibility = ["//webapp/static/js:__subpackages__"],
 )
