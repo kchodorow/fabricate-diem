@@ -61,26 +61,26 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   var newPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
   var nearestPoints = this.quadTree_.getNearest(3, newPos);
   if (nearestPoints.length == 1) {
-    var sbNode = this.softBody_.get_m_nodes().at(nearestPoints[i]);
+    var sbNode = this.softBody_.get_m_nodes().at(nearestPoints[0]);
     return {position : sbNode.get_m_x(), normal : sbNode.get_m_n()};
   }
 
   goog.asserts.assert(nearestPoints.length == 3);
   var totalDistance = 0;
-  var distances = [];
+  var invDistances = [];
   // Sum up the distance between newPos and each nearest point.
   for (var i = 0; i < nearestPoints.length; ++i) {
     var nearestPoint = nearestPoints[i];
     var nearest = new THREE.Vector2(nearestPoint.x, nearestPoint.y);
-    var distance = nearest.distanceTo(newPos);
-    distances.push(distance);
-    totalDistance += distance;
+    var invDistance = 1 / nearest.distanceTo(newPos);
+    invDistances.push(invDistance);
+    totalDistance += invDistance;
   }
 
   // Find a weight for each nearest point.
   var weights = [];
-  for (i = 0; i < distances.length; ++i) {
-    weights.push(distances[i] / totalDistance);
+  for (i = 0; i < invDistances.length; ++i) {
+    weights.push(invDistances[i] / totalDistance);
   }
 
   // Move over to the 3D piece. Combine the positions on the soft body with the

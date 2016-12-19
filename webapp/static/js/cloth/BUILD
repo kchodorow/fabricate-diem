@@ -1,4 +1,5 @@
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
+load("//webapp/static/js/testing:testing.bzl", "js_test")
 
 closure_js_library(
     name = "cloth",
@@ -71,8 +72,6 @@ closure_js_library(
     ],
     deps = ["@io_bazel_rules_closure//closure/library"],
 )
-
-load("//webapp/static/js/testing:testing.bzl", "js_test")
 
 js_test(
     name = "physical-piece-test",
