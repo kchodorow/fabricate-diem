@@ -36,7 +36,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
 
-  var softBody = this.createSoftBody_(this.mesh_.geometry);
+  var softBody = this.createSoftBody_();
   this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
   diem.Physics.get().getWorld().addSoftBody(softBody);
   this.mesh_.userData.physicsBody = softBody;
@@ -60,6 +60,7 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   var newSoftBody = this.createSoftBody_();
   this.geometryMapper_.flip(newSoftBody);
   diem.Physics.get().getWorld().addSoftBody(newSoftBody);
+  this.mesh_.userData.physicsBody = newSoftBody;
 
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
@@ -76,12 +77,12 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
  */
 diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   var helper = new Ammo.btSoftBodyHelpers();
-  this.createAmmoArrays_();
+  var ammoArrays = this.createAmmoArrays_();
   var softBody = helper.CreateFromTriMesh(
     diem.Physics.get().getWorld().getWorldInfo(),
-    this.mesh_.userData.vertices,
-    this.mesh_.userData.indices,
-    this.mesh_.userData.indices.length / 3,
+    ammoArrays.vertices,
+    ammoArrays.indices,
+    ammoArrays.indices.length / 3,
     true);
   softBody.setTotalMass(0.9, false);
   // Disable deactivation
@@ -138,8 +139,7 @@ diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
     ammoIndices[i3 + 2] = f.c;
   }
 
-  this.mesh_.userData.vertices = ammoVertices;
-  this.mesh_.userData.indices = ammoIndices;
+  return {vertices : ammoVertices, indices : ammoIndices};
 };
 
 /**
