@@ -35,6 +35,8 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
 
+  this.ammoVertices_ = new Float32Array(geometry.vertices.length * 3);
+  this.ammoIndices_ = new Uint16Array(geometry.faces.length * 3);
   var softBody = this.createSoftBody_();
   this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
   diem.Physics.get().getWorld().addSoftBody(softBody);
@@ -77,12 +79,12 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
  */
 diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   var helper = new Ammo.btSoftBodyHelpers();
-  var ammoArrays = this.createAmmoArrays_();
+  this.createAmmoArrays_();
   var softBody = helper.CreateFromTriMesh(
     diem.Physics.get().getWorld().getWorldInfo(),
-    ammoArrays.vertices,
-    ammoArrays.indices,
-    ammoArrays.indices.length / 3,
+    this.ammoVertices_,
+    this.ammoIndices_,
+    this.ammoIndices_.length / 3,
     true);
   softBody.setTotalMass(0.9, false);
   // Disable deactivation
@@ -117,30 +119,25 @@ diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
   var numVertices = this.mesh_.geometry.vertices.length;
   var numFaces = this.mesh_.geometry.faces.length;
 
-  var ammoVertices = new Float32Array(numVertices * 3);
-  var ammoIndices = new Uint16Array(numFaces * 3);
-
   var jitter = .01;
   for (var i = 0; i < numVertices; i++) {
     var p = this.mesh_.geometry.vertices[i];
     var i3 = i * 3;
 
-    ammoVertices[i3] = p.x;
-    ammoVertices[i3 + 1] = p.y;
+    this.ammoVertices_[i3] = p.x;
+    this.ammoVertices_[i3 + 1] = p.y;
     // Offset z slightly, so the cloth isn't stuck on the plane.
-    ammoVertices[i3 + 2] = jitter;
+    this.ammoVertices_[i3 + 2] = jitter;
     jitter *= -1;
   }
 
   for (i = 0; i < numFaces; ++i) {
     var f = this.mesh_.geometry.faces[i];
     i3 = i * 3;
-    ammoIndices[i3] = f.a;
-    ammoIndices[i3 + 1] = f.b;
-    ammoIndices[i3 + 2] = f.c;
+    this.ammoIndices_[i3] = f.a;
+    this.ammoIndices_[i3 + 1] = f.b;
+    this.ammoIndices_[i3 + 2] = f.c;
   }
-
-  return {vertices : ammoVertices, indices : ammoIndices};
 };
 
 /**
