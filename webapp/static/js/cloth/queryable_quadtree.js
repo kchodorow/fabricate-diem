@@ -59,13 +59,13 @@ diem.cloth.QueryableQuadTree.prototype.getPointsInQuadrant = function(quadNode) 
  *   just that point, otherwise num nearest points.
  */
 diem.cloth.QueryableQuadTree.prototype.getNearest = function(num, vector) {
-  var current = this.get(vector.x, vector.y);
-  if (current != null) {
-    return [current];
+  if (this.contains(vector.x, vector.y)) {
+    return [new goog.structs.QuadTree.Point(
+      vector.x, vector.y, this.get(vector.x, vector.y))];
   }
   var value = null;
   var queue = new goog.structs.PriorityQueue();
-  current = this.findNearest_(vector.x, vector.y);
+  var current = this.findNearest_(vector.x, vector.y);
   while (queue.getCount() < num) {
     current = current.parent;
     this.traverse_(current, function(node) {

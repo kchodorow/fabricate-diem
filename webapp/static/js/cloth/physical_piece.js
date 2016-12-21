@@ -24,10 +24,9 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   this.pinned_ = [];
   this.handle_ = 0;
   this.mouse_ = null;
+  this.originalPosition_ = new THREE.Vector3().copy(piece.position);
 
   var geometry = this.createGeometry_(piece.geometry);
-  var clothPos = new THREE.Vector3().copy(piece.position);
-  geometry.translate(clothPos.x, clothPos.y, 0);
   var clothMaterial = new THREE.MeshLambertMaterial({
     color: piece.material.color,
     side: THREE.DoubleSide
@@ -106,6 +105,7 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
  */
 diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
   geometry = geometry.clone();
+  geometry.translate(this.originalPosition_.x, this.originalPosition_.y, 0);
   var subdivider = new THREE.SubdivisionModifier(3);
   subdivider.modify(geometry);
   geometry.subdivided = true;

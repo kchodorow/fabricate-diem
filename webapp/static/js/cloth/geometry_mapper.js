@@ -38,9 +38,9 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
   var quadTree = this.setupQuadTree_(softBody);
   var newNodes = softBody.get_m_nodes();
   var oldNodes = this.softBody_.get_m_nodes();
-  for (var newIndex = 0; newIndex < newNodes.size(); ++newIndex) {
-    var newNode = newNodes.at(newIndex);
-    var oldNode = this.getEquivalentNode_(newNode);
+  for (var i = 0; i < newNodes.size(); ++i) {
+    var newNode = newNodes.at(i);
+    var oldNode = this.getEquivalentNode_(newNode, i);
     newNode.set_m_x(oldNode.position);
     newNode.set_m_n(oldNode.normal);
   }
@@ -67,12 +67,12 @@ diem.cloth.GeometryMapper.prototype.getEquivalentIndex = function(oldNode) {
  * @returns {object}
  * @private
  */
-diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
+diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) {
   var ammoPos = newNode.get_m_x();
   var newPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
   var nearestPoints = this.quadTree_.getNearest(3, newPos);
   if (nearestPoints.length == 1) {
-    var sbNode = this.softBody_.get_m_nodes().at(nearestPoints[0]);
+    var sbNode = this.softBody_.get_m_nodes().at(nearestPoints[0].value);
     return {position : sbNode.get_m_x(), normal : sbNode.get_m_n()};
   }
 
