@@ -55,8 +55,6 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   this.mesh_.geometry = geometry;
 
   var oldSoftBody = this.mesh_.userData.physicsBody;
-  diem.Physics.get().getWorld().removeSoftBody(oldSoftBody);
-
   var newSoftBody = this.createSoftBody_();
   this.geometryMapper_.flip(newSoftBody);
   diem.Physics.get().getWorld().addSoftBody(newSoftBody);
@@ -64,10 +62,13 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
 
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
-    // TODO: actually put in the right index, don't just match it with its
-    // old index.
+    var oldNode = oldSoftBody.get_m_nodes().at(pin.index());
+    var index = this.geometryMapper_.getEquivalentIndex(oldNode);
+    pin.setIndex(index);
     newSoftBody.appendAnchor(pin.index(), pin.rigidBody(), false, 1);
   }
+
+  diem.Physics.get().getWorld().removeSoftBody(oldSoftBody);
 };
 
 /**

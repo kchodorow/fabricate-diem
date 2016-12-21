@@ -50,13 +50,24 @@ diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
 };
 
 /**
+ * @param {Ammo.btSoftBody.Node} oldNode the previous node.
+ * @returns {number} the index of the point nearest the given (old) node.
+ */
+diem.cloth.GeometryMapper.prototype.getEquivalentIndex = function(oldNode) {
+  var ammoPos = oldNode.get_m_x();
+  var oldPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
+  var nearestPoints = this.quadTree_.getNearest(1, oldPos);
+  goog.asserts.assert(nearestPoints.length == 1);
+  return nearestPoints[0].value;
+};
+
+/**
  * Given a position, create an equivalent node from the three nearest points.
  * @param {Ammo.btSoftBody.Node} newNode
  * @returns {object}
  * @private
  */
 diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
-  // TODO: is the Ammo shape actually in the right place for this to work?
   var ammoPos = newNode.get_m_x();
   var newPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
   var nearestPoints = this.quadTree_.getNearest(3, newPos);

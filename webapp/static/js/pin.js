@@ -33,6 +33,13 @@ diem.Pin.prototype.index = function() {
 };
 
 /**
+ * @param {number} index
+ */
+diem.Pin.prototype.setIndex = function(idx) {
+  this.index_ = idx;
+};
+
+/**
  * @returns {Ammo.btRigidBody}
  */
 diem.Pin.prototype.rigidBody = function() {
