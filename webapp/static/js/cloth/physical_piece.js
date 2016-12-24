@@ -37,47 +37,7 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
 
   this.ammoVertices_ = new Float32Array(geometry.vertices.length * 3);
   this.ammoIndices_ = new Uint16Array(geometry.faces.length * 3);
-  var softBody = this.createSoftBody_();
-  this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
-  diem.Physics.get().getWorld().addSoftBody(softBody);
-  this.mesh_.userData.physicsBody = softBody;
-};
 
-goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
-
-diem.cloth.PhysicalPiece.pieces_ = [];
-
-/**
- * @param {THREE.Mesh} newMesh
- * @private
- */
-diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
-  var geometry = this.createGeometry_(newMesh.geometry);
-  this.mesh_.geometry = geometry;
-
-  var oldSoftBody = this.mesh_.userData.physicsBody;
-  var newSoftBody = this.createSoftBody_();
-  this.geometryMapper_.flip(newSoftBody);
-  diem.Physics.get().getWorld().addSoftBody(newSoftBody);
-  this.mesh_.userData.physicsBody = newSoftBody;
-
-  for (var i = 0; i < this.pinned_.length; ++i) {
-    var pin = this.pinned_[i];
-    var oldNode = oldSoftBody.get_m_nodes().at(pin.index());
-    var index = this.geometryMapper_.getEquivalentIndex(oldNode);
-    pin.setIndex(index);
-    newSoftBody.appendAnchor(pin.index(), pin.rigidBody(), false, 1);
-  }
-
-  diem.Physics.get().getWorld().removeSoftBody(oldSoftBody);
-};
-
-/**
- * @param {THREE.Geometry} geometry
- * @returns {Ammo.btSoftBody}
- * @private
- */
-diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   var helper = new Ammo.btSoftBodyHelpers();
   this.createAmmoArrays_();
   var softBody = helper.CreateFromTriMesh(
@@ -97,7 +57,104 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   sbConfig.set_kDP(.001);
   sbConfig.set_kDG(.001);
 
-  return softBody;
+  this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
+  diem.Physics.get().getWorld().addSoftBody(softBody);
+  this.mesh_.userData.physicsBody = softBody;
+};
+
+goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
+
+diem.cloth.PhysicalPiece.pieces_ = [];
+
+/**
+ * @param {THREE.Mesh} newMesh
+ * @private
+ */
+diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
+  var geometry = this.createGeometry_(newMesh.geometry);
+  this.mesh_.geometry = geometry;
+
+  this.updateSoftBody_();
+
+  var oldSoftBody = this.mesh_.userData.physicsBody;
+  for (var i = 0; i < this.pinned_.length; ++i) {
+    var pin = this.pinned_[i];
+    var oldNode = oldSoftBody.get_m_nodes().at(pin.index());
+    var index = this.geometryMapper_.getEquivalentIndex(oldNode);
+    pin.setIndex(index);
+    //newSoftBody.appendAnchor(pin.index(), pin.rigidBody(), false, 1);
+  }
+};
+
+/**
+ * @private
+ */
+diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
+  var vertices = this.mesh_.geometry.vertices;
+  var faces = this.mesh_.geometry.faces;
+
+  this.geometryMapper_.storePositions();
+
+  var softBody = this.mesh_.userData.physicsBody;
+  var nodes = softBody.get_m_nodes();
+  for (var i = 0; i < nodes.size(); i++) {
+    var node = nodes.at(i);
+    var pos = node.get_m_x();
+    pos.setX(vertices[i].x);
+    pos.setY(vertices[i].y);
+    pos.setZ(vertices[i].z);
+  }
+
+  var linker = new diem.cloth.PhysicalPiece.LinkTracker(softBody);
+  var ammoFaces = softBody.get_m_faces();
+  for (i = 0; i < faces.length; ++i) {
+    var f = faces[i];
+    linker.connect_(f.a, f.b);
+    linker.connect_(f.a, f.c);
+    linker.connect_(f.b, f.c);
+    var ammoFace = ammoFaces.at(i);
+    ammoFace.set_m_n(0, nodes.at(f.a));
+    ammoFace.set_m_n(1, nodes.at(f.b));
+    ammoFace.set_m_n(2, nodes.at(f.c));
+  }
+
+  softBody.resetLinkRestLengths();
+
+  this.geometryMapper_.flipPositions();
+};
+
+diem.cloth.PhysicalPiece.LinkTracker = function(softBody) {
+  this.links_ = {};
+  this.ammoLinks_ = softBody.get_m_links();
+  this.ammoNodes_ = softBody.get_m_nodes();
+  this.idx_ = 0;
+};
+
+diem.cloth.PhysicalPiece.LinkTracker.prototype.connect_ = function(a, b) {
+  if (this.isLinked_(a, b)) {
+    return;
+  }
+  this.link_(a, b);
+
+  var link = this.ammoLinks_.at(this.idx_++);
+  link.set_m_n(0, this.ammoNodes_.at(a));
+  link.set_m_n(1, this.ammoNodes_.at(b));
+};
+
+diem.cloth.PhysicalPiece.LinkTracker.prototype.isLinked_ = function(a, b) {
+  return a in this.links_ && this.links_[a].includes(b);
+};
+
+diem.cloth.PhysicalPiece.LinkTracker.prototype.link_ = function(a, b) {
+  if (!(a in this.links_)) {
+    this.links_[a] = [];
+  }
+  if (!(b in this.links_)) {
+    this.links_[b] = [];
+  }
+
+  this.links_[a].push(b);
+  this.links_[b].push(a);
 };
 
 /**

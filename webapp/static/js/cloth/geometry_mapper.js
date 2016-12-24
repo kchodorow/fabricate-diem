@@ -10,7 +10,29 @@ goog.require('goog.asserts');
  */
 diem.cloth.GeometryMapper = function(softBody) {
   this.softBody_ = softBody;
+  this.numNodes_ = softBody.get_m_nodes().size();
+  this.oldPositions_ = new Array(this.numNodes_);
+  this.oldNormals_ = new Array(this.numNodes_);
+  for (var i = 0; i < this.oldPositions_.length; ++i) {
+    this.oldPositions_[i] = new Ammo.btVector3();
+    this.oldNormals_[i] = new Ammo.btVector3();
+  }
   this.quadTree_ = this.setupQuadTree_(softBody);
+};
+
+diem.cloth.GeometryMapper.prototype.storePositions = function() {
+  var nodes = this.softBody_.get_m_nodes();
+  for (var i = 0; i < this.oldPositions_.length; ++i) {
+    var node = nodes.at(i);
+    var pos = node.get_m_x();
+    this.oldPositions_[i].setX(pos.x());
+    this.oldPositions_[i].setY(pos.y());
+    this.oldPositions_[i].setZ(pos.z());
+    var normal = node.get_m_n();
+    this.oldNormals_[i].setX(normal.x());
+    this.oldNormals_[i].setY(normal.y());
+    this.oldNormals_[i].setZ(normal.z());
+  }
 };
 
 /**
@@ -31,21 +53,25 @@ diem.cloth.GeometryMapper = function(softBody) {
  * coordinates of point 123's physical representation.
  * @param {Ammo.btSoftBody} softBody
  */
-diem.cloth.GeometryMapper.prototype.flip = function(softBody) {
+diem.cloth.GeometryMapper.prototype.flipPositions = function() {
   // Store the new geometry, since we want a "pristine" copy of the node
   // positions for the next flip and this will modify all of them to match the
   // previous geometry's positions.
-  var quadTree = this.setupQuadTree_(softBody);
-  var newNodes = softBody.get_m_nodes();
-  var oldNodes = this.softBody_.get_m_nodes();
-  for (var i = 0; i < newNodes.size(); ++i) {
-    var newNode = newNodes.at(i);
-    var oldNode = this.getEquivalentNode_(newNode, i);
-    newNode.set_m_x(oldNode.position);
-    newNode.set_m_n(oldNode.normal);
+  var quadTree = this.setupQuadTree_();
+  var new2DNodes = this.softBody_.get_m_nodes();
+  for (var i = 0; i < new2DNodes.size(); ++i) {
+    var new2DNode = new2DNodes.at(i);
+    var new3DPos = new2DNode.get_m_x();
+    var new3DNormal = new2DNode.get_m_x();
+    var old3DNode = this.getEquivalentNode_(new2DNode, i);
+    new3DPos.setX(old3DNode.position.x());
+    new3DPos.setY(old3DNode.position.y());
+    new3DPos.setZ(old3DNode.position.z());
+    new3DNormal.setX(old3DNode.normal.x());
+    new3DNormal.setY(old3DNode.normal.y());
+    new3DNormal.setY(old3DNode.normal.z());
   }
 
-  this.softBody_ = softBody;
   this.quadTree_ = quadTree;
 };
 
@@ -72,8 +98,11 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) 
   var newPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
   var nearestPoints = this.quadTree_.getNearest(3, newPos);
   if (nearestPoints.length == 1) {
-    var sbNode = this.softBody_.get_m_nodes().at(nearestPoints[0].value);
-    return {position : sbNode.get_m_x(), normal : sbNode.get_m_n()};
+    var newIdx = nearestPoints[0].value;
+    return {
+      position : this.oldPositions_[newIdx],
+      normal : this.oldNormals_[newIdx]
+    };
   }
 
   goog.asserts.assert(nearestPoints.length == 3);
@@ -100,16 +129,15 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) 
   var retNormal = new Ammo.btVector3(0, 0, 0);
   for (i = 0; i < nearestPoints.length; ++i) {
     var index = nearestPoints[i].value;
-    sbNode = this.softBody_.get_m_nodes().at(index);
     var weight = weights[i];
 
-    var pos = sbNode.get_m_x();
+    var pos = this.oldPositions_[index];
     retPos.setX(retPos.x() + pos.x() * weight);
     retPos.setY(retPos.y() + pos.y() * weight);
     retPos.setZ(retPos.z() + pos.z() * weight);
 
     // Combine the normals.
-    var normal = sbNode.get_m_n();
+    var normal = this.oldNormals_[index];
     retNormal.setX(retNormal.x() + normal.x() * weight);
     retNormal.setY(retNormal.y() + normal.y() * weight);
     retNormal.setZ(retNormal.z() + normal.z() * weight);
@@ -120,15 +148,14 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) 
 };
 
 /**
- * @param {Ammo.btSoftBody} softBody
  * @returns {diem.cloth.QueryableQuadTree}
  * @private
  */
-diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
+diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function() {
   // Recreate quad tree each time so that there are no "dead" quadrants where
   // all the points have been removed.
   var quadTree = new diem.cloth.QueryableQuadTree(-100, -100, 100, 100);
-  var nodes = softBody.get_m_nodes();
+  var nodes = this.softBody_.get_m_nodes();
   for (var i = 0; i < nodes.size(); ++i) {
     var node = nodes.at(i);
     var pos = node.get_m_x();
