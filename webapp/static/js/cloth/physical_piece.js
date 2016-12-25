@@ -29,7 +29,8 @@ diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   var geometry = this.createGeometry_(piece.geometry);
   var clothMaterial = new THREE.MeshLambertMaterial({
     color: piece.material.color,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    wireframe: true
   });
   this.mesh_ = new THREE.Mesh(geometry, clothMaterial);
   this.mesh_.castShadow = true;
@@ -196,6 +197,8 @@ diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
   geometry = geometry.clone();
   geometry.translate(this.originalPosition_.x, this.originalPosition_.y, 0);
   var subdivider = new THREE.SubdivisionModifier(3);
+  subdivider.WARNINGS = true;
+  subdivider.maxEdgeLength = .5;
   subdivider.modify(geometry);
   geometry.subdivided = true;
   goog.asserts.assert(geometry.vertices.length < 100000);
