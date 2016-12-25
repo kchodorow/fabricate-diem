@@ -151,7 +151,7 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
     var metaVertices;
 
     // new stuff.
-    var sourceEdges, newEdgeVertices, newSourceVertices;
+    var sourceEdges, newEdgeVertices;
 
     oldVertices = geometry.vertices; // { x, y, z}
     oldFaces = geometry.faces; // { a: oldVertex1, b: oldVertex2, c: oldVertex3 }
@@ -180,60 +180,20 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
      *******************************************************/
 
     newEdgeVertices = [];
-    var other, currentEdge, newEdge, face;
-    var edgeVertexWeight, adjacentVertexWeight, connectedFaces;
-
-    for ( i in sourceEdges ) {
-      currentEdge = sourceEdges[ i ];
-      newEdge = new THREE.Vector3();
-
-      edgeVertexWeight = 3 / 8;
-      adjacentVertexWeight = 1 / 8;
-
-      connectedFaces = currentEdge.faces.length;
-
-      // check how many linked faces. 2 should be correct.
-      if ( connectedFaces != 2 ) {
-
-	// if length is not 2, handle condition
-	edgeVertexWeight = 0.5;
-	adjacentVertexWeight = 0;
-
-	if ( connectedFaces != 1 ) {
-
-	  if ( WARNINGS ) console.warn( 'Subdivision Modifier: Number of connected faces != 2, is: ', connectedFaces, currentEdge );
-
-	}
-
+    var maxEdgeSq = this.maxEdgeLength * this.maxEdgeLength;
+    for (i in sourceEdges) {
+      var currentEdge = sourceEdges[i];
+      if (currentEdge.a.distanceToSquared(currentEdge.b) < this.maxEdgeSq) {
+        continue;
       }
 
-      newEdge.addVectors( currentEdge.a, currentEdge.b ).multiplyScalar( edgeVertexWeight );
-
-      tmp.set( 0, 0, 0 );
-
-      for ( j = 0; j < connectedFaces; j ++ ) {
-
-	face = currentEdge.faces[ j ];
-
-	for ( k = 0; k < 3; k ++ ) {
-
-	  other = oldVertices[ face[ ABC[ k ] ] ];
-	  if ( other !== currentEdge.a && other !== currentEdge.b ) break;
-
-	}
-
-	tmp.add( other );
-
-      }
-
-      tmp.multiplyScalar( adjacentVertexWeight );
-      newEdge.add( tmp );
+      var newVertex = new THREE.Vector3();
+      var edgeVertexWeight = .5;
+      newVertex.addVectors(currentEdge.a, currentEdge.b)
+        .multiplyScalar(edgeVertexWeight);
 
       currentEdge.newEdge = newEdgeVertices.length;
-      newEdgeVertices.push( newEdge );
-
-      // console.log(currentEdge, newEdge);
-
+      newEdgeVertices.push(newVertex);
     }
 
     /******************************************************
@@ -242,74 +202,14 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
      *	Reposition each source vertices.
      *
      *******************************************************/
-
-    var beta, sourceVertexWeight, connectingVertexWeight;
-    var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
-    newSourceVertices = [];
-
-    for ( i = 0, il = oldVertices.length; i < il; i ++ ) {
-
-      oldVertex = oldVertices[ i ];
-
-      // find all connecting edges (using lookupTable)
-      connectingEdges = metaVertices[ i ].edges;
-      n = connectingEdges.length;
-
-      if ( n == 3 ) {
-	beta = 3 / 16;
-      } else if ( n > 3 ) {
-	beta = 3 / ( 8 * n ); // Warren's modified formula
-      }
-
-      // Loop's original beta formula
-      // beta = 1 / n * ( 5/8 - Math.pow( 3/8 + 1/4 * Math.cos( 2 * Math. PI / n ), 2) );
-
-      sourceVertexWeight = 1 - n * beta;
-      connectingVertexWeight = beta;
-
-      if ( n <= 2 ) {
-
-	// crease and boundary rules
-	// console.warn('crease and boundary rules');
-
-	if ( n == 2 ) {
-
-	  if ( WARNINGS ) console.warn( '2 connecting edges', connectingEdges );
-	  sourceVertexWeight = 3 / 4;
-	  connectingVertexWeight = 1 / 8;
-
-	  // sourceVertexWeight = 1;
-	  // connectingVertexWeight = 0;
-
-	} else if ( n == 1 ) {
-
-	  if ( WARNINGS ) console.warn( 'only 1 connecting edge' );
-
-	} else if ( n == 0 ) {
-
-	  if ( WARNINGS ) console.warn( '0 connecting edges' );
-
-	}
-
-      }
-
-      newSourceVertex = oldVertex.clone().multiplyScalar( sourceVertexWeight );
-
-      tmp.set( 0, 0, 0 );
-
-      for ( j = 0; j < n; j ++ ) {
-
-	connectingEdge = connectingEdges[ j ];
-	other = connectingEdge.a !== oldVertex ? connectingEdge.a : connectingEdge.b;
-	tmp.add( other );
-
-      }
-
-      tmp.multiplyScalar( connectingVertexWeight );
-      newSourceVertex.add( tmp );
-
-      newSourceVertices.push( newSourceVertex );
-
+    var beta;
+    var sourceVertexWeight = .5;
+    var connectingVertexWeight = .5;
+    var connectingEdge, connectingEdges;
+    var newSourceVertices = [];
+    for (i = 0; i < oldVertices.length; i++) {
+      var oldVertex = oldVertices[i];
+      newSourceVertices.push(oldVertex);
     }
 
 
@@ -320,8 +220,7 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
      *	and edge vertices.
      *
      *******************************************************/
-
-    newVertices = newSourceVertices.concat( newEdgeVertices );
+    newVertices = newSourceVertices.concat(newEdgeVertices);
     var sl = newSourceVertices.length, edge1, edge2, edge3;
     newFaces = [];
 
@@ -331,27 +230,22 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
     var x5 = new THREE.Vector2();
 
     for ( i = 0, il = oldFaces.length; i < il; i ++ ) {
-
-      face = oldFaces[ i ];
+      var face = oldFaces[ i ];
 
       // find the 3 new edges vertex of each old face
-
       edge1 = getEdge( face.a, face.b, sourceEdges ).newEdge + sl;
       edge2 = getEdge( face.b, face.c, sourceEdges ).newEdge + sl;
       edge3 = getEdge( face.c, face.a, sourceEdges ).newEdge + sl;
 
       // create 4 faces.
-
       newFace( newFaces, edge1, edge2, edge3 );
       newFace( newFaces, face.a, edge1, edge3 );
       newFace( newFaces, face.b, edge2, edge1 );
       newFace( newFaces, face.c, edge3, edge2 );
 
       // create 4 new uv's
-
       if ( hasUvs ) {
-
-	uv = oldUvs[ i ];
+	uv = oldUvs[i];
 
 	x0 = uv[ 0 ];
 	x1 = uv[ 1 ];
@@ -366,18 +260,14 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 	newUv( newUVs, x1, x4, x3 );
 	newUv( newUVs, x2, x5, x4 );
-
       }
-
     }
 
     // Overwrite old arrays
     geometry.vertices = newVertices;
     geometry.faces = newFaces;
-    if ( hasUvs ) geometry.faceVertexUvs[ 0 ] = newUVs;
-
-    // console.log('done');
-
+    if (hasUvs) {
+      geometry.faceVertexUvs[ 0 ] = newUVs;
+    }
   };
-
 } )();
