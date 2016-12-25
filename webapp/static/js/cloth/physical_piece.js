@@ -76,14 +76,14 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
 
   this.updateSoftBody_();
 
+/* TODO:
   var oldSoftBody = this.mesh_.userData.physicsBody;
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
     var oldNode = oldSoftBody.get_m_nodes().at(pin.index());
     var index = this.geometryMapper_.getEquivalentIndex(oldNode);
     pin.setIndex(index);
-    //newSoftBody.appendAnchor(pin.index(), pin.rigidBody(), false, 1);
-  }
+  }*/
 };
 
 /**
@@ -91,27 +91,34 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
  */
 diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
   var vertices = this.mesh_.geometry.vertices;
-  var faces = this.mesh_.geometry.faces;
+  var softBody = this.mesh_.userData.physicsBody;
+  var nodes = softBody.get_m_nodes();
+  if (vertices.length != nodes.size()) {
+    // TODO: actually regen the physics shape when this happens.
+    goog.asserts.fail(
+      "Number of veritces changed from " + nodes.size() + " to " + vertices.length);
+  }
 
   this.geometryMapper_.storePositions();
 
-  var softBody = this.mesh_.userData.physicsBody;
-  var nodes = softBody.get_m_nodes();
+  var jitter = .01;
   for (var i = 0; i < nodes.size(); i++) {
     var node = nodes.at(i);
     var pos = node.get_m_x();
     pos.setX(vertices[i].x);
     pos.setY(vertices[i].y);
-    pos.setZ(vertices[i].z);
+    pos.setZ(jitter);
+    jitter *= -1;
   }
 
   var linker = new diem.cloth.PhysicalPiece.LinkTracker(softBody);
+  var faces = this.mesh_.geometry.faces;
   var ammoFaces = softBody.get_m_faces();
   for (i = 0; i < faces.length; ++i) {
     var f = faces[i];
-    linker.connect_(f.a, f.b);
-    linker.connect_(f.a, f.c);
-    linker.connect_(f.b, f.c);
+    linker.connect(f.c, f.a);
+    linker.connect(f.a, f.b);
+    linker.connect(f.b, f.c);
     var ammoFace = ammoFaces.at(i);
     ammoFace.set_m_n(0, nodes.at(f.a));
     ammoFace.set_m_n(1, nodes.at(f.b));
@@ -121,8 +128,17 @@ diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
   softBody.resetLinkRestLengths();
 
   this.geometryMapper_.flipPositions();
+
+  for (i = 0; i < nodes.size(); ++i) {
+    node = nodes.at(i);
+    pos = node.get_m_x();
+  }
 };
 
+/**
+ * @param {Ammo.btSoftBody} softBody
+ * @constructor
+ */
 diem.cloth.PhysicalPiece.LinkTracker = function(softBody) {
   this.links_ = {};
   this.ammoLinks_ = softBody.get_m_links();
@@ -130,7 +146,11 @@ diem.cloth.PhysicalPiece.LinkTracker = function(softBody) {
   this.idx_ = 0;
 };
 
-diem.cloth.PhysicalPiece.LinkTracker.prototype.connect_ = function(a, b) {
+/**
+ * @param {number} a
+ * @param {number} b
+ */
+diem.cloth.PhysicalPiece.LinkTracker.prototype.connect = function(a, b) {
   if (this.isLinked_(a, b)) {
     return;
   }
@@ -141,10 +161,20 @@ diem.cloth.PhysicalPiece.LinkTracker.prototype.connect_ = function(a, b) {
   link.set_m_n(1, this.ammoNodes_.at(b));
 };
 
+/**
+ * @param {number} a
+ * @param {number} b
+ * @private
+ */
 diem.cloth.PhysicalPiece.LinkTracker.prototype.isLinked_ = function(a, b) {
   return a in this.links_ && this.links_[a].includes(b);
 };
 
+/**
+ * @param {number} a
+ * @param {number} b
+ * @private
+ */
 diem.cloth.PhysicalPiece.LinkTracker.prototype.link_ = function(a, b) {
   if (!(a in this.links_)) {
     this.links_[a] = [];
@@ -195,17 +225,6 @@ diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
     this.ammoIndices_[i3 + 1] = f.b;
     this.ammoIndices_[i3 + 2] = f.c;
   }
-};
-
-/**
- * @param {number} n1
- * @param {number} n2
- * @returns {boolean}
- * @private
- */
-diem.cloth.PhysicalPiece.isEqual_ = function(n1, n2) {
-  var delta = 0.000001;
-  return Math.abs(n2 - n1) < delta;
 };
 
 /**

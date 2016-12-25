@@ -152,14 +152,14 @@ diem.cloth.Anchor.prototype.move = function() {
   if (this.dragAllCp_) {
     // When the anchor points and control points are in the same position,
     // dragging moves both control points.
-    this.cwCp_.moveImpl();
-    this.ccwCp_.moveImpl(-1);
+    this.cwCp_.moveImpl(1, false);
+    this.ccwCp_.moveImpl(-1, false);
   } else {
     this.mesh_.position.copy(diem.Globals.mouse).sub(this.mesh_.parent.position);
     this.cwCp_.updateLine();
     this.ccwCp_.updateLine();
-    diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
   }
+  diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
 };
 
 /**

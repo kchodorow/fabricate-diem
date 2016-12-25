@@ -81,8 +81,9 @@ diem.cloth.ControlPoint.prototype.move = function() {
  * itself being dragged. So this multiplier is set to -1 on this drag, so that
  * one anchor point goes the "opposite" direction of the drag.
  */
-diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier) {
+diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier, opt_update) {
   opt_multiplier = opt_multiplier || 1;
+  opt_update = opt_update === undefined ? true : opt_update;
   var patternPiece = this.mesh_.parent;
   // Get the offsets from the origin
   var offset = new THREE.Vector3();
@@ -96,7 +97,9 @@ diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier) {
   this.mesh_.position.copy(offset);
   this.updateLine();
 
-  diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
+  if (opt_update) {
+    diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
+  }
 };
 
 /**

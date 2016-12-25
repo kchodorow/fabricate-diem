@@ -14,8 +14,8 @@ diem.cloth.GeometryMapper = function(softBody) {
   this.oldPositions_ = new Array(this.numNodes_);
   this.oldNormals_ = new Array(this.numNodes_);
   for (var i = 0; i < this.oldPositions_.length; ++i) {
-    this.oldPositions_[i] = new Ammo.btVector3();
-    this.oldNormals_[i] = new Ammo.btVector3();
+    this.oldPositions_[i] = new THREE.Vector3();
+    this.oldNormals_[i] = new THREE.Vector3();
   }
   this.quadTree_ = this.setupQuadTree_(softBody);
 };
@@ -25,13 +25,9 @@ diem.cloth.GeometryMapper.prototype.storePositions = function() {
   for (var i = 0; i < this.oldPositions_.length; ++i) {
     var node = nodes.at(i);
     var pos = node.get_m_x();
-    this.oldPositions_[i].setX(pos.x());
-    this.oldPositions_[i].setY(pos.y());
-    this.oldPositions_[i].setZ(pos.z());
+    this.oldPositions_[i].set(pos.x(), pos.y(), pos.z());
     var normal = node.get_m_n();
-    this.oldNormals_[i].setX(normal.x());
-    this.oldNormals_[i].setY(normal.y());
-    this.oldNormals_[i].setZ(normal.z());
+    this.oldNormals_[i].set(normal.x(), normal.y(), normal.z());
   }
 };
 
@@ -51,7 +47,6 @@ diem.cloth.GeometryMapper.prototype.storePositions = function() {
  * points. E.g., if point 123 is nearest points 45, 6, and 473 in the old 2D
  * rep, then find the "average" 3D point in the old soft body and make that the
  * coordinates of point 123's physical representation.
- * @param {Ammo.btSoftBody} softBody
  */
 diem.cloth.GeometryMapper.prototype.flipPositions = function() {
   // Store the new geometry, since we want a "pristine" copy of the node
@@ -61,15 +56,17 @@ diem.cloth.GeometryMapper.prototype.flipPositions = function() {
   var new2DNodes = this.softBody_.get_m_nodes();
   for (var i = 0; i < new2DNodes.size(); ++i) {
     var new2DNode = new2DNodes.at(i);
-    var new3DPos = new2DNode.get_m_x();
-    var new3DNormal = new2DNode.get_m_x();
     var old3DNode = this.getEquivalentNode_(new2DNode, i);
-    new3DPos.setX(old3DNode.position.x());
-    new3DPos.setY(old3DNode.position.y());
-    new3DPos.setZ(old3DNode.position.z());
-    new3DNormal.setX(old3DNode.normal.x());
-    new3DNormal.setY(old3DNode.normal.y());
-    new3DNormal.setY(old3DNode.normal.z());
+
+    var new3DPos = new2DNode.get_m_x();
+    new3DPos.setX(old3DNode.position.x);
+    new3DPos.setY(old3DNode.position.y);
+    new3DPos.setZ(old3DNode.position.z);
+
+    var new3DNormal = new2DNode.get_m_n();
+    new3DNormal.setX(old3DNode.normal.x);
+    new3DNormal.setY(old3DNode.normal.y);
+    new3DNormal.setY(old3DNode.normal.z);
   }
 
   this.quadTree_ = quadTree;
@@ -125,22 +122,22 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) 
 
   // Move over to the 3D piece. Combine the positions on the soft body with the
   // weights calculated above.
-  var retPos = new Ammo.btVector3(0, 0, 0);
-  var retNormal = new Ammo.btVector3(0, 0, 0);
+  var retPos = new THREE.Vector3(0, 0, 0);
+  var retNormal = new THREE.Vector3(0, 0, 0);
   for (i = 0; i < nearestPoints.length; ++i) {
     var index = nearestPoints[i].value;
     var weight = weights[i];
 
     var pos = this.oldPositions_[index];
-    retPos.setX(retPos.x() + pos.x() * weight);
-    retPos.setY(retPos.y() + pos.y() * weight);
-    retPos.setZ(retPos.z() + pos.z() * weight);
+    retPos.x += pos.x * weight;
+    retPos.y += pos.y * weight;
+    retPos.z += pos.z * weight;
 
     // Combine the normals.
     var normal = this.oldNormals_[index];
-    retNormal.setX(retNormal.x() + normal.x() * weight);
-    retNormal.setY(retNormal.y() + normal.y() * weight);
-    retNormal.setZ(retNormal.z() + normal.z() * weight);
+    retNormal.x += normal.x * weight;
+    retNormal.y += normal.y * weight;
+    retNormal.z += normal.z * weight;
   }
 
   // Return the final position.
