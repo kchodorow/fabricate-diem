@@ -164,6 +164,7 @@ diem.cloth.PhysicalPiece.LinkTracker.prototype.connect = function(a, b) {
 /**
  * @param {number} a
  * @param {number} b
+ * @returns {boolean}
  * @private
  */
 diem.cloth.PhysicalPiece.LinkTracker.prototype.isLinked_ = function(a, b) {
@@ -203,6 +204,10 @@ diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
   return geometry;
 };
 
+/**
+ * Initialize position and index arrays from this.mesh_.geometry.
+ * @private
+ */
 diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
   var numVertices = this.mesh_.geometry.vertices.length;
   var numFaces = this.mesh_.geometry.faces.length;
@@ -272,6 +277,10 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   this.mesh_.geometry.boundingSphere = null;
 };
 
+/**
+ * @param {Ammo.btVector3} btVec3
+ * @param {THREE.Vector3} vec3
+ */
 diem.cloth.PhysicalPiece.toVector3 = function(btVec3, vec3) {
   vec3.x = btVec3.x();
   vec3.y = btVec3.y();

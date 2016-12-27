@@ -33,7 +33,7 @@ diem.Pin.prototype.index = function() {
 };
 
 /**
- * @param {number} index
+ * @param {number} idx
  */
 diem.Pin.prototype.setIndex = function(idx) {
   this.index_ = idx;

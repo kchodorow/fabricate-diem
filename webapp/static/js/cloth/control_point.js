@@ -80,6 +80,7 @@ diem.cloth.ControlPoint.prototype.move = function() {
  * control points are dragged in opposite directions instead of the anchor point
  * itself being dragged. So this multiplier is set to -1 on this drag, so that
  * one anchor point goes the "opposite" direction of the drag.
+ * @param {boolean} [opt_update] if the geometry should be updated (default=true).
  */
 diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier, opt_update) {
   opt_multiplier = opt_multiplier || 1;

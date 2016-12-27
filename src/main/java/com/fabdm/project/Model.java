@@ -15,14 +15,15 @@ public abstract class Model {
         return new AutoValue_Model.GsonTypeAdapter(gson);
     }
 
-    public static Model create(List<Piece> pieces) {
-        return new AutoValue_Model(pieces);
+    public static Model create(String title, List<Piece> pieces) {
+        return new AutoValue_Model(title, pieces);
     }
 
+    public abstract String title();
     public abstract List<Piece> pieces();
 
     public String toJson() {
-        StringBuilder builder = new StringBuilder("pieces : {");
+        StringBuilder builder = new StringBuilder("title : \"" + title() + "\", pieces : {");
         for (Piece piece : pieces()) {
             builder.append(piece.toJson());
         }

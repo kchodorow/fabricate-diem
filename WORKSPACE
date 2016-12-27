@@ -3,7 +3,7 @@ workspace(name = "com_fabdm")
 git_repository(
     name = "io_bazel_rules_appengine",
     remote = "https://github.com/bazelbuild/rules_appengine.git",
-    commit = "a645e2c",
+    commit = "e279bec6e450ecfa32bb37460335981a5784f723",
 )
 
 APPENGINE_BUILD_FILE="""
@@ -53,8 +53,9 @@ maven_jar(
 git_repository(
     name = "io_bazel_rules_closure",
     remote = "https://github.com/bazelbuild/rules_closure.git",
-    commit = "190f7d9b6d3608455ff404504bb3cda3aa7a3bc1",
+    commit = "15fd187b9fac3e0909102cabe8b40456ddc92b7e",
 )
+
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
 closure_repositories()
 
@@ -137,7 +138,7 @@ java_plugin(
         "@auto_value//:processor",
         "@com_google_auto_common//jar",
         "@com_google_gson//jar",
-        "@guava//jar",
+        "@guava//:guava",
         "@java_poet//jar",
     ],
 )
@@ -181,4 +182,3 @@ maven_jar(
     name = "com_google_truth",
     artifact = "com.google.truth:truth:0.30",
 )
-

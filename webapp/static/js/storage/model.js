@@ -11,6 +11,7 @@ goog.require('goog.crypt.Md5');
  * @constructor
  */
 diem.storage.Model = function() {
+  this.title_ = "";
   this.pieces_ = [];
 };
 
@@ -22,10 +23,18 @@ diem.storage.Model.prototype.addPiece = function(piece) {
 };
 
 /**
+ * @return {string}
+ * @private
+ */
+diem.storage.Model.prototype.getTitle_ = function() {
+  return document.getElementById("pattern-name").innerHTML;
+};
+
+/**
  * @returns {string} JSON representation of the pattern.
  */
 diem.storage.Model.prototype.getStorable = function() {
-  var storable = {pieces : []};
+  var storable = {title : this.getTitle_(), pieces : []};
   for (var i = 0; i < this.pieces_.length; ++i) {
     storable.pieces.push(diem.storage.Piece.getStorable(this.pieces_[i]));
   }

@@ -20,6 +20,10 @@ diem.cloth.GeometryMapper = function(softBody) {
   this.quadTree_ = this.setupQuadTree_(softBody);
 };
 
+/**
+ * Store a copy of the 3D fabric's positions so that it can be used in the
+ * flip mapping.
+ */
 diem.cloth.GeometryMapper.prototype.storePositions = function() {
   var nodes = this.softBody_.get_m_nodes();
   for (var i = 0; i < this.oldPositions_.length; ++i) {
@@ -90,7 +94,7 @@ diem.cloth.GeometryMapper.prototype.getEquivalentIndex = function(oldNode) {
  * @returns {object}
  * @private
  */
-diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) {
+diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   var ammoPos = newNode.get_m_x();
   var newPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
   var nearestPoints = this.quadTree_.getNearest(3, newPos);

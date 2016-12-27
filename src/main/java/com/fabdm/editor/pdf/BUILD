@@ -9,8 +9,8 @@ java_library(
     deps = [
         "//src/main/java/com/fabdm/project",
         "@auto_value//:processor",
+        "@guava//:guava",
         "@itext//:jar",
-        "@guava//jar",
     ],
 )
 
@@ -19,14 +19,14 @@ java_library(
     srcs = [
         "PdfServlet.java",
     ],
+    visibility = ["//src/main/java/com/fabdm/editor:__pkg__"],
     deps = [
         ":pdf",
         "//src/main/java/com/fabdm/editor",
         "//src/main/java/com/fabdm/project",
         "@com_google_gson//jar",
+        "@guava//:guava",
         "@itext//:jar",
-        "@guava//jar",
         "@javax_servlet_api//jar",
     ],
-    visibility = ["//src/main/java/com/fabdm/editor:__pkg__"],
 )

@@ -1,5 +1,9 @@
 goog.provide('diem.tools.Toolbar');
 
+/**
+ * @param {diem.tools.ToolManager} toolManager
+ * @constructor
+ */
 diem.tools.Toolbar = function(toolManager) {
   this.toolManager_ = toolManager;
   this.tools_ = this.toolManager_.getTools();
@@ -22,6 +26,10 @@ diem.tools.Toolbar.prototype.createButtons = function() {
   return buttons;
 };
 
+/**
+ * @param {HTMLElement} button
+ * @param {diem.tools.Tool} tool
+ */
 diem.tools.Toolbar.prototype.onClickFunction = function(button, tool) {
   // Deselect old button.
   var currentTool = this.toolManager_.getTool();

@@ -4,28 +4,28 @@ java_library(
         "Account.java",
         "AccountStorage.java",
     ],
+    visibility = ["//src/main/java/com/fabdm:__subpackages__"],
     deps = [
         "//src/main/java/com/fabdm/project",
         "@com_google_appengine_java//:user",
         "@com_google_objectify//jar",
-        "@guava//jar",
-        "@jsr305//jar",
-        "@soy//jar",
+        "@guava//:guava",
+        "@jsr305//:jsr305",
+        "@soy//:soy",
     ],
-    visibility = ["//src/main/java/com/fabdm:__subpackages__"],
 )
 
 java_library(
     name = "servlet",
     srcs = ["SetUsernameServlet.java"],
+    visibility = ["//src/main/java:__pkg__"],
     deps = [
         ":account",
         "//src/main/java/com/fabdm/template",
-        "@com_google_appengine_java//:user", 
-        "@com_google_objectify//jar", 
-        "@guava//jar",
+        "@com_google_appengine_java//:user",
+        "@com_google_objectify//jar",
+        "@guava//:guava",
         "@javax_servlet_api//jar",
-        "@jsr305//jar",
+        "@jsr305//:jsr305",
     ],
-    visibility = ["//src/main/java:__pkg__"],
 )

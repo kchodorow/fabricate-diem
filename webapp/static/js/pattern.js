@@ -28,6 +28,10 @@ diem.Pattern.prototype.addPiece = function() {
   return cloth;
 };
 
+/**
+ * @param {diem.cloth.Workboard} piece
+ * @returns {diem.cloth.Workboard}
+ */
 diem.Pattern.prototype.load = function(piece) {
   var cloth = diem.cloth.Workboard.load(piece);
   cloth.getObject().position.copy(piece.position);

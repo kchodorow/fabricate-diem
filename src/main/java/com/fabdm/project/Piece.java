@@ -17,17 +17,20 @@ public abstract class Piece {
     }
 
     public static Piece create(
-            String uuid, List<Anchor> anchors, List<Model.Edge> edges) {
-        return new AutoValue_Piece(uuid, anchors, edges);
+            String description, String uuid, List<Anchor> anchors, List<Model.Edge> edges) {
+        return new AutoValue_Piece(description, uuid, anchors, edges);
     }
 
+    @Nullable
+    public abstract String description();
     @Nullable
     public abstract String uuid();
     public abstract List<Anchor> anchors();
     public abstract List<Model.Edge> edges();
 
     public String toJson() {
-        StringBuilder builder = new StringBuilder("anchors : {");
+        StringBuilder builder = new StringBuilder("description : \"" + description()
+            + "\", anchors : {");
         for (Anchor anchor : anchors()) {
             builder.append(anchor.toJson());
         }

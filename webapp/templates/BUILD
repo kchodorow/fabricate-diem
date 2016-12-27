@@ -20,31 +20,30 @@ closure_java_template_library(
 )
 
 RUNTIME_DEPS = [
-    "@guava//jar",
-    "@guice_assistedinject//jar",
-    "@guice_multibindings//jar",
-    "@icu4j//jar",
-    "@jsr305//jar",
-    "@jsr330_inject//jar",
+    "@guava//:guava",
+    "@guice_assistedinject//:guice_assistedinject",
+    "@guice_multibindings//:guice_multibindings",
+    "@icu4j//:icu4j",
+    "@jsr305//:jsr305",
+    "@jsr330_inject//:jsr330_inject",
     "@org_aopalliance//jar",
 ]
 
 DEPS = [
-    "@guava//jar",
-    "@guice//jar",
-    "@soy//jar",
+    "@guava//:guava",
+    "@guice//:guice",
+    "@soy//:soy",
 ]
 
 java_library(
     name = "java-template",
     srcs = [
-        ":PatternSoyInfo.java",
         ":ErrorsSoyInfo.java",
         ":MainSoyInfo.java",
+        ":PatternSoyInfo.java",
         ":UserSoyInfo.java",
     ],
     visibility = ["//src/main/java/com/fabdm/template:__pkg__"],
     runtime_deps = RUNTIME_DEPS,
     deps = DEPS,
 )
-
