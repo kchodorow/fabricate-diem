@@ -16,17 +16,17 @@ goog.require('diem.tools.DragPiece');
  */
 diem.Person = function(scene, register) {
   goog.base(this);
+  var material = new THREE.MeshLambertMaterial({color: 0xffffff});
 
-  var loader = new THREE.ObjectLoader();
+  var loader = new THREE.BufferGeometryLoader();
   var tmp = this;
   loader.load(
-    '/assets/standard-female-figure.json',
-    function(object) {
-      var person = object.children[0];
+    '/assets/dressform.json',
+    function(geometry) {
+      var person = new THREE.Mesh(geometry, material);
       tmp.mesh_ = person;
       tmp.addToParent(scene);
       register(tmp.getIntersectables());
-      tmp.mesh_.rotateZ(Math.PI);
       tmp._addPhysics(scene);
     });
 };
@@ -77,18 +77,18 @@ diem.Person.prototype._addPhysics = function(scene) {
   var bodyMotionState = new Ammo.btDefaultMotionState(
     this.getTransform_());
   var bodyShape = new Ammo.btConvexHullShape();
-  var vertices = this.mesh_.geometry.vertices;
-  for (var i = 0; i < vertices.length; ++i) {
+  var vertices = this.mesh_.geometry.attributes.position.array;
+  for (var i = 0; i < vertices.length; i += 3) {
     bodyShape.addPoint(
-      new Ammo.btVector3(vertices[i].x, vertices[i].y, vertices[i].z));
+      new Ammo.btVector3(vertices[i], vertices[i + 1], vertices[i + 2]));
   }
   var inertia = new Ammo.btVector3(0, 0, 0);
   var mass = 0;
   var bodyInfo = new Ammo.btRigidBodyConstructionInfo(
     mass, bodyMotionState, bodyShape, inertia);
-  this.physicalBody_ = new Ammo.btRigidBody(bodyInfo);
+  this.mesh_.userData.physicsBody = new Ammo.btRigidBody(bodyInfo);
 
-  diem.Physics.get().getWorld().addRigidBody(this.physicalBody_);
+  diem.Physics.get().getWorld().addRigidBody(this.mesh_.userData.physicsBody);
 };
 
 /**

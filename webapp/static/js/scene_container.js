@@ -154,6 +154,9 @@ diem.SceneContainer.prototype.initLights_ = function() {
   this.scene.add(directionalLight);
 };
 
+/**
+ * @returns {diem.tools.Toolbar}
+ */
 diem.SceneContainer.prototype.getToolbar = function() {
   return new diem.tools.Toolbar(this.toolManager_);
 };
