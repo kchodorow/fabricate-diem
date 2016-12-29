@@ -39,11 +39,17 @@ public class UserServlet extends HttpServlet {
             errorBuilder.build(request, response);
             return;
         }
+        Account requestor = DataBuilder.getAccount();
+        boolean self = false;
+        if (requestor != null && requestor.getEmail().equals(userInfo.getEmail())) {
+            self = true;
+        }
         dataBuilder.put("projects", userInfo.getProjectNames());
         dataBuilder.put("username", userInfo.getUsername());
         dataBuilder.put(
             "hash",
             Hashing.md5().hashString(userInfo.getEmail(), Charset.forName("UTF-8")).toString());
+        dataBuilder.put("self", self);
         dataBuilder.build(request, response);
     }
 

@@ -4,6 +4,7 @@
  * @param username
  * @param projects
  * @param hash
+ * @param self
  */
 {template .main}
     {call diem.header data="all" /}
@@ -17,7 +18,7 @@
       <a href="{$username}/{$project}">{$project}</a>
     </li>
     {ifempty}
-      No projects, yet! <a href="/+/new">Create a new project.</a>
+      No projects, yet! {if $self}<a href="/+/new">Create a new project.</a>{/if}
     {/foreach}
     </ul>
     {call diem.footer data="all" /}

@@ -14,6 +14,7 @@ import com.google.template.soy.tofu.SoyTofu;
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -53,15 +54,12 @@ public class DataBuilder {
             throws IOException {
         UserService userService = UserServiceFactory.getUserService();
         String uri = request.getRequestURI();
-        if (!userService.isUserLoggedIn()) {
+        Account account = getAccount();
+        if (account == null) {
             data.put(
                     "name", null,
                     "login", userService.createLoginURL(uri));
         } else {
-            User user = userService.getCurrentUser();
-            Preconditions.checkNotNull(user);
-            Account account = AccountStorage.getOrCreate(user.getUserId(), user.getEmail());
-            Preconditions.checkNotNull(account);
             if (account.getUsername() == null && ensureUsernameSet) {
                 response.sendRedirect(DataBuilder.getSetUsernameUri(uri));
                 return;
@@ -74,6 +72,19 @@ public class DataBuilder {
         renderer.setData(data);
         response.setContentType("text/html");
         response.getWriter().write(renderer.render());
+    }
+
+    @Nullable
+    public static Account getAccount() {
+        UserService userService = UserServiceFactory.getUserService();
+        if (!userService.isUserLoggedIn()) {
+            return null;
+        }
+        User user = userService.getCurrentUser();
+        Preconditions.checkNotNull(user);
+        Account account = AccountStorage.getOrCreate(user.getUserId(), user.getEmail());
+        Preconditions.checkNotNull(account);
+        return account;
     }
 
     public static String getSetUsernameUri(String uri) throws IOException {

@@ -9,6 +9,7 @@ java_library(
         "@guava//:guava",
         "@guice//:guice",
         "@javax_servlet_api//jar",
+        "@jsr305//:jsr305",
         "@soy//:soy",
     ],
 )
