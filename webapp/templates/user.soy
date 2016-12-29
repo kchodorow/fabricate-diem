@@ -3,10 +3,12 @@
 /**
  * @param username
  * @param projects
+ * @param hash
  */
 {template .main}
     {call diem.header data="all" /}
     User: {$username}
+    <img src="https://www.gravatar.com/avatar/{$hash}" style="float: right;" />
 
     <h4>Projects</h4>
     <ul>
@@ -15,7 +17,7 @@
       <a href="{$username}/{$project}">{$project}</a>
     </li>
     {ifempty}
-      No projects, yet!
+      No projects, yet! <a href="/+/new">Create a new project.</a>
     {/foreach}
     </ul>
     {call diem.footer data="all" /}

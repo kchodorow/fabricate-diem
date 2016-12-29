@@ -1,11 +1,13 @@
 package com.fabdm;
 
 import com.fabdm.template.DataBuilder;
+import com.google.common.hash.Hashing;
 import com.google.common.collect.ImmutableList;
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +41,9 @@ public class UserServlet extends HttpServlet {
         }
         dataBuilder.put("projects", userInfo.getProjectNames());
         dataBuilder.put("username", userInfo.getUsername());
+        dataBuilder.put(
+            "hash",
+            Hashing.md5().hashString(userInfo.getEmail(), Charset.forName("UTF-8")).toString());
         dataBuilder.build(request, response);
     }
 
