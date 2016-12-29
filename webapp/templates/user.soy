@@ -27,7 +27,7 @@
  */
 {template .setusername}
     {call diem.header data="all" /}
-    {if $error != ''}
+    {if $error != null and $error != ''}
     <div id="error-msg">
       {if $error == 'taken'}
         Username is already taken.

@@ -77,7 +77,9 @@ public class SetUsernameServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String uri = request.getParameter("redirect");
+        // TODO: this is stupid, rethink. '+' is turned into ' ' by the time it gets to here, so
+        // we have to change it back.
+        String uri = request.getParameter("redirect").replaceAll(" ", "+");
         UserService userService = UserServiceFactory.getUserService();
         if (!userService.isUserLoggedIn()) {
             response.sendRedirect(userService.createLoginURL(uri));
@@ -98,7 +100,7 @@ public class SetUsernameServlet extends HttpServlet {
         }
 
         // People can't have "-" in their username, so this shouldn't catch any usernames.
-        if (uri.startsWith("/set-username")) {
+        if (uri.contains("/set-username")) {
             uri = "/";
         }
         response.sendRedirect(uri);
