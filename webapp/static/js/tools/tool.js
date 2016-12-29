@@ -178,6 +178,15 @@ diem.tools.Tool.prototype.updateIntersectable = function() {
 };
 
 /**
+ * If this tool should become the "active tool" on selection, or if this has a
+ * one-time function.
+ * @returns {boolean}
+ */
+diem.tools.Tool.prototype.stateful = function() {
+  return true;
+};
+
+/**
  * If this tool should have a toolbar button, this creates it.
  * @returns {HTMLButtonElement} Or null, if no such button should be created.
  */

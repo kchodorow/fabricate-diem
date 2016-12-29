@@ -78,7 +78,9 @@ diem.tools.ToolManager.prototype.selectTool = function(tool) {
   }
   var responses = tool.onSelect(this.activeTool_);
   this.handleIntersectables(responses);
-  this.activeTool_ = tool;
+  if (tool.stateful()) {
+    this.activeTool_ = tool;
+  }
 };
 
 /**

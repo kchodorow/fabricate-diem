@@ -19,7 +19,7 @@ diem.tools.AddPiece = function(scene) {
   this.name_ = diem.tools.AddPiece.NAME;
   this.button_ = new diem.Button.builder()
     .setInnerHtml('C')
-    .setTooltip('New pattern piece [C]')
+    .setTooltip('New pattern piece (C)')
     .build();
 };
 
@@ -48,6 +48,13 @@ diem.tools.AddPiece.NAME = 'ADD_PIECE';
  */
 diem.tools.AddPiece.prototype.getKeys = function() {
   return [goog.events.KeyCodes.C];
+};
+
+/**
+ * @override
+ */
+diem.tools.AddPiece.prototype.stateful = function() {
+  return false;
 };
 
 /**
