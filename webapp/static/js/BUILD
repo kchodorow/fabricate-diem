@@ -1,5 +1,3 @@
-exports_files(["three.js"])
-
 load(
     "@io_bazel_rules_closure//closure:defs.bzl",
     "closure_js_binary",
@@ -18,14 +16,17 @@ filegroup(
 closure_js_binary(
     name = "lib",
     compilation_level = "WHITESPACE_ONLY",
+    debug = True,
+    entry_points = [
+        "diem.Scene.init",
+        "diem.Scene.addButtons",
+    ],
     deps = [":scene"],
 )
 
 closure_js_library(
     name = "globals",
     srcs = ["globals.js"],
-    externs = [":extern.js"],
-    suppress = ["lintChecks"],
     visibility = ["//webapp/static/js:__subpackages__"],
 )
 

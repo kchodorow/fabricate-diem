@@ -1,5 +1,7 @@
 /* global THREE, location */
 goog.provide('diem.Scene');
+goog.provide('diem.Scene.addButtons');
+goog.provide('diem.Scene.init');
 
 goog.require('diem.Button');
 goog.require('diem.SceneContainer');
@@ -23,6 +25,13 @@ function init() {
   diem.Scene.addButtons(sceneContainer);
   render();
 }
+
+/**
+ * @export
+ */
+diem.Scene.init = function() {
+  init();
+};
 
 /**
  * Add toolbar buttons.
