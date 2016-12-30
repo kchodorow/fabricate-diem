@@ -74,6 +74,7 @@ diem.storage.Piece = function() {
   this.anchors = [];
   this.edges = [];
   this.description = null;
+  this.fabric = null;
 };
 
 /**
@@ -93,6 +94,10 @@ diem.storage.Piece.getStorable = function(workboard) {
     piece.edges.push(
       diem.storage.Edge.getStorable(workboard.shape_['edges_'][i]));
   }
+  var material = workboard.fabric_.getMaterial();
+  piece.fabric = {material : {
+    color : material.color.getHex(),
+    side : material.side}};
   return piece;
 };
 

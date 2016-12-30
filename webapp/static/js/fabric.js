@@ -4,17 +4,23 @@ goog.provide('diem.Fabric');
 
 /**
  * The physical properties of a piece of fabric.
+ * @param {object} storageFabric
  * @constructor
+ * @private
  */
-diem.Fabric = function() {
+diem.Fabric = function(storageFabric) {
   this.mass_ = .1;
   this.gravity_ = new THREE.Vector3(
     0, - diem.Fabric.GRAVITY, 0).multiplyScalar(this.mass_);
+  this.material_ = new THREE.MeshBasicMaterial(storageFabric.material);
+};
 
-  this.material_ = new THREE.MeshBasicMaterial({
-    color : diem.Fabric.getRandomColor(),
-    side : THREE.DoubleSide
-  });
+/**
+ * @param {object} storageFabric
+ * @returns {diem.Fabric}
+ */
+diem.Fabric.load = function(storageFabric) {
+  return new diem.Fabric(storageFabric);
 };
 
 /**

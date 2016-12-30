@@ -23,7 +23,6 @@ goog.require('diem.tools.Text');
  */
 diem.cloth.Workboard = function() {
   goog.base(this);
-  this.fabric_ = new diem.Fabric();
 
   // The physical piece currently being dragged.
   this.currentPiece_ = null;
@@ -54,7 +53,12 @@ diem.cloth.Workboard.createNew = function(w, h) {
     diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, 0), "2"),
     diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, 0), "3")];
   var edges = diem.storage.Edge.fromAnchors(anchors);
-  workboard.initMeshes_({anchors : anchors, edges : edges});
+  var material = {color : diem.Fabric.getRandomColor(), side : THREE.DoubleSide};
+  workboard.initMeshes_({
+    anchors : anchors,
+    edges : edges,
+    fabric : {material : material}
+  });
   return workboard;
 };
 
@@ -96,6 +100,7 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
 
   this.geometry_ = new THREE.ShapeGeometry(this.shape_);
 
+  this.fabric_ = diem.Fabric.load(piece.fabric);
   this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
   this.mesh_.uuid = piece.uuid;
   this.mesh_.shape = this.shape_;
