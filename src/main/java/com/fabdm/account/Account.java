@@ -66,6 +66,12 @@ public class Account {
         return projects.containsKey(projectName) ? projects.get(projectName).get() : null;
     }
 
+    public void deleteProject(String projectName) {
+        if (projects.containsKey(projectName)) {
+            projects.remove(projectName);
+        }
+    }
+
     public List<String> getProjectNames() {
         return ImmutableList.copyOf(projects.keySet());
     }

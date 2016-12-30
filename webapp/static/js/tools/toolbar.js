@@ -34,7 +34,9 @@ diem.tools.Toolbar.prototype.onClickFunction = function(button, tool) {
   // Deselect old button.
   var currentTool = this.toolManager_.getTool();
   var oldButton = currentTool.getButton();
-  if (oldButton != null && oldButton.className.indexOf(' active') >= 0) {
+  if (tool.stateful()
+      && oldButton != null
+      && oldButton.className.indexOf(' active') >= 0) {
     oldButton.className = oldButton.className.replace(' active', '');
   }
   // Select new button.

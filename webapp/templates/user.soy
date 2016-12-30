@@ -22,9 +22,10 @@
           <td><button onclick="diem.User.delete('{$project}')">x</button></td>
         </tr>
       {ifempty}
-        No projects, yet! {if $self}<a href="/+/new">Create a new project.</a>{/if}
+        No projects, yet!
     {/foreach}
     </table>
+    {if $self}<button onclick="location.href='/+/new'">New project</button>{/if}
     <script src="/js/user-bin.js"></script>
     {call diem.footer data="all" /}
 {/template}

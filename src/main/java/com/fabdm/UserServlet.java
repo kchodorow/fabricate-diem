@@ -65,11 +65,8 @@ public class UserServlet extends HttpServlet {
         }
 
         Account user = DataBuilder.getAccount();
-        Project project = user.getProject(projectName);
-        if (project == null) {
-            return;
-        }
-        ofy().delete().entity(project).now();
+        user.deleteProject(projectName);
+        ofy().save().entity(user).now();
     }
 
     private String getUsername(String requestURI) {
