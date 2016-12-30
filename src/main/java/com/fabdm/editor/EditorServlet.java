@@ -3,18 +3,17 @@ package com.fabdm.editor;
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 import com.fabdm.editor.pdf.PdfServlet;
-import com.fabdm.project.GsonFactory;
-import com.fabdm.project.Model;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.com.google.common.base.Strings;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -102,7 +101,13 @@ public class EditorServlet extends HttpServlet {
         Metadata metadata = null;
         if (updateMetadata) {
             Gson gson = new GsonBuilder().create();
-            metadata = gson.fromJson(metadataParam, Metadata.class);
+            try {
+                metadata = gson.fromJson(metadataParam, Metadata.class);
+            } catch (JsonSyntaxException e) {
+                // TODO: be noisier about this.
+                System.out.println(e.getMessage());
+                updateMetadata = false;
+            }
         }
 
         String data = request.getParameter("data");
