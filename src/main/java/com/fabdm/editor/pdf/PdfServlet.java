@@ -31,8 +31,7 @@ public class PdfServlet extends HttpServlet {
             return;
         }
 
-        Gson gson = new GsonBuilder().registerTypeAdapterFactory(GsonFactory.create())
-                .create();
+        Gson gson = new GsonBuilder().registerTypeAdapterFactory(GsonFactory.create()).create();
         Model model = gson.fromJson(project.getModel(), Model.class);
         File pdf;
         if (pdfCacheContains(model)) {

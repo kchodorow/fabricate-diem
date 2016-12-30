@@ -3,6 +3,7 @@ goog.provide('diem.storage.Storage');
 goog.require('diem.storage.Model');
 
 goog.require('goog.asserts');
+goog.require('goog.crypt.Md5');
 goog.require('goog.events');
 goog.require('goog.net.XhrIo');
 
@@ -13,7 +14,8 @@ goog.require('goog.net.XhrIo');
 diem.storage.Storage = function() {
   this.model_ = new diem.storage.Model();
   this.lastSend_ = Date.now();
-  this.lastHash_ = diem.storage.Model.getHash(this.model_.getStorable());
+  this.lastDataHash_ = this.getHash(this.model_.getStorable());
+  this.lastMetadataHash_ = this.getHash(this.getMetadata_());
   this.patternLoaded_ = false;
 };
 
@@ -59,21 +61,50 @@ diem.storage.Storage.prototype.send = function() {
   if (now - this.lastSend_ < 10000) {
     return;
   }
-  this.lastSend_ = now;
 
-  // Don't send if it's the exact same model we sent last time.
+  var post = [];
   var json = this.model_.getStorable();
-  var hash = diem.storage.Model.getHash(json);
-  if (this.lastHash_ == hash) {
-    this.lastSend_ = now;
+  var currentDataHash = this.getHash(json);
+  if (this.lastDataHash_ != currentDataHash) {
+    post.push("data=" + json);
+  }
+  var metadata = this.getMetadata_();
+  var currentMetadataHash = this.getHash(metadata);
+  if (this.lastMetadataHash_ != currentMetadataHash) {
+    post.push("metadata=" + this.getMetadata_());
+  }
+
+  this.lastSend_ = now;
+  this.lastDataHash_ = currentDataHash;
+  this.lastMetadataHash_ = currentMetadataHash;
+
+  if (post.length == 0) {
+    // There is nothing to send: nothing has changed.
     return;
   }
-  this.lastHash_ = hash;
 
   var request = new goog.net.XhrIo();
-  request.send(
-    window.location.pathname, 'POST', "data=" + json);
+  request.send(window.location.pathname, 'POST', post.join("&"));
   // TODO: update lastSend_ when the send returns success.
+};
+
+/**
+ * @param {string} str
+ * @return {string} the hashed digest.
+ */
+diem.storage.Storage.prototype.getHash = function(str) {
+  var hash = new goog.crypt.Md5();
+  hash.update(str);
+  return "" + hash.digest();
+};
+
+/**
+ * @returns {string}
+ * @private
+ */
+diem.storage.Storage.prototype.getMetadata_ = function() {
+  return JSON.stringify({
+    title : document.getElementById("pattern-name").innerHTML});
 };
 
 /**

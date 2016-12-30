@@ -3,13 +3,18 @@ package com.fabdm.editor;
 import com.fabdm.account.Account;
 import com.fabdm.account.AccountStorage;
 import com.fabdm.editor.pdf.PdfServlet;
+import com.fabdm.project.GsonFactory;
+import com.fabdm.project.Model;
 import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.repackaged.com.google.common.base.Strings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +56,7 @@ public class EditorServlet extends HttpServlet {
         }
         String format = request.getParameter("format");
         if (format == null) {
-            builder.put("description", project.getDescription());
+            builder.put("description", project.getTitle());
             builder.build(request, response);
             return;
         }
@@ -92,19 +97,42 @@ public class EditorServlet extends HttpServlet {
             return;
         }
 
+        String metadataParam = request.getParameter("metadata");
+        boolean updateMetadata = !Strings.isNullOrEmpty(metadataParam);
+        Metadata metadata = null;
+        if (updateMetadata) {
+            Gson gson = new GsonBuilder().create();
+            metadata = gson.fromJson(metadataParam, Metadata.class);
+        }
+
         String data = request.getParameter("data");
+        boolean updateData = !Strings.isNullOrEmpty(data);
         if (account.getUsername().equals(loader.getUsername())) {
-            project.setModel(data);
+            if (updateData) {
+                project.setModel(data);
+            }
+            if (updateMetadata) {
+                project.setTitle(metadata.title);
+            }
         } else {  // fork.
-            project = Project.builder()
+            Project.Builder builder = Project.builder()
                 .setForkedFrom(project.getId())
                 .setUsername(account.getUsername())
-                .setModel(data)
-                .setDescription(project.getDescription())
-                .setUri(project.getUri())
-                .build();
+                .setUri(project.getUri());
+            if (updateData) {
+                builder.setModel(data);
+            }
+            if (updateMetadata) {
+                builder.setTitle(metadata.title);
+            }
+            project = builder.build();
         }
         ofy().save().entity(project).now();
         response.setStatus(HttpServletResponse.SC_OK);
     }
+}
+
+// TODO: make this an autovalue class.
+class Metadata {
+    public String title;
 }

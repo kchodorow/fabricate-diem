@@ -145,7 +145,7 @@ public class Exporter {
         Font descFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.ITALIC);
         try {
             document.add(new Paragraph("Fabricate Diem", descFont));
-            document.add(new Paragraph(project.getDescription(), titleFont));
+            document.add(new Paragraph(project.getTitle(), titleFont));
             document.add(new Paragraph("http://www.fabdm.com/TODO/" + project.getUri(), descFont));
         } catch (DocumentException e) {
             throw new PdfException(e.getMessage());

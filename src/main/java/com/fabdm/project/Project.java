@@ -13,7 +13,7 @@ public class Project {
     // TODO: this should probably be more human-readable.
     Long forkedFrom;
     String username;
-    String description;
+    String title;
     String uri;
     int version;
     String model;
@@ -22,11 +22,11 @@ public class Project {
     }
 
     private Project(
-        Long forkedFrom, String username, String description, String uri, String model) {
+        Long forkedFrom, String username, String title, String uri, String model) {
         this.id = null;
         this.forkedFrom = forkedFrom;
         this.username = username;
-        this.description = description;
+        this.title = title;
         this.uri = uri;
         this.version = 0;
         this.model = model;
@@ -45,8 +45,8 @@ public class Project {
         return uri;
     }
 
-    public String getDescription() {
-        return description;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     void setVersion(int version) {
@@ -71,11 +71,15 @@ public class Project {
         return new Builder();
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public static class Builder {
 
         private Long forkedFrom;
         private String username;
-        private String description;
+        private String title;
         private String uri;
         private String model;
 
@@ -91,8 +95,8 @@ public class Project {
             this.model = model;
             return this;
         }
-        public Builder setDescription(String description) {
-            this.description = description;
+        public Builder setTitle(String title) {
+            this.title = title;
             return this;
         }
         public Builder setUri(String uri) {
@@ -101,7 +105,7 @@ public class Project {
         }
 
         public Project build() {
-            return new Project(forkedFrom, username, description, uri, model);
+            return new Project(forkedFrom, username, title, uri, model);
         }
     }
 }

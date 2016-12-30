@@ -11,7 +11,6 @@ goog.require('goog.crypt.Md5');
  * @constructor
  */
 diem.storage.Model = function() {
-  this.title_ = "";
   this.pieces_ = [];
   this.camera_ = null;
 };
@@ -31,21 +30,10 @@ diem.storage.Model.prototype.setCamera = function(camera) {
 };
 
 /**
- * @return {string}
- * @private
- */
-diem.storage.Model.prototype.getTitle_ = function() {
-  return document.getElementById("pattern-name").innerHTML;
-};
-
-/**
  * @returns {string} JSON representation of the pattern.
  */
 diem.storage.Model.prototype.getStorable = function() {
   var storable = {
-    // TODO: this shouldn't be stored in the model, since we want to be able to
-    // parse/modify it on the server side.
-    title : this.getTitle_(),
     pieces : [],
     camera : this.camera_
   };
@@ -53,16 +41,6 @@ diem.storage.Model.prototype.getStorable = function() {
     storable.pieces.push(diem.storage.Piece.getStorable(this.pieces_[i]));
   }
   return JSON.stringify(storable);
-};
-
-/**
- * @param {string} json output of Model.getStorable.
- * @return {string} the hashed digest.
- */
-diem.storage.Model.getHash = function(json) {
-  var hash = new goog.crypt.Md5();
-  hash.update(json);
-  return "" + hash.digest();
 };
 
 /**
