@@ -1,6 +1,8 @@
 package com.fabdm;
 
+import com.fabdm.project.Project;
 import com.fabdm.template.DataBuilder;
+import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
 import com.google.common.collect.ImmutableList;
 import com.fabdm.account.Account;
@@ -11,6 +13,8 @@ import java.nio.charset.Charset;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 
 public class UserServlet extends HttpServlet {
     private static final String USERNAME_PREFIX = "/+/user/";
@@ -51,6 +55,21 @@ public class UserServlet extends HttpServlet {
             Hashing.md5().hashString(userInfo.getEmail(), Charset.forName("UTF-8")).toString());
         dataBuilder.put("self", self);
         dataBuilder.build(request, response);
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+        String projectName = request.getParameter("delete");
+        if (Strings.isNullOrEmpty(projectName)) {
+            return;
+        }
+
+        Account user = DataBuilder.getAccount();
+        Project project = user.getProject(projectName);
+        if (project == null) {
+            return;
+        }
+        ofy().delete().entity(project).now();
     }
 
     private String getUsername(String requestURI) {

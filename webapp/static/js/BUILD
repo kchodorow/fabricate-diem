@@ -8,9 +8,22 @@ filegroup(
     name = "js",
     srcs = [
         ":lib.js",
+        ":user-bin.js",
         "//webapp/static/js/vendor",
     ],
     visibility = ["//webapp/static:__pkg__"],
+)
+
+closure_js_binary(
+    name = "user-bin",
+    entry_points = ["diem.User.delete"],
+    deps = [":user-lib"],
+)
+
+closure_js_library(
+    name = "user-lib",
+    srcs = ["user.js"],
+    deps = ["@io_bazel_rules_closure//closure/library"],
 )
 
 closure_js_binary(
