@@ -63,6 +63,10 @@ public class Project {
         return model;
     }
 
+    public String toJson() {
+        return "{\"model\":" + getModel() + "}";
+    }
+
     public static Builder builder() {
         return new Builder();
     }

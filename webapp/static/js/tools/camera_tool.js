@@ -61,3 +61,19 @@ diem.tools.CameraTool.prototype.onSelect = function() {
 diem.tools.CameraTool.prototype.getKeys = function() {
   return this.dir_;
 };
+
+/**
+ * @param {THREE.Camera} [camera]
+ * @param {number} [opt_x]
+ * @param {number} [opt_y]
+ * @param {number} [opt_z]
+ */
+diem.tools.CameraTool.setCameraPosition = function(
+  camera, opt_x, opt_y, opt_z) {
+  if (opt_x == undefined) {
+    opt_x = 0;
+    opt_y = 10;
+    opt_z = 20;
+  }
+  camera.position.set(opt_x, opt_y, opt_z);
+};

@@ -34,9 +34,9 @@ diem.SceneContainer = function() {
   document.getElementById(diem.Globals.WEBGL_DIV_ID).appendChild(
     this.renderer.domElement);
 
-  this.camera.position.z = 20;
-  this.camera.position.y = 10;
+  diem.tools.CameraTool.setCameraPosition(this.camera);
   this.camera.lookAt(new THREE.Vector3(0, 10, 0));
+  diem.storage.Storage.getCurrent().setCamera(this.camera);
 
   this.toolManager_ = new diem.tools.ToolManager();
   this.toolManager_.registerTool(new diem.tools.AddAnchorPoint());
@@ -47,6 +47,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
   this.toolManager_.registerTool(new diem.tools.SeamTool());
   this.toolManager_.registerTool(new diem.tools.Text());
+  // TODO: it's silly to create 8 separate camera tools.
   this.toolManager_.registerTool(
     new diem.tools.CameraTool(this.camera, [goog.events.KeyCodes.LEFT]));
   this.toolManager_.registerTool(
@@ -90,13 +91,17 @@ diem.SceneContainer = function() {
 };
 
 /**
- * @param {Array<diem.cloth.Workboard>} model
+ * @param {object} model
  */
 diem.SceneContainer.prototype.load = function(model) {
   var tool = this.toolManager_.getTool(diem.tools.AddPiece.NAME);
   for (var i = 0; i < model.pieces.length; ++i) {
     var intersectables = tool.onSelect(tool, model.pieces[i]);
     this.toolManager_.handleIntersectables(intersectables);
+  }
+  if (model.camera != null) {
+    diem.tools.CameraTool.setCameraPosition(
+      this.camera, model.camera.x, model.camera.y, model.camera.z);
   }
 };
 

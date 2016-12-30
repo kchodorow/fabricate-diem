@@ -13,6 +13,7 @@ goog.require('goog.crypt.Md5');
 diem.storage.Model = function() {
   this.title_ = "";
   this.pieces_ = [];
+  this.camera_ = null;
 };
 
 /**
@@ -20,6 +21,13 @@ diem.storage.Model = function() {
  */
 diem.storage.Model.prototype.addPiece = function(piece) {
   this.pieces_.push(piece);
+};
+
+/**
+ * @param {THREE.Camera} camera
+ */
+diem.storage.Model.prototype.setCamera = function(camera) {
+  this.camera_ = camera.position;
 };
 
 /**
@@ -34,7 +42,13 @@ diem.storage.Model.prototype.getTitle_ = function() {
  * @returns {string} JSON representation of the pattern.
  */
 diem.storage.Model.prototype.getStorable = function() {
-  var storable = {title : this.getTitle_(), pieces : []};
+  var storable = {
+    // TODO: this shouldn't be stored in the model, since we want to be able to
+    // parse/modify it on the server side.
+    title : this.getTitle_(),
+    pieces : [],
+    camera : this.camera_
+  };
   for (var i = 0; i < this.pieces_.length; ++i) {
     storable.pieces.push(diem.storage.Piece.getStorable(this.pieces_[i]));
   }

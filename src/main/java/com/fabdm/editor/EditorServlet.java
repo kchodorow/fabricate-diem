@@ -57,7 +57,7 @@ public class EditorServlet extends HttpServlet {
         }
         switch (format) {
             case JSON:
-                response.getWriter().write("{\"model\":" + project.getModel() + "}");
+                response.getWriter().write(project.toJson());
                 break;
             case PDF:
                 PdfServlet servlet = new PdfServlet();
