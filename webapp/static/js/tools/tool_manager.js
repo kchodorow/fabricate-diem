@@ -36,6 +36,9 @@ diem.tools.ToolManager.prototype.registerTool = function(tool) {
     this.shortcuts_.registerShortcut(id, keys[0], keys[1]);
     break;
   }
+  for (var key in tool.keyHandlers()) {
+    this.shortcuts_.registerShortcut(id + "-" + key, parseInt(key));
+  }
   this.toolMap_[id] = tool;
 };
 
@@ -57,12 +60,17 @@ diem.tools.ToolManager.prototype.setupShortcuts_ = function() {
  * @param {goog.ui.KeyboardShortcutEvent} event the event that fired
  */
 diem.tools.ToolManager.prototype.handleKeypress = function(event) {
-  if (!(event.identifier in this.toolMap_)) {
-    console.log('no tool matches ' + event.identifier);
+  var key = event.identifier;
+  if (this.activeTool_ != null && this.activeTool_.handles(key)) {
+    this.activeTool_.handle(key);
+    return;
+  }
+  if (!(key in this.toolMap_)) {
+    console.log('no tool matches ' + key);
     this.selectTool(diem.tools.ToolManager.BASE_TOOL);
     return;
   }
-  var newTool = this.toolMap_[event.identifier];
+  var newTool = this.toolMap_[key];
   this.selectTool(newTool);
 };
 

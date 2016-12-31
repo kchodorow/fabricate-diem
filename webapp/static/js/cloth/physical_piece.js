@@ -338,6 +338,15 @@ diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
 };
 
 /**
+ * Remove 3D piece from THREE and Ammo.
+ */
+diem.cloth.PhysicalPiece.prototype.delete = function() {
+  diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
+  this.mesh_.parent.remove(this.mesh_);
+  // TODO: unregister from event handlers?
+};
+
+/**
  * @returns {array<diem.clothPhysicalPiece>} A list of physical pieces for
  *   render to run simulate() on.
  */

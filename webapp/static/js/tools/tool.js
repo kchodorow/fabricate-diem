@@ -18,7 +18,7 @@ diem.tools.Tool = function() {
   /**
    *
    */
-  this.name_ = null;
+  this.name_ = "tool";
 
   // Mappings of actions to a dict of THREE.Mesh ids and their
   // diem.MeshWrappers.
@@ -28,16 +28,10 @@ diem.tools.Tool = function() {
   this.intersectableList_ = {};
   // Mapping of THREE.Mesh ids -> MeshWrappers
   this.wrapperMap_ = {};
+  // Other keycodes that should be grabbed by this tool, mapped to handlers.
+  this.keyHandlers_ = {};
   // Optional HTML toolbar button.
   this.button_ = null;
-};
-
-/**
- * This function can be used to unset onSelect/onDeselect behavior.
- * @returns {Array}
- */
-diem.tools.Tool.NO_OP = function() {
-  return [];
 };
 
 /**
@@ -185,6 +179,31 @@ diem.tools.Tool.prototype.updateIntersectable = function() {
  */
 diem.tools.Tool.prototype.stateful = function() {
   return true;
+};
+
+/**
+ * A list of keys this tool "listens" for. These are kind of sub-tools, e.g.,
+ * a tool that selects a shape might listen for DEL to delete it.
+ * @returns {object}
+ */
+diem.tools.Tool.prototype.keyHandlers = function() {
+  return this.keyHandlers_;
+};
+
+/**
+ * @returns {boolean}
+ */
+diem.tools.Tool.prototype.handles = function(key) {
+  var keyCode = key.substring(key.indexOf("-") + 1);
+  return keyCode in this.keyHandlers_;
+};
+
+/**
+ * @returns {boolean}
+ */
+diem.tools.Tool.prototype.handle = function(key) {
+  var keyCode = key.substring(key.indexOf("-") + 1);
+  goog.bind(this.keyHandlers_[keyCode], this)();
 };
 
 /**

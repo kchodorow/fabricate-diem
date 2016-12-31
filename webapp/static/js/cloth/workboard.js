@@ -114,6 +114,18 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
 };
 
 /**
+ * Remove the 2D and 3D pieces from the pattern.
+ */
+diem.cloth.Workboard.prototype.delete = function() {
+  var parent = this.mesh_.parent;
+  var pieces = this.mesh_.userData.physicalPieces;
+  for (var i = 0; i < pieces.length; ++i) {
+    pieces[i].delete();
+  }
+  parent.remove(this.mesh_);
+};
+
+/**
  * Get the anchor point corresponding to the given storage anchor.
  * @param {string} uuid
  * @param {Array.<diem.storage.Anchor>} storageAnchors

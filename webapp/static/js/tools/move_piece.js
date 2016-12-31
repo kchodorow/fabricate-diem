@@ -12,6 +12,8 @@ goog.require('goog.events.KeyCodes');
 diem.tools.MovePiece = function() {
   goog.base(this);
   this.name_ = diem.tools.MovePiece.NAME;
+  this.selected_ = null;
+  this.keyHandlers_[goog.events.KeyCodes.X] = this.deletePiece_;
   this.button_ = new diem.Button.builder()
     .setInnerHtml('V')
     .setTooltip('Move pattern piece [V]')
@@ -39,10 +41,27 @@ diem.tools.MovePiece.createIntersectable = function(action, meshWrapper) {
     diem.tools.MovePiece.NAME, action, meshWrapper);
 };
 
+diem.tools.Tool.prototype.onDeselect = function(opt_newTool) {
+  this.selected_ = null;
+  return [];
+};
+
+/**
+ * @override
+ */
+diem.tools.MovePiece.prototype.deletePiece_ = function() {
+  if (this.selected_ == null) {
+    // TODO: do something to warn the user.
+    return;
+  }
+  this.selected_.delete();
+};
+
 /**
  * @override
  */
 diem.tools.MovePiece.prototype.onDragStart = function(meshWrapper) {
+  this.selected_ = meshWrapper;
   meshWrapper.moveStart();
   return [];
 };
