@@ -7,7 +7,6 @@ goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
 goog.require('diem.tools.AddAnchorPoint');
-goog.require('diem.tools.SeamTool');
 
 goog.require('goog.asserts');
 
@@ -66,8 +65,6 @@ diem.cloth.Edge.prototype.addToParent = function(parent) {
 diem.cloth.Edge.prototype.getIntersectables = function() {
   return [
     diem.tools.AddAnchorPoint.createIntersectable(
-      diem.events.CLICKABLE, this),
-    diem.tools.SeamTool.createIntersectable(
       diem.events.CLICKABLE, this)];
 };
 

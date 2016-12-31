@@ -142,12 +142,6 @@ closure_js_library(
 )
 
 closure_js_library(
-    name = "seam",
-    srcs = ["seam.js"],
-    visibility = ["//webapp/static/js:__subpackages__"],
-)
-
-closure_js_library(
     name = "button",
     srcs = ["button.js"],
     visibility = ["//webapp/static/js:__subpackages__"],

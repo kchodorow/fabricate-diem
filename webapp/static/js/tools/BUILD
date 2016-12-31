@@ -8,10 +8,9 @@ closure_js_library(
         ":anchor-point",
         ":camera",
         ":drag-piece",
+        ":fabric",
         ":move-piece",
         ":person",
-        ":seam",
-        ":text",
     ],
 )
 
@@ -56,6 +55,17 @@ closure_js_library(
 )
 
 closure_js_library(
+    name = "fabric",
+    srcs = ["fabric_tool.js"],
+    visibility = ["//webapp/static/js/cloth:__pkg__"],
+    deps = [
+        ":tool",
+        "//webapp/static/js:button",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
     name = "person",
     srcs = ["person_tool.js"],
     deps = [
@@ -87,34 +97,12 @@ closure_js_library(
 )
 
 closure_js_library(
-    name = "seam",
-    srcs = ["seam_tool.js"],
-    visibility = ["//webapp/static/js:__subpackages__"],
-    deps = [
-        ":tool",
-        "//webapp/static/js:seam",
-        "@io_bazel_rules_closure//closure/library",
-    ],
-)
-
-closure_js_library(
     name = "anchor-point",
     srcs = [
         "add_anchor_pt.js",
         "anchor_pt.js",
         "rm_anchor_pt.js",
     ],
-    visibility = ["//webapp/static/js:__subpackages__"],
-    deps = [
-        ":tool",
-        "//webapp/static/js:button",
-        "@io_bazel_rules_closure//closure/library",
-    ],
-)
-
-closure_js_library(
-    name = "text",
-    srcs = ["text.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
     deps = [
         ":tool",

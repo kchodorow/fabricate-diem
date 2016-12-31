@@ -13,8 +13,11 @@ goog.require('diem.storage.Anchor');
 goog.require('diem.storage.Edge');
 goog.require('diem.storage.Storage');
 goog.require('diem.tools.DragPiece');
+goog.require('diem.tools.FabricTool');
 goog.require('diem.tools.MovePiece');
-goog.require('diem.tools.Text');
+goog.require('goog.asserts');
+goog.require('goog.events');
+goog.require('goog.ui.HsvaPalette');
 
 /**
  * @constructor
@@ -24,16 +27,12 @@ goog.require('diem.tools.Text');
 diem.cloth.Workboard = function() {
   goog.base(this);
 
+  this.shape_ = new THREE.Shape();
+  this.anchors_ = [];
+  this.fabric_ = null;
+
   // The physical piece currently being dragged.
   this.currentPiece_ = null;
-
-  this.description_ = document.createElement('div');
-  this.description_.setAttribute('contenteditable', true);
-  this.description_.setAttribute(
-    'style', 'position: absolute; top: ' + diem.Globals.clientY
-      + 'px; left: ' + diem.Globals.clientX + 'px;');
-  this.description_.innerHTML = "Description";
-  document.body.appendChild(this.description_);
 };
 
 goog.inherits(diem.cloth.Workboard, diem.MeshWrapper);
@@ -80,14 +79,12 @@ diem.cloth.Workboard.load = function(piece) {
  */
 diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
   var corners = piece.anchors;
-  this.anchors_ = [];
   for (var i = 0; i < corners.length; ++i) {
     var anchor = new diem.cloth.Anchor(corners[i]);
     this.anchors_.push(anchor);
   }
 
   var edges = piece.edges;
-  this.shape_ = new THREE.Shape();
   this.shape_['edges_'] = [];
   for (i = 0; i < edges.length; ++i) {
     var startAnchor = this.getAnchor_(edges[i].startAnchor, corners);
@@ -98,10 +95,10 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
   }
   diem.cloth.ControlPoint.updateActions(this.shape_);
 
-  this.geometry_ = new THREE.ShapeGeometry(this.shape_);
+  var geometry = new THREE.ShapeGeometry(this.shape_);
 
   this.fabric_ = diem.Fabric.load(piece.fabric);
-  this.mesh_ = new THREE.Mesh(this.geometry_, this.fabric_.getMaterial());
+  this.mesh_ = new THREE.Mesh(geometry, this.fabric_.getMaterial());
   this.mesh_.uuid = piece.uuid;
   this.mesh_.shape = this.shape_;
   this.mesh_.name = 'workboard' + diem.cloth.Workboard.INDEX++;
@@ -139,7 +136,7 @@ diem.cloth.Workboard.prototype.getAnchor_ = function(uuid, storageAnchors) {
  */
 diem.cloth.Workboard.prototype.getIntersectables = function() {
   var intersects = [
-    diem.tools.Text.createIntersectable(
+    diem.tools.FabricTool.createIntersectable(
       diem.events.CLICKABLE, this),
     diem.tools.DragPiece.createIntersectable(
       diem.events.DRAGGABLE, this),
@@ -208,19 +205,17 @@ diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
 };
 
 /**
- * @returns {string}
- */
-diem.cloth.Workboard.prototype.getDescription = function() {
-  return this.description_;
-};
-
-/**
- * @param {Object} intersection
  * @returns {array}
  */
-diem.cloth.Workboard.prototype.editText = function(intersection) {
-  if (this.description_.innerHTML == "") {
-    this.description_.innerHTML = "Description";
-  }
-  return [];
+diem.cloth.Workboard.prototype.chooseFabric = function() {
+  var palette = new goog.ui.HsvaPalette();
+  var material = this.fabric_.getMaterial();
+  goog.events.listen(
+    palette, goog.ui.Component.EventType.ACTION,
+    function(e) {
+      material.color.setStyle(e.target.color);
+      palette.dispose();
+    }
+  );
+  palette.render();
 };

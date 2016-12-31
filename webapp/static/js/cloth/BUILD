@@ -23,8 +23,8 @@ closure_js_library(
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js/storage",
         "//webapp/static/js/tools:drag-piece",
+        "//webapp/static/js/tools:fabric",
         "//webapp/static/js/tools:move-piece",
-        "//webapp/static/js/tools:text",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -44,7 +44,6 @@ closure_js_library(
         "//webapp/static/js/events",
         "//webapp/static/js/storage",
         "//webapp/static/js/tools:anchor-point",
-        "//webapp/static/js/tools:seam",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
