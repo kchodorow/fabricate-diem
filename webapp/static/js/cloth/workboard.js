@@ -205,9 +205,10 @@ diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
 };
 
 /**
+ * @param {goog.events.BrowserEvent} event
  * @returns {array}
  */
-diem.cloth.Workboard.prototype.chooseFabric = function() {
+diem.cloth.Workboard.prototype.chooseFabric = function(event) {
   var palette = new goog.ui.HsvaPalette();
   var material = this.fabric_.getMaterial();
   goog.events.listen(
@@ -218,4 +219,9 @@ diem.cloth.Workboard.prototype.chooseFabric = function() {
     }
   );
   palette.render();
+  var x = event.clientX + window.scrollX;
+  var y = event.clientY + window.scrollY;
+  palette.getDomHelper().setProperties(
+    palette.getElement(),
+    {style: "position: absolute; left: " + x + "px; top: " + y + "px;"});
 };

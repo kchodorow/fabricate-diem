@@ -152,6 +152,6 @@ diem.EventHandler.prototype.handleClick = function(event) {
   }
   // Intersection points are used to figure out where the pin should go on the
   // person.
-  var newInteractables = tool.onClick(intersects);
+  var newInteractables = tool.onClick(intersects, event);
   this.toolManager_.handleIntersectables(newInteractables);
 };

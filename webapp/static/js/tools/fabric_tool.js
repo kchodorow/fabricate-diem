@@ -41,8 +41,8 @@ diem.tools.FabricTool.createIntersectable = function(action, meshWrapper) {
 /**
  * @override
  */
-diem.tools.FabricTool.prototype.onClick = function(intersects) {
+diem.tools.FabricTool.prototype.onClick = function(intersects, event) {
   var meshWrapper = this.getMeshWrapper(intersects[0]);
-  meshWrapper.chooseFabric();
+  meshWrapper.chooseFabric(event);
   return [];
 };
