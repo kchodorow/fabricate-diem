@@ -47,10 +47,10 @@ diem.cloth.Workboard.INDEX = 0;
 diem.cloth.Workboard.createNew = function(w, h) {
   var workboard = new diem.cloth.Workboard();
   var anchors = [
-    diem.storage.Anchor.fromVector(new THREE.Vector3(0, 0, 0), "0"),
-    diem.storage.Anchor.fromVector(new THREE.Vector3(w, 0, 0), "1"),
-    diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, 0), "2"),
-    diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, 0), "3")];
+    diem.storage.Anchor.fromVector(new THREE.Vector3(0, 0, 0)),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(w, 0, 0)),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, 0)),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, 0))];
   var edges = diem.storage.Edge.fromAnchors(anchors);
   var material = {color : diem.Fabric.getRandomColor(), side : THREE.DoubleSide};
   workboard.initMeshes_({

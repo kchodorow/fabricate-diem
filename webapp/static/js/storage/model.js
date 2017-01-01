@@ -105,12 +105,11 @@ diem.storage.Anchor.getStorable = function(inAnchor) {
 /**
  * Returns an achor point in storable format.
  * @param {THREE.Vector3} vec
- * @param {string} uuid
  * @returns {diem.storage.Anchor}
  */
-diem.storage.Anchor.fromVector = function(vec, uuid) {
+diem.storage.Anchor.fromVector = function(vec) {
   var anchor = {};
-  anchor.uuid = uuid;
+  anchor.uuid = THREE.Math.generateUUID();
   anchor.anchor = vec;
   anchor.cwCp = vec.clone();
   anchor.ccwCp = vec.clone();
