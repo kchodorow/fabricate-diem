@@ -99,7 +99,9 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
 
   this.fabric_ = diem.Fabric.load(piece.fabric);
   this.mesh_ = new THREE.Mesh(geometry, this.fabric_.getMaterial());
-  this.mesh_.uuid = piece.uuid;
+  if ('uuid' in piece) {
+    this.mesh_.uuid = piece.uuid;
+  }
   this.mesh_.shape = this.shape_;
   this.mesh_.name = 'workboard' + diem.cloth.Workboard.INDEX++;
   // A list of all physical representations of this pattern piece.
