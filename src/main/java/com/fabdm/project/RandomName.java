@@ -37,6 +37,7 @@ class RandomName {
     private static final ImmutableList<String> PLURALS = ImmutableList.of("underwear");
 
     private static final String[] ADJECTIVES = {
+            "armored",
             "bohemian",
             "boho",
             "business",

@@ -100,16 +100,20 @@ diem.tools.ToolManager.prototype.getTool = function(opt_name) {
  * @param {Array} responses
  */
 diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
+  var toolIds = [];
   for (var i = 0; i < responses.length; ++i) {
     var toolId = responses[i].getToolId();
+    if (!toolIds.includes(toolId)) {
+      toolIds.push(toolId);
+    }
     goog.asserts.assert(
       toolId in this.toolMap_, "Did you can registerTool for " + toolId + "?");
     this.toolMap_[responses[i].getToolId()].addAction(
       responses[i].getAction(), responses[i].getMeshWrapper());
   }
 
-  for (i in this.toolMap_) {
-    this.toolMap_[i].updateIntersectable();
+  for (i in toolIds) {
+    this.toolMap_[toolIds[i]].updateIntersectable();
   }
 };
 

@@ -332,10 +332,25 @@ diem.cloth.PhysicalPiece.prototype.drag3d = function() {
  */
 diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
   goog.asserts.assert(this.handle_ != -1);
-  this.pinned_.push(new diem.Pin(this.handle_, this.mouse_));
+  var pin = new diem.Pin(this.handle_, this.mouse_, this);
+  this.pinned_.push(pin);
   this.handle_ = null;
   this.mouse_ = null;
-  return [];
+  pin.addToParent(this.mesh_.parent);
+  return pin.getIntersectables();
+};
+
+diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
+  var tbd = this.pinned_.indexOf(pin);
+  this.pinned_.splice(tbd, 1);
+
+  // Recreated the pinned array.
+  var pins = this.mesh_.userData.physicsBody.get_m_anchors();
+  pins.resize(0);
+  for (var i = 0; i < this.pinned_.length; ++i) {
+    this.mesh_.userData.physicsBody.appendAnchor(
+      this.pinned_[i].index(), this.pinned_[i].rigidBody(), false, 1);
+  }
 };
 
 /**

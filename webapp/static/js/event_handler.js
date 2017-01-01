@@ -133,7 +133,8 @@ diem.EventHandler.prototype.dragAction = function() {
  */
 diem.EventHandler.prototype.dragEnd = function() {
   if (this.clicked_ != null) {
-    this.toolManager_.getTool().onDragEnd(this.clicked_);
+    var newInteractables = this.toolManager_.getTool().onDragEnd(this.clicked_);
+    this.toolManager_.handleIntersectables(newInteractables);
   }
   this.clicked_ = null;
 };
