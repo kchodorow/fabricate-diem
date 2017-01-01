@@ -36,9 +36,6 @@ diem.tools.ToolManager.prototype.registerTool = function(tool) {
     this.shortcuts_.registerShortcut(id, keys[0], keys[1]);
     break;
   }
-  for (var key in tool.keyHandlers()) {
-    this.shortcuts_.registerShortcut(id + "-" + key, parseInt(key));
-  }
   this.toolMap_[id] = tool;
 };
 
@@ -61,10 +58,6 @@ diem.tools.ToolManager.prototype.setupShortcuts_ = function() {
  */
 diem.tools.ToolManager.prototype.handleKeypress = function(event) {
   var key = event.identifier;
-  if (this.activeTool_ != null && this.activeTool_.handles(key)) {
-    this.activeTool_.handle(key);
-    return;
-  }
   if (!(key in this.toolMap_)) {
     console.log('no tool matches ' + key);
     this.selectTool(diem.tools.ToolManager.BASE_TOOL);
@@ -108,6 +101,9 @@ diem.tools.ToolManager.prototype.getTool = function(opt_name) {
  */
 diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
   for (var i = 0; i < responses.length; ++i) {
+    var toolId = responses[i].getToolId();
+    goog.asserts.assert(
+      toolId in this.toolMap_, "Did you can registerTool for " + toolId + "?");
     this.toolMap_[responses[i].getToolId()].addAction(
       responses[i].getAction(), responses[i].getMeshWrapper());
   }

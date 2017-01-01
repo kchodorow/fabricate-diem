@@ -21,6 +21,7 @@ goog.require('diem.tools.MovePiece');
 diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
   goog.base(this);
   diem.cloth.PhysicalPiece.pieces_.push(this);
+  this.workboardMesh_ = piece;
   this.pinned_ = [];
   this.handle_ = 0;
   this.mouse_ = null;
@@ -238,8 +239,8 @@ diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
  */
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
   return [
-    diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this),
-    diem.tools.MovePiece.createIntersectable(diem.events.CLICKABLE, this)
+    diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this),
+    diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this)
   ];
 };
 
@@ -343,7 +344,14 @@ diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
 diem.cloth.PhysicalPiece.prototype.delete = function() {
   diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
   this.mesh_.parent.remove(this.mesh_);
-  // TODO: unregister from event handlers?
+  // Remove from 2D pattern's array.
+  var twoD = this.workboardMesh_;
+  var pieces = twoD.userData.physicalPieces;
+  var index = pieces.indexOf(this);
+  goog.asserts.assert(index >= 0);
+  pieces.splice(index, 1);
+  twoD.remove(this.mesh_);
+  this.workboardMesh_ = null;
 };
 
 /**

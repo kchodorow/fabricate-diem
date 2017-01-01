@@ -27,7 +27,7 @@ goog.addDependency('../../../../js/tools/add_anchor_pt.js', ['diem.tools.AddAnch
 goog.addDependency('../../../../js/tools/add_piece.js', ['diem.tools.AddPiece'], ['diem.Button', 'diem.Pattern', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/anchor_pt.js', ['diem.tools.AnchorPoint'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/camera_tool.js', ['diem.tools.CameraTool'], ['diem.tools.Tool', 'goog.asserts', 'goog.events.KeyCodes'], false);
-goog.addDependency('../../../../js/tools/delete.js', ['diem.tools.Delete'], ['diem.tools.Tool', 'goog.events.KeyCodes'], false);
+goog.addDependency('../../../../js/tools/delete.js', ['diem.tools.Delete'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/drag_piece.js', ['diem.tools.DragPiece'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/fabric_tool.js', ['diem.tools.FabricTool'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);
 goog.addDependency('../../../../js/tools/move_piece.js', ['diem.tools.MovePiece'], ['diem.Button', 'diem.tools.Tool', 'goog.events.KeyCodes'], false);

@@ -11,6 +11,7 @@ goog.require('diem.tools.AddAnchorPoint');
 goog.require('diem.tools.AddPiece');
 goog.require('diem.tools.AnchorPoint');
 goog.require('diem.tools.CameraTool');
+goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.FabricTool');
 goog.require('diem.tools.MovePiece');
@@ -41,6 +42,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.AddAnchorPoint());
   this.toolManager_.registerTool(new diem.tools.AddPiece(this.scene));
   this.toolManager_.registerTool(new diem.tools.AnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.Delete());
   this.toolManager_.registerTool(new diem.tools.DragPiece());
   this.toolManager_.registerTool(new diem.tools.FabricTool());
   this.toolManager_.registerTool(new diem.tools.MovePiece());

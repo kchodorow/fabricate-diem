@@ -12,6 +12,7 @@ goog.require('diem.cloth.PhysicalPiece');
 goog.require('diem.storage.Anchor');
 goog.require('diem.storage.Edge');
 goog.require('diem.storage.Storage');
+goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.FabricTool');
 goog.require('diem.tools.MovePiece');
@@ -121,8 +122,9 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
 diem.cloth.Workboard.prototype.delete = function() {
   var parent = this.mesh_.parent;
   var pieces = this.mesh_.userData.physicalPieces;
-  for (var i = 0; i < pieces.length; ++i) {
-    pieces[i].delete();
+  // This removes pieces from the array, so we can't use the standard for-loop.
+  while (pieces.length > 0) {
+    pieces[0].delete();
   }
   parent.remove(this.mesh_);
 };
@@ -151,6 +153,8 @@ diem.cloth.Workboard.prototype.getAnchor_ = function(uuid, storageAnchors) {
 diem.cloth.Workboard.prototype.getIntersectables = function() {
   var intersects = [
     diem.tools.FabricTool.createIntersectable(
+      diem.events.CLICKABLE, this),
+    diem.tools.Delete.createIntersectable(
       diem.events.CLICKABLE, this),
     diem.tools.DragPiece.createIntersectable(
       diem.events.DRAGGABLE, this),
