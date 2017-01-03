@@ -195,7 +195,7 @@ diem.cloth.Workboard.prototype.move = function() {
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
-  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_, this.w, this.h);
+  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
   physicalPiece.addToParent(this.mesh_.parent);
   physicalPiece.drag3dStart();
   this.currentPiece_ = physicalPiece;

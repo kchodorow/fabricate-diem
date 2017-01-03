@@ -13,8 +13,6 @@ goog.require('goog.events.KeyCodes');
 diem.tools.DragPiece = function() {
   goog.base(this);
   this.name_ = diem.tools.DragPiece.NAME;
-  this.selected_ = null;
-//  this.keyHandlers_[goog.events.KeyCodes.X] = this.deletePiece_;
   this.button_ = new diem.Button.builder()
     .setInnerHtml('D')
     .setTooltip('Drag fabric [D]')
@@ -36,19 +34,7 @@ diem.tools.DragPiece.prototype.getKeys = function() {
  * @override
  */
 diem.tools.DragPiece.prototype.onDeselect = function(opt_newTool) {
-  this.selected_ = null;
   return [];
-};
-
-/**
- * @override
- */
-diem.tools.DragPiece.prototype.deletePiece_ = function() {
-  if (this.selected_ == null) {
-    // TODO: do something to warn the user.
-    return;
-  }
-  this.selected_.delete();
 };
 
 /**

@@ -51,6 +51,7 @@ diem.storage.Piece = function() {
   this.position = null;
   this.anchors = [];
   this.edges = [];
+  this.physicalPieces = [];
   this.description = null;
   this.fabric = null;
 };
@@ -67,7 +68,6 @@ diem.storage.Piece.getStorable = function(workboard) {
   for (var i = 0; i < workboard.anchors_.length; ++i) {
     piece.anchors.push(diem.storage.Anchor.getStorable(workboard.anchors_[i]));
   }
-  var edges = [];
   for (i = 0; i < workboard.shape_['edges_'].length; ++i) {
     piece.edges.push(
       diem.storage.Edge.getStorable(workboard.shape_['edges_'][i]));
@@ -76,6 +76,16 @@ diem.storage.Piece.getStorable = function(workboard) {
   piece.fabric = {material : {
     color : material.color.getHex(),
     side : material.side}};
+  var physicalPieces = workboard.getObject().userData.physicalPieces;
+  for (i = 0; i < physicalPieces.length; ++i) {
+    var physicalPiece = physicalPiece[i];
+    var pins = [];
+    for (var j = 0; j < physicalPiece.pins().length; ++j) {
+      var pin = physicalPiece.pins()[j];
+      pins.push({index : pin.index(), position : pin.getObject().position});
+    }
+    piece.physicalPieces.push({pins : pins});
+  }
   return piece;
 };
 

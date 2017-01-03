@@ -7,6 +7,7 @@ closure_js_library(
         ":add-piece",
         ":anchor-point",
         ":camera",
+        ":delete",
         ":drag-piece",
         ":fabric",
         ":move-piece",
@@ -50,6 +51,17 @@ closure_js_library(
     srcs = ["camera_tool.js"],
     deps = [
         ":tool",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
+    name = "delete",
+    srcs = ["delete.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":tool",
+        "//webapp/static/js:button",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

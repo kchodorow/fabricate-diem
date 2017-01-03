@@ -93,7 +93,7 @@ diem.cloth.GeometryMapper.prototype.getEquivalentIndex = function(oldNode) {
  * @returns {object}
  * @private
  */
-diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode, idx) {
+diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   var ammoPos = newNode.get_m_x();
   var newPos = new THREE.Vector2(ammoPos.x(), ammoPos.y());
   var nearestPoints = this.quadTree_.getNearest(3, newPos);

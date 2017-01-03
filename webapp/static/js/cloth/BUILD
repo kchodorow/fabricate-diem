@@ -22,6 +22,7 @@ closure_js_library(
         "//webapp/static/js:globals",
         "//webapp/static/js:mesh-wrapper",
         "//webapp/static/js/storage",
+        "//webapp/static/js/tools:delete",
         "//webapp/static/js/tools:drag-piece",
         "//webapp/static/js/tools:fabric",
         "//webapp/static/js/tools:move-piece",
@@ -50,7 +51,10 @@ closure_js_library(
 
 closure_js_library(
     name = "physical-piece",
-    srcs = ["physical_piece.js"],
+    srcs = [
+        "link_tracker.js",
+        "physical_piece.js",
+    ],
     deps = [
         ":geometry-mapper",
         "//webapp/static/js:globals",
@@ -58,6 +62,7 @@ closure_js_library(
         "//webapp/static/js:physics",
         "//webapp/static/js:pin",
         "//webapp/static/js/events",
+        "//webapp/static/js/tools:delete",
         "//webapp/static/js/tools:drag-piece",
         "//webapp/static/js/tools:move-piece",
     ],

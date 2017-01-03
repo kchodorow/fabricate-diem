@@ -6,19 +6,19 @@ goog.require('diem.MeshWrapper');
 goog.require('diem.Physics');
 goog.require('diem.Pin');
 goog.require('diem.cloth.GeometryMapper');
+goog.require('diem.cloth.LinkTracker');
 goog.require('diem.events');
+goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.MovePiece');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.
  * @param {THREE.Mesh} piece
- * @param {number} clothWidth
- * @param {number} clothHeight
  * @constructor
  * @extends {diem.MeshWrapper}
  */
-diem.cloth.PhysicalPiece = function(piece, clothWidth, clothHeight) {
+diem.cloth.PhysicalPiece = function(piece) {
   goog.base(this);
   diem.cloth.PhysicalPiece.pieces_.push(this);
   this.workboardMesh_ = piece;
@@ -114,7 +114,7 @@ diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
     jitter *= -1;
   }
 
-  var linker = new diem.cloth.PhysicalPiece.LinkTracker(softBody);
+  var linker = new diem.cloth.LinkTracker(softBody);
   var faces = this.mesh_.geometry.faces;
   var ammoFaces = softBody.get_m_faces();
   for (i = 0; i < faces.length; ++i) {
@@ -136,59 +136,6 @@ diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
     node = nodes.at(i);
     pos = node.get_m_x();
   }
-};
-
-/**
- * @param {Ammo.btSoftBody} softBody
- * @constructor
- */
-diem.cloth.PhysicalPiece.LinkTracker = function(softBody) {
-  this.links_ = {};
-  this.ammoLinks_ = softBody.get_m_links();
-  this.ammoNodes_ = softBody.get_m_nodes();
-  this.idx_ = 0;
-};
-
-/**
- * @param {number} a
- * @param {number} b
- */
-diem.cloth.PhysicalPiece.LinkTracker.prototype.connect = function(a, b) {
-  if (this.isLinked_(a, b)) {
-    return;
-  }
-  this.link_(a, b);
-
-  var link = this.ammoLinks_.at(this.idx_++);
-  link.set_m_n(0, this.ammoNodes_.at(a));
-  link.set_m_n(1, this.ammoNodes_.at(b));
-};
-
-/**
- * @param {number} a
- * @param {number} b
- * @returns {boolean}
- * @private
- */
-diem.cloth.PhysicalPiece.LinkTracker.prototype.isLinked_ = function(a, b) {
-  return a in this.links_ && this.links_[a].includes(b);
-};
-
-/**
- * @param {number} a
- * @param {number} b
- * @private
- */
-diem.cloth.PhysicalPiece.LinkTracker.prototype.link_ = function(a, b) {
-  if (!(a in this.links_)) {
-    this.links_[a] = [];
-  }
-  if (!(b in this.links_)) {
-    this.links_[b] = [];
-  }
-
-  this.links_[a].push(b);
-  this.links_[b].push(a);
 };
 
 /**

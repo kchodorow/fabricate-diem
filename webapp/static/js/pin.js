@@ -2,6 +2,7 @@
 goog.provide('diem.Pin');
 
 goog.require('diem.MeshWrapper');
+goog.require('diem.Physics');
 goog.require('diem.tools.Delete');
 
 /**
@@ -20,7 +21,8 @@ diem.Pin = function(index, rigidBody, piece) {
   var geometry = new THREE.CircleGeometry(.2, 8);
   var material = new THREE.MeshBasicMaterial({color : 0x000000});
   this.mesh_ = new THREE.Mesh(geometry, material);
-  this.mesh_.position.set(diem.Globals.mouse.x, diem.Globals.mouse.y, 1);
+  var position = this.rigidBody_.getWorldTransform().getOrigin();
+  this.mesh_.position.set(position.x(), position.y(), position.z());
   this.mesh_.name = "pin" + diem.Pin.PINS++;
 };
 

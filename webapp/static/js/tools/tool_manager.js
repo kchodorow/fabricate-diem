@@ -1,7 +1,7 @@
 goog.provide('diem.tools.ToolManager');
 
 goog.require('diem.tools.Tool');
-
+goog.require('goog.asserts');
 goog.require('goog.events');
 goog.require('goog.ui.KeyboardShortcutHandler');
 
