@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
  */
 class RandomName {
     private static final String[] ARTICLES = {
+            "apron",
             "blouse",
             "bodice",
             "bolero",
@@ -31,7 +32,8 @@ class RandomName {
             "slacks",
             "teddy",
             "teeshirt",
-            "underwear"
+            "underwear",
+            "wrap"
     };
 
     private static final ImmutableList<String> PLURALS = ImmutableList.of("underwear");
@@ -48,6 +50,7 @@ class RandomName {
             "earth mother",
             "elegant",
             "fantasy",
+            "hiking",
             "holiday",
             "gothic",
             "hippy",
@@ -57,10 +60,12 @@ class RandomName {
             "punky",
             "regal",
             "sexy",
+            "summer",
             "slouchy",
             "superhero",
             "Victorian",
-            "vintage"
+            "vintage",
+            "cold weather"
     };
 
     private final String article;

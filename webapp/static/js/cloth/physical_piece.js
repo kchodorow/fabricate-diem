@@ -77,14 +77,16 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
 
   this.updateSoftBody_();
 
-/* TODO:
-  var oldSoftBody = this.mesh_.userData.physicsBody;
+  var pins = this.mesh_.userData.physicsBody.get_m_anchors();
+  pins.resize(0);
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
-    var oldNode = oldSoftBody.get_m_nodes().at(pin.index());
-    var index = this.geometryMapper_.getEquivalentIndex(oldNode);
-    pin.setIndex(index);
-  }*/
+    var newIndex = this.geometryMapper_.getEquivalentIndex(
+      pin.getObject().position);
+    pin.setIndex(newIndex);
+    this.mesh_.userData.physicsBody.appendAnchor(
+      pin.index(), pin.rigidBody(), false, 1);
+  }
 };
 
 /**
