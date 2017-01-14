@@ -24,7 +24,7 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.workboardMesh_ = piece;
   this.pinned_ = [];
   this.handle_ = 0;
-  this.mouse_ = null;
+  this.currentPin_ = null;
   this.originalPosition_ = new THREE.Vector3().copy(piece.position);
 
   var geometry = this.createGeometry_(piece.geometry);
@@ -66,6 +66,20 @@ diem.cloth.PhysicalPiece = function(piece) {
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
 
 diem.cloth.PhysicalPiece.pieces_ = [];
+
+/**
+ * @param {THREE.Mesh} mesh
+ * @param {Object} storablePhysicalPiece
+ * @returns {diem.cloth.PhysicalPiece}
+ */
+diem.cloth.PhysicalPiece.load = function(mesh, storablePhysicalPiece) {
+  var pp = new diem.cloth.PhysicalPiece(mesh);
+  for (var i = 0; i < storablePhysicalPiece.pins.length; ++i) {
+    var storablePin = storablePhysicalPiece.pins[i];
+    pp.addPin_(storablePin.index, storablePin.position);
+  }
+  return pp;
+};
 
 /**
  * @param {THREE.Mesh} newMesh
@@ -256,13 +270,9 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
       minDistance = testDistance;
     }
   }
-
-  this.mouse_ = diem.Physics.get().addMouseBody();
-
-  var influence = 1;
-  this.mesh_.userData.physicsBody.appendAnchor(
-    this.handle_, this.mouse_, false, influence);
-  return [];
+  goog.asserts.assert(this.handle_ != -1);
+  this.currentPin_ = this.addPin_(this.handle_, diem.Globals.mouse);
+  return this.currentPin_.getIntersectables();
 };
 
 /**
@@ -270,10 +280,7 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
  * @returns {Array}
  */
 diem.cloth.PhysicalPiece.prototype.drag3d = function() {
-  var mousePos = new THREE.Vector3().copy(diem.Globals.mouse);
-  this.mouse_.getWorldTransform().setOrigin(
-    new Ammo.btVector3(mousePos.x, mousePos.y, 0));
-  return [];
+  return this.currentPin_.drag3d();
 };
 
 /**
@@ -281,14 +288,54 @@ diem.cloth.PhysicalPiece.prototype.drag3d = function() {
  */
 diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
   goog.asserts.assert(this.handle_ != -1);
-  var pin = new diem.Pin(this.handle_, this.mouse_, this);
-  this.pinned_.push(pin);
+  var pin = this.currentPin_;
   this.handle_ = null;
-  this.mouse_ = null;
-  pin.addToParent(this.mesh_.parent);
-  return pin.getIntersectables();
+  this.currentPin_ = null;
+  return [];
 };
 
+/**
+ * @returns {Array<diem.Pin>}
+ */
+diem.cloth.PhysicalPiece.prototype.pins = function() {
+  return this.pinned_;
+};
+
+/**
+ * @param {number} index
+ * @param {THREE.Vector3} position
+ * @returns {diem.Pin}
+ * @private
+ */
+diem.cloth.PhysicalPiece.prototype.addPin_ = function(index, position) {
+  var pinShape = new Ammo.btSphereShape(.1);
+  var transform = new Ammo.btTransform();
+  transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
+  transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
+  var mouseMotionState = new Ammo.btDefaultMotionState(transform);
+  var inertia = new Ammo.btVector3(0, 0, 0);
+  var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
+    0,  // mass
+    mouseMotionState,
+    pinShape,
+    inertia);
+  var pinBody = new Ammo.btRigidBody(mouseBodyInfo);
+  diem.Physics.get().getWorld().addRigidBody(pinBody);
+
+  var pin = new diem.Pin(index, pinBody, this);
+  this.pinned_.push(pin);
+  var influence = 1;
+  this.mesh_.userData.physicsBody.appendAnchor(
+    pin.index(), pinBody, false, influence);
+  pin.rigidBody().getWorldTransform().setOrigin(
+    new Ammo.btVector3(position.x, position.y, position.z));
+  pin.addToParent(this.mesh_.parent);
+  return pin;
+};
+
+/**
+ * @param {diem.Pin} pin
+ */
 diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
   var tbd = this.pinned_.indexOf(pin);
   this.pinned_.splice(tbd, 1);

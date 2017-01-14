@@ -57,6 +57,7 @@ diem.cloth.Workboard.createNew = function(w, h) {
   workboard.initMeshes_({
     anchors : anchors,
     edges : edges,
+    physicalPieces : [],
     fabric : {material : material}
   });
   return workboard;
@@ -69,7 +70,6 @@ diem.cloth.Workboard.createNew = function(w, h) {
 diem.cloth.Workboard.load = function(piece) {
   var workboard = new diem.cloth.Workboard();
   workboard.initMeshes_(piece);
-  workboard.description_.innerHTML = piece.description;
   return workboard;
 };
 
@@ -113,7 +113,28 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
     this.shape_['edges_'][i].addToParent(this.mesh_);
   }
 
+  for (i = 0; i < piece.physicalPieces.length; ++i) {
+    var physicalPiece = new diem.cloth.PhysicalPiece.load(
+      this.mesh_, piece.physicalPieces[i]);
+    this.mesh_.userData.physicalPieces.push(physicalPiece);
+  }
+
   diem.storage.Storage.getCurrent().addPiece(this);
+};
+
+/**
+ * @override
+ */
+diem.cloth.Workboard.prototype.addToParent = function(parent) {
+  parent.add(this.mesh_);
+  var pieces = this.mesh_.userData.physicalPieces;
+  for (var i = 0; i < pieces.length; ++i) {
+    var piece = pieces[i];
+    piece.addToParent(parent);
+    for (var j = 0; j < piece.pins().length; ++j) {
+      piece.pinned_[j].addToParent(parent);
+    }
+  }
 };
 
 /**
@@ -164,6 +185,10 @@ diem.cloth.Workboard.prototype.getIntersectables = function() {
     intersects = intersects
       .concat(this.anchors_[i].getIntersectables())
       .concat(this.shape_['edges_'][i].getIntersectables());
+  }
+  var pp = this.mesh_.userData.physicalPieces;
+  for (i = 0; i < pp.length; ++i) {
+    intersects = intersects.concat(pp[i].getIntersectables());
   }
   return intersects;
 };

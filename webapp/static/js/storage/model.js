@@ -64,7 +64,6 @@ diem.storage.Piece.getStorable = function(workboard) {
   var piece = new diem.storage.Piece();
   piece.uuid = workboard.getUuid();
   piece.position = workboard.getObject().position.clone();
-  piece.description = workboard.getDescription();
   for (var i = 0; i < workboard.anchors_.length; ++i) {
     piece.anchors.push(diem.storage.Anchor.getStorable(workboard.anchors_[i]));
   }
@@ -78,7 +77,7 @@ diem.storage.Piece.getStorable = function(workboard) {
     side : material.side}};
   var physicalPieces = workboard.getObject().userData.physicalPieces;
   for (i = 0; i < physicalPieces.length; ++i) {
-    var physicalPiece = physicalPiece[i];
+    var physicalPiece = physicalPieces[i];
     var pins = [];
     for (var j = 0; j < physicalPiece.pins().length; ++j) {
       var pin = physicalPiece.pins()[j];

@@ -104,7 +104,6 @@ diem.Person.prototype.getIntersectables = function() {
  * @returns {Array}
  */
 diem.Person.prototype.onClick = function(intersection) {
-  var pin = new diem.Pin(intersection.point);
-  pin.addToParent(this.mesh_.parent);
+  // TODO: add pin.
   return [];
 };

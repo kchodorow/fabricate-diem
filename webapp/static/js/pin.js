@@ -1,9 +1,10 @@
-/* global THREE */
+/* global THREE, Ammo */
 goog.provide('diem.Pin');
 
 goog.require('diem.MeshWrapper');
 goog.require('diem.Physics');
 goog.require('diem.tools.Delete');
+goog.require('diem.tools.DragPiece');
 
 /**
  * @param {number} index The vertex's index that the pin is through
@@ -34,7 +35,10 @@ diem.Pin.PINS = 0;
  * @override
  */
 diem.Pin.prototype.getIntersectables = function() {
-  return [diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this)];
+  return [
+    diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this),
+    diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this)
+  ];
 };
 
 /**
@@ -56,6 +60,26 @@ diem.Pin.prototype.setIndex = function(idx) {
  */
 diem.Pin.prototype.rigidBody = function() {
   return this.rigidBody_;
+};
+
+diem.Pin.prototype.drag3dStart = function() {
+  return [];
+};
+
+/**
+ * Set one vertex to the current mouse posisiton.
+ * @returns {Array}
+ */
+diem.Pin.prototype.drag3d = function() {
+  var mousePos = new THREE.Vector3().copy(diem.Globals.mouse);
+  this.rigidBody_.getWorldTransform().setOrigin(
+    new Ammo.btVector3(mousePos.x, mousePos.y, 0));
+  this.mesh_.position = mousePos;
+  return [];
+};
+
+diem.Pin.prototype.drag3dEnd = function() {
+  return [];
 };
 
 /**

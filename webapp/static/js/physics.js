@@ -46,25 +46,3 @@ diem.Physics.prototype.update = function() {
 diem.Physics.prototype.getWorld = function() {
   return this.physicsWorld;
 };
-
-/**
- * Adds the mouse as a "rigid body" so the fabric can be attached to it.
- * @returns {Ammo.btRigidBody}
- */
-diem.Physics.prototype.addMouseBody = function() {
-  var mouseShape = new Ammo.btSphereShape(.1);
-  var transform = new Ammo.btTransform();
-  transform.setOrigin(new Ammo.btVector3(
-    diem.Globals.mouse.x, diem.Globals.mouse.y, 0));
-  transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
-  var mouseMotionState = new Ammo.btDefaultMotionState(transform);
-  var inertia = new Ammo.btVector3(0, 0, 0);
-  var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
-    0,  // mass
-    mouseMotionState,
-    mouseShape,
-    inertia);
-  var mouseRigidBody = new Ammo.btRigidBody(mouseBodyInfo);
-  diem.Physics.get().getWorld().addRigidBody(mouseRigidBody);
-  return mouseRigidBody;
-};
