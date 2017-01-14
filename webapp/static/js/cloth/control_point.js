@@ -3,6 +3,7 @@ goog.provide('diem.cloth.ControlPoint');
 
 goog.require('diem.events');
 goog.require('diem.tools.AnchorPoint');
+goog.require('diem.tools.Delete');
 
 /**
  * @constructor
@@ -49,8 +50,10 @@ diem.cloth.ControlPoint.prototype.getMeshes = function() {
  * @override
  */
 diem.cloth.ControlPoint.prototype.getIntersectables = function() {
-  return [diem.tools.AnchorPoint.createIntersectable(
-    diem.events.DRAGGABLE, this)];
+  return [
+    diem.tools.AnchorPoint.createIntersectable(diem.events.DRAGGABLE, this),
+    diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this),
+  ];
 };
 
 /**
@@ -59,6 +62,16 @@ diem.cloth.ControlPoint.prototype.getIntersectables = function() {
  */
 diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable) {
   this.independentlyDraggable = draggable;
+};
+
+/**
+ * This doesn't actually delete the CP, but it resets it to the position of the
+ * anchor point.
+ */
+diem.cloth.ControlPoint.prototype.delete = function() {
+  this.mesh_.position.copy(this.anchor_.position);
+  diem.cloth.ControlPoint.updateWorkboardGeometry(this.mesh_.parent);
+  return [];
 };
 
 /**

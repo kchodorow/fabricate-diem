@@ -2,7 +2,7 @@
 // Please do not edit.
 goog.addDependency('../../../../js/button.js', ['diem.Button'], [], false);
 goog.addDependency('../../../../js/cloth/anchor.js', ['diem.cloth.Anchor'], ['diem.Globals', 'diem.MeshWrapper', 'diem.cloth.ControlPoint', 'diem.events', 'diem.tools.AnchorPoint', 'diem.tools.RemoveAnchorPoint'], false);
-goog.addDependency('../../../../js/cloth/control_point.js', ['diem.cloth.ControlPoint'], ['diem.events', 'diem.tools.AnchorPoint'], false);
+goog.addDependency('../../../../js/cloth/control_point.js', ['diem.cloth.ControlPoint'], ['diem.events', 'diem.tools.AnchorPoint', 'diem.tools.Delete'], false);
 goog.addDependency('../../../../js/cloth/edge.js', ['diem.cloth.Edge'], ['diem.Globals', 'diem.MeshWrapper', 'diem.cloth.Anchor', 'diem.cloth.ControlPoint', 'diem.events', 'diem.tools.AddAnchorPoint', 'goog.asserts'], false);
 goog.addDependency('../../../../js/cloth/geometry_mapper.js', ['diem.cloth.GeometryMapper'], ['diem.cloth.QueryableQuadTree', 'goog.asserts'], false);
 goog.addDependency('../../../../js/cloth/link_tracker.js', ['diem.cloth.LinkTracker'], [], false);
