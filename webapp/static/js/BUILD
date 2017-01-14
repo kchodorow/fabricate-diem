@@ -111,6 +111,7 @@ closure_js_library(
         ":mesh-wrapper",
         ":physics",
         "//webapp/static/js/tools:delete",
+        "//webapp/static/js/tools:drag-piece",
     ],
 )
 

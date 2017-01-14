@@ -67,6 +67,7 @@ diem.cloth.ControlPoint.prototype.setIndependentlyDraggable = function(draggable
 /**
  * This doesn't actually delete the CP, but it resets it to the position of the
  * anchor point.
+ * @returns {Array}
  */
 diem.cloth.ControlPoint.prototype.delete = function() {
   this.mesh_.position.copy(this.anchor_.position);

@@ -45,6 +45,7 @@ closure_js_library(
         "//webapp/static/js/events",
         "//webapp/static/js/storage",
         "//webapp/static/js/tools:anchor-point",
+        "//webapp/static/js/tools:delete",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

@@ -272,6 +272,7 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
   }
   goog.asserts.assert(this.handle_ != -1);
   this.currentPin_ = this.addPin_(this.handle_, diem.Globals.mouse);
+  this.currentPin_.addToParent(this.mesh_.parent);
   return this.currentPin_.getIntersectables();
 };
 
@@ -329,7 +330,6 @@ diem.cloth.PhysicalPiece.prototype.addPin_ = function(index, position) {
     pin.index(), pinBody, false, influence);
   pin.rigidBody().getWorldTransform().setOrigin(
     new Ammo.btVector3(position.x, position.y, position.z));
-  pin.addToParent(this.mesh_.parent);
   return pin;
 };
 

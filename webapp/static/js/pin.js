@@ -62,6 +62,9 @@ diem.Pin.prototype.rigidBody = function() {
   return this.rigidBody_;
 };
 
+/**
+ * @returns {Array}
+ */
 diem.Pin.prototype.drag3dStart = function() {
   return [];
 };
@@ -78,6 +81,9 @@ diem.Pin.prototype.drag3d = function() {
   return [];
 };
 
+/**
+ * @returns {Array}
+ */
 diem.Pin.prototype.drag3dEnd = function() {
   return [];
 };
