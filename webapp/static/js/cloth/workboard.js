@@ -31,6 +31,7 @@ diem.cloth.Workboard = function() {
   this.shape_ = new THREE.Shape();
   this.anchors_ = [];
   this.fabric_ = null;
+  this.palette_ = null;
 
   // The physical piece currently being dragged.
   this.currentPiece_ = null;
@@ -252,13 +253,20 @@ diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
  * @returns {array}
  */
 diem.cloth.Workboard.prototype.chooseFabric = function(event) {
+  if (this.palette_ != null) {
+    this.palette_.dispose();
+    this.palette_ = null;
+  }
+  var workboard = this;
   var palette = new goog.ui.HsvaPalette();
+  this.palette_ = palette;
   var material = this.fabric_.getMaterial();
   goog.events.listen(
     palette, goog.ui.Component.EventType.ACTION,
     function(e) {
       material.color.setStyle(e.target.color);
       palette.dispose();
+      workboard.palette_ = null;
     }
   );
   palette.render();

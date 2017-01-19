@@ -80,8 +80,6 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   var distance = -this.camera_.position.z / dir.z;
   diem.Globals.mouse = this.camera_.position.clone().add(dir.multiplyScalar(distance));
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
-  diem.Globals.clientX = x;
-  diem.Globals.clientY = y;
 };
 
 /**
@@ -105,7 +103,8 @@ diem.EventHandler.prototype.getIntersections_ = function(x, y, intersectables) {
 diem.EventHandler.prototype.dragStart = function(dragEvent) {
   var tool = this.toolManager_.getTool();
   var intersects = this.getIntersections_(
-    dragEvent.clientX, dragEvent.clientY,
+    dragEvent.clientX + window.scrollX,
+    dragEvent.clientY + window.scrollY,
     tool.getIntersectable(diem.events.DRAGGABLE));
   if (intersects.length == 0) {
     return;
@@ -121,8 +120,8 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
  */
 diem.EventHandler.prototype.dragAction = function() {
   if (this.clicked_ != null) {
-    var x = this.dragger_.clientX;
-    var y = this.dragger_.clientY;
+    var x = this.dragger_.clientX + window.scrollX;
+    var y = this.dragger_.clientY + window.scrollY;
     this.updateMouseCoordinates_(x, y);
     this.toolManager_.getTool().onDrag(this.clicked_);
   }
@@ -146,7 +145,8 @@ diem.EventHandler.prototype.dragEnd = function() {
 diem.EventHandler.prototype.handleClick = function(event) {
   var tool = this.toolManager_.getTool();
   var intersects = this.getIntersections_(
-    event.clientX, event.clientY,
+    event.clientX + window.scrollX,
+    event.clientY + window.scrollY,
     tool.getIntersectable(diem.events.CLICKABLE));
   if (intersects.length == 0) {
     return;
