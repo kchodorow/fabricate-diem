@@ -6,6 +6,7 @@ goog.require('diem.MeshWrapper');
 goog.require('diem.cloth.Anchor');
 goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
+goog.require('diem.storage.Anchor');
 goog.require('diem.tools.AddAnchorPoint');
 
 goog.require('goog.asserts');
@@ -106,7 +107,8 @@ diem.cloth.Edge.prototype.onClick = function(intersects) {
   // Create a new anchor point where the mouse is.
   var workboardMesh = this.mesh_.parent;
   var oldEndAnchor = this.endAnchor_;
-  var newAnchor = new diem.cloth.Anchor(diem.Globals.mouse);
+  var newAnchor = new diem.cloth.Anchor(
+    diem.storage.Anchor.fromVector(diem.Globals.mouse));
   this.replaceEndAnchor(newAnchor);
   newAnchor.addToParent(workboardMesh);
 

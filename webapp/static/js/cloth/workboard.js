@@ -54,7 +54,10 @@ diem.cloth.Workboard.createNew = function(w, h) {
     diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, 0)),
     diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, 0))];
   var edges = diem.storage.Edge.fromAnchors(anchors);
-  var material = {color : diem.Fabric.getRandomColor(), side : THREE.DoubleSide};
+  var material = {
+    color: diem.Fabric.getRandomColor(),
+    side: THREE.DoubleSide
+  };
   workboard.initMeshes_({
     anchors : anchors,
     edges : edges,

@@ -28,39 +28,14 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.originalPosition_ = new THREE.Vector3().copy(piece.position);
 
   var geometry = this.createGeometry_(piece.geometry);
-  var clothMaterial = new THREE.MeshLambertMaterial({
-    color: piece.material.color,
-    side: THREE.DoubleSide
-  });
+  var clothMaterial = piece.material;
   this.mesh_ = new THREE.Mesh(geometry, clothMaterial);
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
 
-  this.ammoVertices_ = new Float32Array(geometry.vertices.length * 3);
-  this.ammoIndices_ = new Uint16Array(geometry.faces.length * 3);
-
-  var helper = new Ammo.btSoftBodyHelpers();
-  this.createAmmoArrays_();
-  var softBody = helper.CreateFromTriMesh(
-    diem.Physics.get().getWorld().getWorldInfo(),
-    this.ammoVertices_,
-    this.ammoIndices_,
-    this.ammoIndices_.length / 3,
-    true);
-  softBody.setTotalMass(0.9, false);
-  // Disable deactivation
-  softBody.setActivationState(4);
-
-  var sbConfig = softBody.get_m_cfg();
-  sbConfig.set_viterations(10);
-  sbConfig.set_piterations(10);
-  // Set damping and drag coefficients.
-  sbConfig.set_kDP(.001);
-  sbConfig.set_kDG(.001);
-
-  this.geometryMapper_ = new diem.cloth.GeometryMapper(softBody);
-  diem.Physics.get().getWorld().addSoftBody(softBody);
-  this.mesh_.userData.physicsBody = softBody;
+  this.createSoftBody_();
+  this.geometryMapper_ = new diem.cloth.GeometryMapper(
+    this.mesh_.userData.physicsBody);
 };
 
 goog.inherits(diem.cloth.PhysicalPiece, diem.MeshWrapper);
@@ -107,49 +82,76 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
+  this.geometryMapper_.storePositions();
+
   var vertices = this.mesh_.geometry.vertices;
   var softBody = this.mesh_.userData.physicsBody;
   var nodes = softBody.get_m_nodes();
   if (vertices.length != nodes.size()) {
-    // TODO: actually regen the physics shape when this happens.
-    goog.asserts.fail(
-      "Number of veritces changed from " + nodes.size() + " to " + vertices.length);
+    this.createSoftBody_();
+    softBody = this.mesh_.userData.physicsBody;
+    nodes = softBody.get_m_nodes();
+  } else {
+    var jitter = .01;
+    for (var i = 0; i < nodes.size(); i++) {
+      var node = nodes.at(i);
+      var pos = node.get_m_x();
+      pos.setX(vertices[i].x);
+      pos.setY(vertices[i].y);
+      pos.setZ(jitter);
+      jitter *= -1;
+    }
+
+    var linker = new diem.cloth.LinkTracker(softBody);
+    var faces = this.mesh_.geometry.faces;
+    var ammoFaces = softBody.get_m_faces();
+    for (i = 0; i < faces.length; ++i) {
+      var f = faces[i];
+      linker.connect(f.c, f.a);
+      linker.connect(f.a, f.b);
+      linker.connect(f.b, f.c);
+      var ammoFace = ammoFaces.at(i);
+      ammoFace.set_m_n(0, nodes.at(f.a));
+      ammoFace.set_m_n(1, nodes.at(f.b));
+      ammoFace.set_m_n(2, nodes.at(f.c));
+    }
+
+    softBody.resetLinkRestLengths();
   }
-
-  this.geometryMapper_.storePositions();
-
-  var jitter = .01;
-  for (var i = 0; i < nodes.size(); i++) {
-    var node = nodes.at(i);
-    var pos = node.get_m_x();
-    pos.setX(vertices[i].x);
-    pos.setY(vertices[i].y);
-    pos.setZ(jitter);
-    jitter *= -1;
-  }
-
-  var linker = new diem.cloth.LinkTracker(softBody);
-  var faces = this.mesh_.geometry.faces;
-  var ammoFaces = softBody.get_m_faces();
-  for (i = 0; i < faces.length; ++i) {
-    var f = faces[i];
-    linker.connect(f.c, f.a);
-    linker.connect(f.a, f.b);
-    linker.connect(f.b, f.c);
-    var ammoFace = ammoFaces.at(i);
-    ammoFace.set_m_n(0, nodes.at(f.a));
-    ammoFace.set_m_n(1, nodes.at(f.b));
-    ammoFace.set_m_n(2, nodes.at(f.c));
-  }
-
-  softBody.resetLinkRestLengths();
 
   this.geometryMapper_.flipPositions();
+};
 
-  for (i = 0; i < nodes.size(); ++i) {
-    node = nodes.at(i);
-    pos = node.get_m_x();
+/**
+ * Create a soft body from this mesh's THREE geometry.
+ * @returns {Ammo.btSoftBody}
+ * @private
+ */
+diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
+  var ammoArrays = this.createAmmoArrays_();
+  var helper = new Ammo.btSoftBodyHelpers();
+  var softBody = helper.CreateFromTriMesh(
+    diem.Physics.get().getWorld().getWorldInfo(),
+    ammoArrays.vertices,
+    ammoArrays.indices,
+    ammoArrays.indices.length / 3,
+    true);
+  softBody.setTotalMass(0.9, false);
+  // Disable deactivation
+  softBody.setActivationState(4);
+
+  var sbConfig = softBody.get_m_cfg();
+  sbConfig.set_viterations(10);
+  sbConfig.set_piterations(10);
+  // Set damping and drag coefficients.
+  sbConfig.set_kDP(.001);
+  sbConfig.set_kDG(.001);
+
+  if (this.mesh_.userData.physicsBody != null) {
+    diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
   }
+  diem.Physics.get().getWorld().addSoftBody(softBody);
+  this.mesh_.userData.physicsBody = softBody;
 };
 
 /**
@@ -170,31 +172,37 @@ diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
 
 /**
  * Initialize position and index arrays from this.mesh_.geometry.
+ * @returns {object}
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
   var numVertices = this.mesh_.geometry.vertices.length;
   var numFaces = this.mesh_.geometry.faces.length;
+  var ammoArrays = {
+    vertices : new Float32Array(numVertices * 3),
+    indices : new Uint16Array(numFaces * 3)
+  };
 
   var jitter = .01;
   for (var i = 0; i < numVertices; i++) {
     var p = this.mesh_.geometry.vertices[i];
     var i3 = i * 3;
 
-    this.ammoVertices_[i3] = p.x;
-    this.ammoVertices_[i3 + 1] = p.y;
+    ammoArrays.vertices[i3] = p.x;
+    ammoArrays.vertices[i3 + 1] = p.y;
     // Offset z slightly, so the cloth isn't stuck on the plane.
-    this.ammoVertices_[i3 + 2] = jitter;
+    ammoArrays.vertices[i3 + 2] = jitter;
     jitter *= -1;
   }
 
   for (i = 0; i < numFaces; ++i) {
     var f = this.mesh_.geometry.faces[i];
     i3 = i * 3;
-    this.ammoIndices_[i3] = f.a;
-    this.ammoIndices_[i3 + 1] = f.b;
-    this.ammoIndices_[i3 + 2] = f.c;
+    ammoArrays.indices[i3] = f.a;
+    ammoArrays.indices[i3 + 1] = f.b;
+    ammoArrays.indices[i3 + 2] = f.c;
   }
+  return ammoArrays;
 };
 
 /**
@@ -354,6 +362,7 @@ diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
  */
 diem.cloth.PhysicalPiece.prototype.delete = function() {
   diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
+  this.mesh_.userData.physicsBody = null;
   this.mesh_.parent.remove(this.mesh_);
   // Remove from 2D pattern's array.
   var twoD = this.workboardMesh_;

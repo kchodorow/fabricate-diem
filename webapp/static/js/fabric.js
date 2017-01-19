@@ -12,7 +12,7 @@ diem.Fabric = function(storageFabric) {
   this.mass_ = .1;
   this.gravity_ = new THREE.Vector3(
     0, - diem.Fabric.GRAVITY, 0).multiplyScalar(this.mass_);
-  this.material_ = new THREE.MeshBasicMaterial(storageFabric.material);
+  this.material_ = new THREE.MeshLambertMaterial(storageFabric.material);
 };
 
 /**
