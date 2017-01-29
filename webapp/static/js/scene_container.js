@@ -70,9 +70,7 @@ diem.SceneContainer = function() {
   ground.addToParent(this.scene);
   this.drawAxes_();
   this.initLights_();
-  var person = new diem.Person(
-    this.scene,
-    goog.bind(this.toolManager_.handleIntersectables, this.toolManager_));
+  var person = new diem.Person(this.scene);
   this.toolManager_.registerTool(
     new diem.tools.PersonTool(person, [
       goog.events.KeyCodes.LEFT,

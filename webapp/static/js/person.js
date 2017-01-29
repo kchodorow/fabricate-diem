@@ -14,24 +14,31 @@ goog.require('diem.tools.DragPiece');
  * @constructor
  * @extends {diem.MeshWrapper}
  */
-diem.Person = function(scene, register) {
+diem.Person = function(scene) {
   goog.base(this);
-  var material = new THREE.MeshLambertMaterial({color: 0xffffff});
+  this.scene_ = scene;
 
   var loader = new THREE.BufferGeometryLoader();
-  var tmp = this;
-  loader.load(
-    '/assets/dressform.json',
-    function(geometry) {
-      var person = new THREE.Mesh(geometry, material);
-      tmp.mesh_ = person;
-      tmp.addToParent(scene);
-      register(tmp.getIntersectables());
-      tmp._addPhysics(scene);
-    });
+  loader.load('/assets/dressform.json', goog.bind(this.onModelLoad_, this));
 };
 
 goog.inherits(diem.Person, diem.MeshWrapper);
+
+diem.Person.POSITION = new THREE.Vector3(-20, 5, 0);
+
+/**
+ * @private
+ */
+diem.Person.prototype.onModelLoad_ = function(geometry) {
+  var material = new THREE.MeshLambertMaterial({color: 0xffffff});
+  var person = new THREE.Mesh(geometry, material);
+  this.mesh_ = person;
+  this.mesh_.position.set(
+    diem.Person.POSITION.x, diem.Person.POSITION.y, diem.Person.POSITION.z);
+  this.mesh_.rotation.y = THREE.Math.degToRad(45);
+  this.addToParent(this.scene_);
+  this._addPhysics();
+};
 
 /**
  * @override
@@ -41,16 +48,16 @@ diem.Person.prototype.move = function(dir) {
   switch (dir[0]) {
   case goog.events.KeyCodes.LEFT:
     goog.asserts.assert(modified);
-    this.mesh_.rotateZ(-.1);
+    this.mesh_.rotateY(-.1);
     break;
   case goog.events.KeyCodes.RIGHT:
     goog.asserts.assert(modified);
-    this.mesh_.rotateZ(.1);
+    this.mesh_.rotateY(.1);
     break;
   }
 
   // Update physics.
-  this.physicalBody_.setWorldTransform(this.getTransform_());
+  this.mesh_.userData.physicsBody.setWorldTransform(this.getTransform_());
 };
 
 /**
@@ -70,10 +77,9 @@ diem.Person.prototype.getTransform_ = function() {
 };
 
 /**
- * @param {THREE.Scene} scene
  * @private
  */
-diem.Person.prototype._addPhysics = function(scene) {
+diem.Person.prototype._addPhysics = function() {
   var bodyMotionState = new Ammo.btDefaultMotionState(
     this.getTransform_());
   var bodyShape = new Ammo.btConvexHullShape();
@@ -89,21 +95,4 @@ diem.Person.prototype._addPhysics = function(scene) {
   this.mesh_.userData.physicsBody = new Ammo.btRigidBody(bodyInfo);
 
   diem.Physics.get().getWorld().addRigidBody(this.mesh_.userData.physicsBody);
-};
-
-/**
- * @override
- */
-diem.Person.prototype.getIntersectables = function() {
-  return [diem.tools.DragPiece.createIntersectable(
-      diem.events.CLICKABLE, this)];
-};
-
-/**
- * @param {Object} intersection
- * @returns {Array}
- */
-diem.Person.prototype.onClick = function(intersection) {
-  // TODO: add pin.
-  return [];
 };
