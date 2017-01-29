@@ -21,8 +21,7 @@ diem.Pin = function(position, piece) {
   var geometry = new THREE.CircleGeometry(.2, 8);
   var material = new THREE.MeshBasicMaterial({color : 0x000000});
   this.mesh_ = new THREE.Mesh(geometry, material);
-  var position = this.rigidBody_.getWorldTransform().getOrigin();
-  this.mesh_.position.set(position.x(), position.y(), position.z());
+  this.mesh_.position.set(position.x, position.y, position.z);
   this.mesh_.name = "pin" + diem.Pin.PINS++;
 };
 

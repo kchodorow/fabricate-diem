@@ -3,6 +3,7 @@ goog.provide('diem.SceneContainer');
 
 goog.require('diem.EventHandler');
 goog.require('diem.Globals');
+goog.require('diem.Ground');
 goog.require('diem.Person');
 goog.require('diem.Physics');
 goog.require('diem.cloth.PhysicalPiece');
@@ -65,6 +66,8 @@ diem.SceneContainer = function() {
       goog.events.KeyCodes.DOWN,
       goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT]));
 
+  var ground = new diem.Ground();
+  ground.addToParent(this.scene);
   this.drawAxes_();
   this.initLights_();
   var person = new diem.Person(
