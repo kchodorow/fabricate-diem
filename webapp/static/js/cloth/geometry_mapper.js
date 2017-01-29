@@ -9,15 +9,11 @@ goog.require('goog.asserts');
  * @constructor
  */
 diem.cloth.GeometryMapper = function(softBody) {
-  this.softBody_ = softBody;
-  this.numNodes_ = softBody.get_m_nodes().size();
-  this.oldPositions_ = new Array(this.numNodes_);
-  this.oldNormals_ = new Array(this.numNodes_);
-  for (var i = 0; i < this.oldPositions_.length; ++i) {
-    this.oldPositions_[i] = new THREE.Vector3();
-    this.oldNormals_[i] = new THREE.Vector3();
-  }
+  this.softBody_ = null;
+  this.oldPositions_ = null;
+  this.oldNormals_ = null;
   this.quadTree_ = this.setupQuadTree_(softBody);
+  this.setupSoftBody_(softBody);
 };
 
 /**
@@ -52,12 +48,12 @@ diem.cloth.GeometryMapper.prototype.storePositions = function() {
  * rep, then find the "average" 3D point in the old soft body and make that the
  * coordinates of point 123's physical representation.
  */
-diem.cloth.GeometryMapper.prototype.flipPositions = function() {
+diem.cloth.GeometryMapper.prototype.flipPositions = function(newSoftBody) {
   // Store the new geometry, since we want a "pristine" copy of the node
   // positions for the next flip and this will modify all of them to match the
   // previous geometry's positions.
-  var quadTree = this.setupQuadTree_();
-  var new2DNodes = this.softBody_.get_m_nodes();
+  var quadTree = this.setupQuadTree_(newSoftBody);
+  var new2DNodes = newSoftBody.get_m_nodes();
   for (var i = 0; i < new2DNodes.size(); ++i) {
     var new2DNode = new2DNodes.at(i);
     var old3DNode = this.getEquivalentNode_(new2DNode, i);
@@ -74,6 +70,7 @@ diem.cloth.GeometryMapper.prototype.flipPositions = function() {
   }
 
   this.quadTree_ = quadTree;
+  this.setupSoftBody_(newSoftBody);
 };
 
 /**
@@ -147,15 +144,30 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   return {position : retPos, normal : retNormal};
 };
 
+diem.cloth.GeometryMapper.prototype.setupSoftBody_ = function(softBody) {
+  if (this.softBody_ == softBody) {
+    return;
+  }
+  this.softBody_ = softBody;
+  var numNodes = softBody.get_m_nodes().size();
+  this.oldPositions_ = new Array(numNodes);
+  this.oldNormals_ = new Array(numNodes);
+  for (var i = 0; i < this.oldPositions_.length; ++i) {
+    this.oldPositions_[i] = new THREE.Vector3();
+    this.oldNormals_[i] = new THREE.Vector3();
+  }
+};
+
 /**
+ * Creates a QuadTree of 2D workboard coordinates to node index.
  * @returns {diem.cloth.QueryableQuadTree}
  * @private
  */
-diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function() {
+diem.cloth.GeometryMapper.prototype.setupQuadTree_ = function(softBody) {
   // Recreate quad tree each time so that there are no "dead" quadrants where
   // all the points have been removed.
   var quadTree = new diem.cloth.QueryableQuadTree(-100, -100, 100, 100);
-  var nodes = this.softBody_.get_m_nodes();
+  var nodes = softBody.get_m_nodes();
   for (var i = 0; i < nodes.size(); ++i) {
     var node = nodes.at(i);
     var pos = node.get_m_x();

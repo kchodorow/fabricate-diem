@@ -119,7 +119,7 @@ diem.cloth.PhysicalPiece.prototype.updateSoftBody_ = function() {
     softBody.resetLinkRestLengths();
   }
 
-  this.geometryMapper_.flipPositions();
+  this.geometryMapper_.flipPositions(softBody);
 };
 
 /**
