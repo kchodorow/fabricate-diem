@@ -148,8 +148,14 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
 
   if (this.mesh_.userData.physicsBody != null) {
     diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
+    this.mesh_.userData.physicsBody = null;
   }
-  diem.Physics.get().getWorld().addSoftBody(softBody);
+  // These flags are _critically important_, otherwise the soft body won't
+  // collide with rigid bodies. According to the documentation these are the
+  // defaults (at least for the 3-arg ctor), but apparently not for the 1-arg.
+  var filter = 1;
+  var mask = -1;
+  diem.Physics.get().getWorld().addSoftBody(softBody, filter, mask);
   this.mesh_.userData.physicsBody = softBody;
 };
 
