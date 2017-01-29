@@ -72,9 +72,7 @@ diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
     var pin = this.pinned_[i];
     var newIndex = this.geometryMapper_.getEquivalentIndex(
       pin.getObject().position);
-    pin.setIndex(newIndex);
-    this.mesh_.userData.physicsBody.appendAnchor(
-      pin.index(), pin.rigidBody(), false, 1);
+    pin.appendAnchor(newIndex);
   }
 };
 
@@ -321,23 +319,19 @@ diem.cloth.PhysicalPiece.prototype.addPin_ = function(index, position) {
   var transform = new Ammo.btTransform();
   transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
   transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
-  var mouseMotionState = new Ammo.btDefaultMotionState(transform);
+  var pinMotionState = new Ammo.btDefaultMotionState(transform);
   var inertia = new Ammo.btVector3(0, 0, 0);
   var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
     0,  // mass
-    mouseMotionState,
+    pinMotionState,
     pinShape,
     inertia);
   var pinBody = new Ammo.btRigidBody(mouseBodyInfo);
   diem.Physics.get().getWorld().addRigidBody(pinBody);
 
-  var pin = new diem.Pin(index, pinBody, this);
+  var pin = new diem.Pin(pinBody, this);
+  pin.appendAnchor(index);
   this.pinned_.push(pin);
-  var influence = 1;
-  this.mesh_.userData.physicsBody.appendAnchor(
-    pin.index(), pinBody, false, influence);
-  pin.rigidBody().getWorldTransform().setOrigin(
-    new Ammo.btVector3(position.x, position.y, position.z));
   return pin;
 };
 
@@ -352,8 +346,7 @@ diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
   var pins = this.mesh_.userData.physicsBody.get_m_anchors();
   pins.resize(0);
   for (var i = 0; i < this.pinned_.length; ++i) {
-    this.mesh_.userData.physicsBody.appendAnchor(
-      this.pinned_[i].index(), this.pinned_[i].rigidBody(), false, 1);
+    this.pinned_[i].appendAnchor(this.pinned_[i].index());
   }
 };
 

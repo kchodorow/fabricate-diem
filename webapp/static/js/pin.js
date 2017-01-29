@@ -7,15 +7,14 @@ goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 
 /**
- * @param {number} index The vertex's index that the pin is through
  * @param {Ammo.btRigidBody} rigidBody The fixed point representing the mouse.
  * @param {diem.cloth.PhysicalPiece} piece
  * @extends {diem.MeshWrapper}
  * @constructor
  */
-diem.Pin = function(index, rigidBody, piece) {
+diem.Pin = function(rigidBody, piece) {
   goog.base(this);
-  this.index_ = index;
+  this.index_ = 0;
   this.rigidBody_ = rigidBody;
   this.piece_ = piece;
 
@@ -42,17 +41,24 @@ diem.Pin.prototype.getIntersectables = function() {
 };
 
 /**
+ * @param {number} index The vertex's index that the pin is through
+ */
+diem.Pin.prototype.appendAnchor = function(index) {
+  this.index_ = index;
+  var disableCollisionBetweenLinkedBodies = false;
+  var influence = 1;
+  this.piece_.getObject().userData.physicsBody.appendAnchor(
+    this.index_,
+    this.rigidBody_,
+    disableCollisionBetweenLinkedBodies,
+    influence);
+};
+
+/**
  * @returns {number}
  */
 diem.Pin.prototype.index = function() {
   return this.index_;
-};
-
-/**
- * @param {number} idx
- */
-diem.Pin.prototype.setIndex = function(idx) {
-  this.index_ = idx;
 };
 
 /**
