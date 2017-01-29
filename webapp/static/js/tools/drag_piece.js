@@ -51,9 +51,7 @@ diem.tools.DragPiece.createIntersectable = function(action, meshWrapper) {
  * @override
  */
 diem.tools.DragPiece.prototype.onDragStart = function(meshWrapper) {
-  var new3d = meshWrapper.drag3dStart();
-  this.selected_ = new3d[0];
-  return new3d;
+  return meshWrapper.drag3dStart();
 };
 
 /**

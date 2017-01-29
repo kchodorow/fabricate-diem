@@ -32,6 +32,7 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.mesh_ = new THREE.Mesh(geometry, clothMaterial);
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
+  this.mesh_.name = "pp" + diem.cloth.PhysicalPiece.pieces_.length;
 
   this.createSoftBody_();
   this.geometryMapper_ = new diem.cloth.GeometryMapper(
@@ -277,6 +278,16 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
     }
   }
   goog.asserts.assert(this.handle_ != -1);
+
+  // Bullet doesn't seem to like 2 pins on the same node, so reuse an old pin if
+  // there's already one at handle_.
+  // TODO: figure out what's going on.
+  for (i = 0; i < this.pinned_.length; ++i) {
+    if (this.pinned_[i].index() == this.handle_) {
+      this.currentPin_ = this.pinned_[i];
+      return [];
+    }
+  }
   this.currentPin_ = this.addPin_(this.handle_, diem.Globals.mouse);
   this.currentPin_.addToParent(this.mesh_.parent);
   return this.currentPin_.getIntersectables();
@@ -295,7 +306,6 @@ diem.cloth.PhysicalPiece.prototype.drag3d = function() {
  */
 diem.cloth.PhysicalPiece.prototype.drag3dEnd = function() {
   goog.asserts.assert(this.handle_ != -1);
-  var pin = this.currentPin_;
   this.handle_ = null;
   this.currentPin_ = null;
   return [];
@@ -315,21 +325,7 @@ diem.cloth.PhysicalPiece.prototype.pins = function() {
  * @private
  */
 diem.cloth.PhysicalPiece.prototype.addPin_ = function(index, position) {
-  var pinShape = new Ammo.btSphereShape(.1);
-  var transform = new Ammo.btTransform();
-  transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-  transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
-  var pinMotionState = new Ammo.btDefaultMotionState(transform);
-  var inertia = new Ammo.btVector3(0, 0, 0);
-  var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
-    0,  // mass
-    pinMotionState,
-    pinShape,
-    inertia);
-  var pinBody = new Ammo.btRigidBody(mouseBodyInfo);
-  diem.Physics.get().getWorld().addRigidBody(pinBody);
-
-  var pin = new diem.Pin(pinBody, this);
+  var pin = new diem.Pin(position, this);
   pin.appendAnchor(index);
   this.pinned_.push(pin);
   return pin;

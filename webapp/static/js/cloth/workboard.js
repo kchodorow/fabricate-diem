@@ -226,10 +226,10 @@ diem.cloth.Workboard.prototype.move = function() {
 diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
   physicalPiece.addToParent(this.mesh_.parent);
-  physicalPiece.drag3dStart();
+  var pinIntersectables = physicalPiece.drag3dStart();
   this.currentPiece_ = physicalPiece;
   this.mesh_.userData.physicalPieces.push(physicalPiece);
-  return physicalPiece.getIntersectables();
+  return pinIntersectables.concat(physicalPiece.getIntersectables());
 };
 
 /**

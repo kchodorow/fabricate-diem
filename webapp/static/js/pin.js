@@ -12,10 +12,10 @@ goog.require('diem.tools.DragPiece');
  * @extends {diem.MeshWrapper}
  * @constructor
  */
-diem.Pin = function(rigidBody, piece) {
+diem.Pin = function(position, piece) {
   goog.base(this);
   this.index_ = 0;
-  this.rigidBody_ = rigidBody;
+  this.rigidBody_ = this.createBody_(position);
   this.piece_ = piece;
 
   var geometry = new THREE.CircleGeometry(.2, 8);
@@ -29,6 +29,29 @@ diem.Pin = function(rigidBody, piece) {
 goog.inherits(diem.Pin, diem.MeshWrapper);
 
 diem.Pin.PINS = 0;
+
+/**
+ * @param {THREE.Vector3} position
+ * @private
+ * @returns {Ammo.btRigidBody}
+ */
+diem.Pin.prototype.createBody_ = function(position) {
+  var pinShape = new Ammo.btSphereShape(.1);
+  var transform = new Ammo.btTransform();
+  transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
+  transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
+  var pinMotionState = new Ammo.btDefaultMotionState(transform);
+  var inertia = new Ammo.btVector3(0, 0, 0);
+  var mass = 0;
+  var mouseBodyInfo = new Ammo.btRigidBodyConstructionInfo(
+    mass,
+    pinMotionState,
+    pinShape,
+    inertia);
+  var pinBody = new Ammo.btRigidBody(mouseBodyInfo);
+  diem.Physics.get().getWorld().addRigidBody(pinBody);
+  return pinBody;
+};
 
 /**
  * @override
