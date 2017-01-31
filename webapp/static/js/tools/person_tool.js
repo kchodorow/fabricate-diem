@@ -33,6 +33,13 @@ diem.tools.PersonTool.prototype.onSelect = function() {
 /**
  * @override
  */
+diem.tools.PersonTool.prototype.stateful = function() {
+  return false;
+};
+
+/**
+ * @override
+ */
 diem.tools.PersonTool.prototype.getKeys = function() {
   return this.dir_;
 };

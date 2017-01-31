@@ -63,6 +63,13 @@ diem.tools.CameraTool.prototype.getKeys = function() {
 };
 
 /**
+ * @override
+ */
+diem.tools.CameraTool.prototype.stateful = function() {
+  return false;
+};
+
+/**
  * @param {THREE.Camera} [camera]
  * @param {number} [opt_x]
  * @param {number} [opt_y]

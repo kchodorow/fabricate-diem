@@ -2,6 +2,7 @@
 
 goog.provide('diem.Pattern');
 
+goog.require('diem.Ruler');
 goog.require('diem.cloth.Workboard');
 
 /**
@@ -11,15 +12,17 @@ diem.Pattern = function() {
   this.pieces_ = [];
 };
 
-diem.Pattern.CLOTH_OFFSET_X = 10;
-diem.Pattern.CLOTH_OFFSET_Y = 8;
+diem.Pattern.CLOTH_OFFSET_X = -10;
+diem.Pattern.CLOTH_OFFSET_Y = 6;
 
 /**
  * Create a new piece of cloth, adds it to the array of pieces, and returns it.
  * @returns {diem.cloth.Workboard}
  */
 diem.Pattern.prototype.addPiece = function() {
-  var cloth = diem.cloth.Workboard.createNew(7, 10);
+  // 1 yard x 1/2 yard.
+  var yard = new diem.Ruler.Inches(36).toThree();
+  var cloth = diem.cloth.Workboard.createNew(yard, yard / 2);
   cloth.getObject().position.set(
     diem.Pattern.CLOTH_OFFSET_X,
     diem.Pattern.CLOTH_OFFSET_Y * this.pieces_.length,
