@@ -153,10 +153,12 @@ diem.SceneContainer.prototype.drawAxes_ = function() {
  * @private
  */
 diem.SceneContainer.prototype.initLights_ = function() {
-  var ambient = new THREE.AmbientLight(0x101030);
+  var ambient = new THREE.AmbientLight(0xffffff);
   this.scene.add(ambient);
-  var directionalLight = new THREE.DirectionalLight(0xffeedd);
-  directionalLight.position.set(0,0,30);
+  // This is required for shadows.
+  var directionalLight = new THREE.DirectionalLight(0xB8AE9C);
+  var pos = this.camera.position;
+  directionalLight.position.set(pos.x, pos.y, pos.z);
   this.scene.add(directionalLight);
 };
 

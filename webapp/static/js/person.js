@@ -24,13 +24,13 @@ diem.Person = function(scene) {
 
 goog.inherits(diem.Person, diem.MeshWrapper);
 
-diem.Person.POSITION = new THREE.Vector3(-20, 5, 0);
+diem.Person.POSITION = new THREE.Vector3(-20, 10, 0);
 
 /**
  * @private
  */
 diem.Person.prototype.onModelLoad_ = function(geometry) {
-  var material = new THREE.MeshLambertMaterial({color: 0xffffff});
+  var material = new THREE.MeshLambertMaterial({color: 0x595241});
   var person = new THREE.Mesh(geometry, material);
   this.mesh_ = person;
   this.mesh_.position.set(
