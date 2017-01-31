@@ -303,8 +303,8 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
  * Set one vertex to the current mouse posisiton.
  * @returns {Array}
  */
-diem.cloth.PhysicalPiece.prototype.drag3d = function() {
-  return this.currentPin_.drag3d();
+diem.cloth.PhysicalPiece.prototype.drag3d = function(personIntersection, camera) {
+  return this.currentPin_.drag3d(personIntersection, camera);
 };
 
 /**

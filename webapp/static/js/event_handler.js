@@ -13,11 +13,12 @@ goog.require('goog.fx.Dragger');
  * @param {diem.tools.ToolManager} toolManager
  * @constructor
  */
-diem.EventHandler = function(camera, toolManager) {
+diem.EventHandler = function(camera, toolManager, person) {
   this.camera_ = camera;
   this.raycaster_ = new THREE.Raycaster();
   this.raycaster_.linePrecision = 1;
   this.toolManager_ = toolManager;
+  this.person_ = person;
 
   this.setupOnClick_();
   this.setupDraggable_();
@@ -122,8 +123,13 @@ diem.EventHandler.prototype.dragAction = function() {
   if (this.clicked_ != null) {
     var x = this.dragger_.clientX + window.scrollX;
     var y = this.dragger_.clientY + window.scrollY;
+    var pintersection = null;
+    var intersects = this.getIntersections_(x, y, [this.person_.getObject()]);
+    if (intersects.length > 0) {
+      pintersection = intersects[0];
+    }
     this.updateMouseCoordinates_(x, y);
-    this.toolManager_.getTool().onDrag(this.clicked_);
+    this.toolManager_.getTool().onDrag(this.clicked_, pintersection);
   }
 };
 

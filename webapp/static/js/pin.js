@@ -28,6 +28,7 @@ diem.Pin = function(position, piece) {
 goog.inherits(diem.Pin, diem.MeshWrapper);
 
 diem.Pin.PINS = 0;
+diem.Pin.EPSILON = .25;
 
 /**
  * @param {THREE.Vector3} position
@@ -101,11 +102,28 @@ diem.Pin.prototype.drag3dStart = function() {
  * Set one vertex to the current mouse posisiton.
  * @returns {Array}
  */
-diem.Pin.prototype.drag3d = function() {
-  var mousePos = new THREE.Vector3().copy(diem.Globals.mouse);
+diem.Pin.prototype.drag3d = function(personIntersection, camera) {
+  var meshPos = null;
+  if (personIntersection != null) {
+    // We could just get the normal of the personIntersection.
+    // Get the position of the camera.
+    var cameraPos = camera.position;
+    // Get the vector from the mouse -> the camera.
+    var cameraToMouse = personIntersection.point.clone().sub(cameraPos);
+    // Normalize.
+    cameraToMouse.normalize();
+    // Reverse.
+    var mouseToCamera = cameraToMouse.multiplyScalar(-1);
+    // Scale to epsilon length.
+    mouseToCamera.multiplyScalar(diem.Pin.EPSILON);
+    // Apply to intersection point.
+    meshPos = personIntersection.point.clone().add(mouseToCamera);
+  } else {
+    meshPos = new THREE.Vector3().copy(diem.Globals.mouse);
+  }
+  this.mesh_.position = meshPos;
   this.rigidBody_.getWorldTransform().setOrigin(
-    new Ammo.btVector3(mousePos.x, mousePos.y, 0));
-  this.mesh_.position = mousePos;
+    new Ammo.btVector3(meshPos.x, meshPos.y, meshPos.z));
   return [];
 };
 

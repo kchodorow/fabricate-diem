@@ -44,7 +44,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.AddPiece(this.scene));
   this.toolManager_.registerTool(new diem.tools.AnchorPoint());
   this.toolManager_.registerTool(new diem.tools.Delete());
-  this.toolManager_.registerTool(new diem.tools.DragPiece());
+  this.toolManager_.registerTool(new diem.tools.DragPiece(this.camera));
   this.toolManager_.registerTool(new diem.tools.FabricTool());
   this.toolManager_.registerTool(new diem.tools.MovePiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
@@ -79,7 +79,7 @@ diem.SceneContainer = function() {
     new diem.tools.PersonTool(person, [
       goog.events.KeyCodes.RIGHT,
       goog.ui.KeyboardShortcutHandler.Modifiers.SHIFT]));
-  this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_);
+  this.eventHandler_ = new diem.EventHandler(this.camera, this.toolManager_, person);
 
   diem.storage.Storage.get().request(goog.bind(this.load, this));
 

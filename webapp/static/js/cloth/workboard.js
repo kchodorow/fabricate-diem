@@ -237,10 +237,10 @@ diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
  * @param {diem.tools.Tool} tool
  * @returns {Array}
  */
-diem.cloth.Workboard.prototype.drag3d = function(tool) {
+diem.cloth.Workboard.prototype.drag3d = function(personIntersection, camera) {
   // We have to delegate this for the initial drag to work, since there's
   // no piece to drag when the drag starts.
-  return this.currentPiece_.drag3d();
+  return this.currentPiece_.drag3d(personIntersection, camera);
 };
 
 /**

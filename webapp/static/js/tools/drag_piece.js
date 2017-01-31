@@ -10,9 +10,10 @@ goog.require('goog.events.KeyCodes');
  * @constructor
  * @extends {diem.tools.Tool}
  */
-diem.tools.DragPiece = function() {
+diem.tools.DragPiece = function(camera) {
   goog.base(this);
   this.name_ = diem.tools.DragPiece.NAME;
+  this.camera_ = camera;
   this.button_ = new diem.Button.builder()
     .setInnerHtml('D')
     .setTooltip('Drag fabric [D]')
@@ -57,8 +58,8 @@ diem.tools.DragPiece.prototype.onDragStart = function(meshWrapper) {
 /**
  * @override
  */
-diem.tools.DragPiece.prototype.onDrag = function(meshWrapper) {
-  return meshWrapper.drag3d();
+diem.tools.DragPiece.prototype.onDrag = function(meshWrapper, personIntersection) {
+  return meshWrapper.drag3d(personIntersection, this.camera_);
 };
 
 /**
