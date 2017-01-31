@@ -138,6 +138,8 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   softBody.setTotalMass(0.9, false);
   // Disable deactivation
   softBody.setActivationState(4);
+  softBody.generateBendingConstraints(2);
+  softBody.randomizeConstraints();
 
   var sbConfig = softBody.get_m_cfg();
   sbConfig.set_viterations(10);
