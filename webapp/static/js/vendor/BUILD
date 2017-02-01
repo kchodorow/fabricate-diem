@@ -1,3 +1,10 @@
+load("//bazel:emscripten.bzl", "idl")
+
+idl(
+    name = "other-ammo",
+    idl = "@ammo//:ammo.idl",
+)
+
 filegroup(
     name = "vendor",
     srcs = [

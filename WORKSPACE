@@ -182,3 +182,28 @@ maven_jar(
     name = "com_google_truth",
     artifact = "com.google.truth:truth:0.30",
 )
+
+new_local_repository(
+    name = "emscripten",
+    path = "/Users/k/emsdk_portable/emscripten/incoming",
+    build_file_content = """
+exports_files([
+    "tools/webidl_binder.py",
+    "emscripten-version.txt",
+])
+py_library(
+    name = "pylib",
+    visibility = ["//visibility:public"],
+    srcs = glob(["**/*.py"]),
+    data = glob(["**/*.pyc"]),
+)
+""",
+)
+
+new_local_repository(
+    name = "ammo",
+    path = "/Users/k/gitroot/ammo.js",
+    build_file_content = """
+exports_files(["ammo.idl"])
+""",
+)
