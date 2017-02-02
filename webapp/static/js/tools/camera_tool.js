@@ -39,14 +39,14 @@ diem.tools.CameraTool.prototype.onSelect = function() {
     break;
   case goog.events.KeyCodes.UP:
     if (modified) {
-      this.camera_.position.setZ(this.camera_.position.z + 1);
+      this.camera_.position.setZ(this.camera_.position.z - 1);
     } else {
       this.camera_.position.setY(this.camera_.position.y + 1);
     }
     break;
   case goog.events.KeyCodes.DOWN:
     if (modified) {
-      this.camera_.position.setZ(this.camera_.position.z - 1);
+      this.camera_.position.setZ(this.camera_.position.z + 1);
     } else {
       this.camera_.position.setY(this.camera_.position.y - 1);
     }
