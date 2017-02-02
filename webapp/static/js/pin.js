@@ -18,7 +18,7 @@ diem.Pin = function(position, piece) {
   this.rigidBody_ = this.createBody_(position);
   this.piece_ = piece;
 
-  var geometry = new THREE.CircleGeometry(.2, 8);
+  var geometry = new THREE.CircleGeometry(diem.Pin.RADIUS, 6);
   var material = new THREE.MeshBasicMaterial({color : 0x000000});
   this.mesh_ = new THREE.Mesh(geometry, material);
   this.mesh_.position.set(position.x, position.y, position.z);
@@ -28,6 +28,7 @@ diem.Pin = function(position, piece) {
 goog.inherits(diem.Pin, diem.MeshWrapper);
 
 diem.Pin.PINS = 0;
+diem.Pin.RADIUS = .2;
 diem.Pin.EPSILON = .25;
 
 /**
@@ -36,7 +37,7 @@ diem.Pin.EPSILON = .25;
  * @returns {Ammo.btRigidBody}
  */
 diem.Pin.prototype.createBody_ = function(position) {
-  var pinShape = new Ammo.btSphereShape(.1);
+  var pinShape = new Ammo.btSphereShape(diem.Pin.RADIUS);
   var transform = new Ammo.btTransform();
   transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
   transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
@@ -103,6 +104,8 @@ diem.Pin.prototype.drag3dStart = function() {
  * @returns {Array}
  */
 diem.Pin.prototype.drag3d = function(personIntersection, camera) {
+  // TODO: there is a stutter entering/leaving the body, because of the
+  // rapid z-coord change.
   var meshPos = null;
   var bodyPos = null;
   if (personIntersection != null) {

@@ -20,6 +20,7 @@ goog.require('diem.tools.MovePiece');
  */
 diem.cloth.PhysicalPiece = function(piece) {
   goog.base(this);
+  this.id_ = diem.cloth.PhysicalPiece.pieces_.length;
   diem.cloth.PhysicalPiece.pieces_.push(this);
   this.workboardMesh_ = piece;
   this.pinned_ = [];
@@ -295,7 +296,7 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function(intersection) {
       return [];
     }
   }
-  this.currentPin_ = this.addPin_(this.handle_, diem.Globals.mouse);
+  this.currentPin_ = this.addPin_(this.handle_, intersection.point);
   this.currentPin_.addToParent(this.mesh_.parent);
   return this.currentPin_.getIntersectables();
 };
@@ -357,9 +358,12 @@ diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
  * Remove 3D piece from THREE and Ammo.
  */
 diem.cloth.PhysicalPiece.prototype.delete = function() {
-  diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
-  this.mesh_.userData.physicsBody = null;
-  this.mesh_.parent.remove(this.mesh_);
+  // Remove any pins.
+  for (var i = 0; i < this.pinned_.length; ++i) {
+    this.pinned_[i].delete();
+  }
+  this.mesh_.userData.physicsBody.get_m_anchors().resize(0);
+
   // Remove from 2D pattern's array.
   var twoD = this.workboardMesh_;
   var pieces = twoD.userData.physicalPieces;
@@ -368,6 +372,14 @@ diem.cloth.PhysicalPiece.prototype.delete = function() {
   pieces.splice(index, 1);
   twoD.remove(this.mesh_);
   this.workboardMesh_ = null;
+
+  // Remove from global array of things to simulate.
+  diem.cloth.PhysicalPiece.pieces_.splice(this.id_, 1);
+
+  // Remove the physical piece.
+  diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
+  this.mesh_.userData.physicsBody = null;
+  this.mesh_.parent.remove(this.mesh_);
 };
 
 /**

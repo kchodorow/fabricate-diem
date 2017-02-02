@@ -112,11 +112,6 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
   // A list of all physical representations of this pattern piece.
   this.mesh_.userData.physicalPieces = [];
 
-  for (i = 0; i < this.anchors_.length; ++i) {
-    this.anchors_[i].addToParent(this.mesh_);
-    this.shape_['edges_'][i].addToParent(this.mesh_);
-  }
-
   for (i = 0; i < piece.physicalPieces.length; ++i) {
     var physicalPiece = new diem.cloth.PhysicalPiece.load(
       this.mesh_, piece.physicalPieces[i]);
@@ -131,6 +126,10 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
  */
 diem.cloth.Workboard.prototype.addToParent = function(parent) {
   parent.add(this.mesh_);
+  for (i = 0; i < this.anchors_.length; ++i) {
+    this.anchors_[i].addToParent(this.mesh_);
+    this.shape_['edges_'][i].addToParent(this.mesh_);
+  }
   var pieces = this.mesh_.userData.physicalPieces;
   for (var i = 0; i < pieces.length; ++i) {
     var piece = pieces[i];
