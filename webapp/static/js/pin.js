@@ -103,27 +103,35 @@ diem.Pin.prototype.drag3dStart = function() {
  * @returns {Array}
  */
 diem.Pin.prototype.drag3d = function(personIntersection, camera) {
+  var target = null;
   var meshPos = null;
+  var bodyPos = null;
   if (personIntersection != null) {
-    // We could just get the normal of the personIntersection.
-    // Get the position of the camera.
-    var cameraPos = camera.position;
-    // Get the vector from the mouse -> the camera.
-    var cameraToMouse = personIntersection.point.clone().sub(cameraPos);
-    // Normalize.
-    cameraToMouse.normalize();
-    // Reverse.
-    var mouseToCamera = cameraToMouse.multiplyScalar(-1);
-    // Scale to epsilon length.
-    mouseToCamera.multiplyScalar(diem.Pin.EPSILON);
-    // Apply to intersection point.
-    meshPos = personIntersection.point.clone().add(mouseToCamera);
+    target = personIntersection.point;
   } else {
-    meshPos = new THREE.Vector3().copy(diem.Globals.mouse);
+    target = diem.Globals.mouse;
   }
+
+  // We could just get the normal of the personIntersection.
+  // Get the position of the camera.
+  var cameraPos = camera.position;
+  // Get the vector from the mouse -> the camera.
+  var cameraToMouse = target.clone().sub(cameraPos);
+  // Normalize.
+  cameraToMouse.normalize();
+  // Reverse.
+  var mouseToCamera = cameraToMouse.multiplyScalar(-1);
+  // Scale to epsilon length.
+  mouseToCamera.multiplyScalar(diem.Pin.EPSILON);
+  // Apply to intersection point.
+  meshPos = target.clone().add(mouseToCamera);
+  bodyPos = meshPos.clone();
+  mouseToCamera.multiplyScalar(5);
+  // Nudge a little closer to the camera.
+  meshPos.add(mouseToCamera);
   this.mesh_.position = meshPos;
   this.rigidBody_.getWorldTransform().setOrigin(
-    new Ammo.btVector3(meshPos.x, meshPos.y, meshPos.z));
+    new Ammo.btVector3(bodyPos.x, bodyPos.y, bodyPos.z));
   return [];
 };
 

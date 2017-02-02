@@ -138,7 +138,8 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   softBody.setTotalMass(0.9, false);
   // Disable deactivation
   softBody.setActivationState(4);
-  softBody.generateBendingConstraints(2);
+  // This has a performance hit, but makes the fabric stiffer.
+//  softBody.generateBendingConstraints(2);
   softBody.randomizeConstraints();
 
   var sbConfig = softBody.get_m_cfg();
@@ -269,19 +270,23 @@ diem.cloth.PhysicalPiece.toVector3 = function(btVec3, vec3) {
 /**
  * @override
  */
-diem.cloth.PhysicalPiece.prototype.drag3dStart = function() {
+diem.cloth.PhysicalPiece.prototype.drag3dStart = function(intersection) {
   this.handle_ = -1;
+
+  var face = intersection.face;
+  var candidates = [face.a, face.b, face.c];
 
   var minDistance = Number.MAX_VALUE;
   var nodes = this.mesh_.userData.physicsBody.get_m_nodes();
-  for (var i = 0; i < nodes.size(); i++) {
-    var node = nodes.at(i);
+  for (var i = 0; i < candidates.length; i++) {
+    var idx = candidates[i];
+    var node = nodes.at(idx);
     var nodePos = node.get_m_x();
     var testHandle = new THREE.Vector3(
       nodePos.x(), nodePos.y(), nodePos.z());
-    var testDistance = testHandle.distanceToSquared(diem.Globals.mouse);
+    var testDistance = testHandle.distanceToSquared(intersection.point);
     if (testDistance < minDistance) {
-      this.handle_ = i;
+      this.handle_ = idx;
       minDistance = testDistance;
     }
   }

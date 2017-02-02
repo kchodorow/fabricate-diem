@@ -112,7 +112,9 @@ diem.EventHandler.prototype.dragStart = function(dragEvent) {
   }
   var object = intersects[0].object;
   this.clicked_ = tool.getMeshWrapper(object);
-  var intersectables = tool.onDragStart(this.clicked_);
+  // It is useful to have the full intersection information for soft body
+  // drags, to find the right vertex to pull.
+  var intersectables = tool.onDragStart(this.clicked_, intersects[0]);
   this.toolManager_.handleIntersectables(intersectables);
 };
 

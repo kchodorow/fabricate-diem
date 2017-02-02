@@ -223,10 +223,10 @@ diem.cloth.Workboard.prototype.move = function() {
  * @param {diem.tools.Tool} tool
  * @returns {Array}
  */
-diem.cloth.Workboard.prototype.drag3dStart = function(tool) {
+diem.cloth.Workboard.prototype.drag3dStart = function(intersection) {
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
   physicalPiece.addToParent(this.mesh_.parent);
-  var pinIntersectables = physicalPiece.drag3dStart();
+  var pinIntersectables = physicalPiece.drag3dStart(intersection);
   this.currentPiece_ = physicalPiece;
   this.mesh_.userData.physicalPieces.push(physicalPiece);
   return pinIntersectables.concat(physicalPiece.getIntersectables());
