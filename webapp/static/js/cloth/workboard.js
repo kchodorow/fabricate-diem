@@ -223,6 +223,9 @@ diem.cloth.Workboard.prototype.move = function() {
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3dStart = function(intersection) {
+  if (this.currentPiece_) {
+    this.currentPiece_.deselect();
+  }
   var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
   physicalPiece.addToParent(this.mesh_.parent);
   var pinIntersectables = physicalPiece.drag3dStart(intersection);
@@ -248,6 +251,13 @@ diem.cloth.Workboard.prototype.drag3d = function(personIntersection, camera) {
  */
 diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
   return this.currentPiece_.drag3dEnd();
+};
+
+diem.cloth.Workboard.prototype.select = function() {
+};
+
+diem.cloth.Workboard.prototype.deselect = function() {
+  this.currentPiece_.deselect();
 };
 
 /**

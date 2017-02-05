@@ -24,7 +24,7 @@ diem.Person = function(scene) {
 
 goog.inherits(diem.Person, diem.MeshWrapper);
 
-diem.Person.POSITION = new THREE.Vector3(-20, 10, 0);
+diem.Person.POSITION = new THREE.Vector3(-20, 8, 0);
 
 /**
  * @private

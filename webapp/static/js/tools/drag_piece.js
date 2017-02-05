@@ -18,6 +18,7 @@ diem.tools.DragPiece = function(camera) {
     .setInnerHtml('D')
     .setTooltip('Drag fabric [D]')
     .build();
+  this.activeMesh_ = null;
 };
 
 goog.inherits(diem.tools.DragPiece, diem.tools.Tool);
@@ -52,6 +53,11 @@ diem.tools.DragPiece.createIntersectable = function(action, meshWrapper) {
  * @override
  */
 diem.tools.DragPiece.prototype.onDragStart = function(meshWrapper, intersection) {
+  if (this.activeMesh_ != null) {
+    this.activeMesh_.deselect();
+  }
+  this.activeMesh_ = meshWrapper;
+  meshWrapper.select();
   return meshWrapper.drag3dStart(intersection);
 };
 

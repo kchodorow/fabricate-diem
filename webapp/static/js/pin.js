@@ -19,14 +19,23 @@ diem.Pin = function(position, piece) {
   this.piece_ = piece;
 
   var geometry = new THREE.CircleGeometry(diem.Pin.RADIUS, 6);
-  var material = new THREE.MeshBasicMaterial({color : 0x000000});
+  var material = new THREE.MeshBasicMaterial({color : diem.Pin.COLOR});
   this.mesh_ = new THREE.Mesh(geometry, material);
   this.mesh_.position.set(position.x, position.y, position.z);
   this.mesh_.name = "pin" + diem.Pin.PINS++;
+
+  // TODO: this should be a contrasting color to whatever the material is..
+  var shadowMaterial = new THREE.MeshBasicMaterial({
+    color : diem.Pin.COLOR,
+    opacity: .5
+  });
+  this.shadow_ = new THREE.Mesh(geometry, shadowMaterial);
+  this.shadow_.name = this.mesh_.name + " shadow";
 };
 
 goog.inherits(diem.Pin, diem.MeshWrapper);
 
+diem.Pin.COLOR = 0x000000;
 diem.Pin.PINS = 0;
 diem.Pin.RADIUS = .2;
 diem.Pin.EPSILON = .25;
@@ -65,6 +74,15 @@ diem.Pin.prototype.getIntersectables = function() {
 };
 
 /**
+ * @override
+ */
+diem.Pin.prototype.addToParent = function(parent) {
+  parent.add(this.mesh_);
+  this.shadow_.position.sub(this.piece_.getWorkboardMesh().position);
+  this.piece_.getWorkboardMesh().add(this.shadow_);
+};
+
+/**
  * @param {number} index The vertex's index that the pin is through
  */
 diem.Pin.prototype.anchorTo = function(index) {
@@ -76,6 +94,7 @@ diem.Pin.prototype.anchorTo = function(index) {
     this.rigidBody_,
     disableCollisionBetweenLinkedBodies,
     influence);
+  this.shadow_.position.copy(this.piece_.get2dPosition(index));
 };
 
 /**
@@ -146,12 +165,19 @@ diem.Pin.prototype.drag3dEnd = function() {
   return [];
 };
 
+diem.Pin.prototype.select = function() {
+};
+
+diem.Pin.prototype.deselect = function() {
+};
+
 /**
  * Remove this pin.
  */
 diem.Pin.prototype.delete = function() {
   diem.Physics.get().getWorld().removeRigidBody(this.rigidBody_);
-  this.mesh_.parent.remove(this.mesh_);
   this.rigidBody_ = null;
+  this.mesh_.parent.remove(this.mesh_);
+  this.shadow_.parent.remove(this.shadow_);
   this.piece_.removePin(this);
 };

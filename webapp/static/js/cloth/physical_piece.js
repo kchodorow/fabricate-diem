@@ -27,6 +27,7 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.handle_ = 0;
   this.currentPin_ = null;
   this.originalPosition_ = new THREE.Vector3().copy(piece.position);
+  this.workboardGeometry_ = null;
 
   var geometry = this.createGeometry_(piece.geometry);
   var clothMaterial = piece.material;
@@ -189,6 +190,7 @@ diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
   subdivider.modify(geometry);
   geometry.subdivided = true;
   goog.asserts.assert(geometry.vertices.length < 100000);
+  this.workboardGeometry_ = geometry.clone();
   return geometry;
 };
 
@@ -292,6 +294,21 @@ diem.cloth.PhysicalPiece.toVector3 = function(btVec3, vec3) {
   vec3.x = btVec3.x();
   vec3.y = btVec3.y();
   vec3.z = btVec3.z();
+};
+
+/**
+ * @returns {THREE.Vector3}
+ */
+diem.cloth.PhysicalPiece.prototype.get2dPosition = function(index) {
+  return this.workboardGeometry_.vertices[index];
+};
+
+/**
+ * The underlying mesh this physical piece was created from.
+ * @returns {THREE.Vector3}
+ */
+diem.cloth.PhysicalPiece.prototype.getWorkboardMesh = function() {
+  return this.workboardMesh_;
 };
 
 /**
@@ -407,6 +424,18 @@ diem.cloth.PhysicalPiece.prototype.delete = function() {
   diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
   this.mesh_.userData.physicsBody = null;
   this.mesh_.parent.remove(this.mesh_);
+};
+
+diem.cloth.PhysicalPiece.prototype.deselect = function() {
+  for (var i = 0; i < this.pinned_.length; ++i) {
+    this.pinned_[i].shadow_.visible = false;
+  }
+};
+
+diem.cloth.PhysicalPiece.prototype.select = function() {
+  for (var i = 0; i < this.pinned_.length; ++i) {
+    this.pinned_[i].shadow_.visible = true;
+  }
 };
 
 /**
