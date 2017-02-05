@@ -190,6 +190,7 @@ new_local_repository(
 exports_files([
     "tools/webidl_binder.py",
     "emscripten-version.txt",
+    "em++",
 ])
 py_library(
     name = "pylib",
@@ -197,13 +198,5 @@ py_library(
     srcs = glob(["**/*.py"]),
     data = glob(["**/*.pyc"]),
 )
-""",
-)
-
-new_local_repository(
-    name = "ammo",
-    path = "/Users/k/gitroot/ammo.js",
-    build_file_content = """
-exports_files(["ammo.idl"])
 """,
 )

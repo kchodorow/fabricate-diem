@@ -40,5 +40,5 @@ idl = rule(
     outputs = {
         'cpp' : '%{name}.cpp',
         'js' : '%{name}.js',
-    }
+    },
 )

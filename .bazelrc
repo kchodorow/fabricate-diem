@@ -1,3 +1,4 @@
 build --java_toolchain=@io_bazel_rules_appengine//appengine:jdk7
 build --experimental_repository_cache=/Users/k/.bazel/cache
 build --ignore_unsupported_sandboxing
+build --spawn_strategy=standalone
