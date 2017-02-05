@@ -33,7 +33,7 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.mesh_ = new THREE.Mesh(geometry, clothMaterial);
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
-  this.mesh_.name = "pp" + diem.cloth.PhysicalPiece.pieces_.length;
+  this.mesh_.name = "pp" + this.id_;
 
   this.createSoftBody_();
   this.geometryMapper_ = new diem.cloth.GeometryMapper(
@@ -65,16 +65,29 @@ diem.cloth.PhysicalPiece.load = function(mesh, storablePhysicalPiece) {
 diem.cloth.PhysicalPiece.prototype.updateGeometry = function(newMesh) {
   var geometry = this.createGeometry_(newMesh.geometry);
   this.mesh_.geometry = geometry;
-
   this.updateSoftBody_();
 
+  var newIndex = -1;
   var pins = this.mesh_.userData.physicsBody.get_m_anchors();
+  var testPos = new THREE.Vector3();
+  var nodes = this.mesh_.userData.physicsBody.get_m_nodes();
   pins.resize(0);
   for (var i = 0; i < this.pinned_.length; ++i) {
     var pin = this.pinned_[i];
-    var newIndex = this.geometryMapper_.getEquivalentIndex(
-      pin.getObject().position);
-    pin.appendAnchor(newIndex);
+
+    var minDistance = Number.MAX_VALUE;
+    for (var j = 0; j < nodes.size(); ++j) {
+      var node = nodes.at(j);
+
+      var testPosAmmo = node.get_m_x();
+      testPos.set(testPosAmmo.x(), testPosAmmo.y(), testPosAmmo.z());
+      var testDistance = testPos.distanceToSquared(pin.getObject().position);
+      if (testDistance < minDistance) {
+        newIndex = j;
+        minDistance = testDistance;
+      }
+    }
+    pin.anchorTo(newIndex);
   }
 };
 
@@ -253,6 +266,19 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
     diem.cloth.PhysicalPiece.toVector3(nodes.at(face.c).get_m_n(), normals[2]);
   }
 
+  for (i = 0; i < this.pinned_.length; ++i) {
+    var pin = this.pinned_[i];
+    var pinnedNode = nodes.at(pin.index()).get_m_x();
+    var pinPos = pin.getObject().position;
+    pinnedNode.setX(pinPos.x);
+    pinnedNode.setY(pinPos.y);
+    pinnedNode.setZ(pinPos.z);
+    var meshPos = positions[pin.index()];
+    meshPos.x = pinPos.x;
+    meshPos.y = pinPos.y;
+    meshPos.z = pinPos.z;
+  }
+
   geometry.verticesNeedUpdate = true;
   geometry.normalsNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
@@ -334,7 +360,7 @@ diem.cloth.PhysicalPiece.prototype.pins = function() {
  */
 diem.cloth.PhysicalPiece.prototype.addPin_ = function(index, position) {
   var pin = new diem.Pin(position, this);
-  pin.appendAnchor(index);
+  pin.anchorTo(index);
   this.pinned_.push(pin);
   return pin;
 };
@@ -350,7 +376,7 @@ diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
   var pins = this.mesh_.userData.physicsBody.get_m_anchors();
   pins.resize(0);
   for (var i = 0; i < this.pinned_.length; ++i) {
-    this.pinned_[i].appendAnchor(this.pinned_[i].index());
+    this.pinned_[i].anchorTo(this.pinned_[i].index());
   }
 };
 
@@ -359,8 +385,9 @@ diem.cloth.PhysicalPiece.prototype.removePin = function(pin) {
  */
 diem.cloth.PhysicalPiece.prototype.delete = function() {
   // Remove any pins.
-  for (var i = 0; i < this.pinned_.length; ++i) {
-    this.pinned_[i].delete();
+  while (this.pinned_.length > 0) {
+    // delete() calls removePin, above, which pops the pin from the array.
+    this.pinned_[0].delete();
   }
   this.mesh_.userData.physicsBody.get_m_anchors().resize(0);
 

@@ -67,7 +67,7 @@ diem.Pin.prototype.getIntersectables = function() {
 /**
  * @param {number} index The vertex's index that the pin is through
  */
-diem.Pin.prototype.appendAnchor = function(index) {
+diem.Pin.prototype.anchorTo = function(index) {
   this.index_ = index;
   var disableCollisionBetweenLinkedBodies = false;
   var influence = 1;
