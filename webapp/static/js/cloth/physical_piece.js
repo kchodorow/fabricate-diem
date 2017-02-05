@@ -312,6 +312,16 @@ diem.cloth.PhysicalPiece.prototype.getWorkboardMesh = function() {
 };
 
 /**
+ * Get the sb point nearest the workboard intersection.
+ */
+diem.cloth.PhysicalPiece.prototype.dragFromWorkboard = function(intersection) {
+  this.handle_ = this.geometryMapper_.getEquivalentIndex(intersection.point);
+  this.currentPin_ = this.addPin_(this.handle_, intersection.point);
+  this.currentPin_.addToParent(this.mesh_.parent);
+  return this.currentPin_.getIntersectables();
+};
+
+/**
  * @override
  */
 diem.cloth.PhysicalPiece.prototype.drag3dStart = function(intersection) {

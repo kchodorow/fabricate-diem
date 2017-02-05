@@ -74,11 +74,11 @@ diem.cloth.GeometryMapper.prototype.flipPositions = function(newSoftBody) {
 };
 
 /**
- * @param {THREE.Vector3} oldNode the position
+ * @param {THREE.Vector2} oldNode the 2D position
  * @returns {number} the index of the point nearest the given (old) node.
  */
 diem.cloth.GeometryMapper.prototype.getEquivalentIndex = function(oldNode) {
-  var oldPos = new THREE.Vector2(oldNode.x, oldNode.y);
+  var oldPos = oldNode.clone();
   var nearestPoints = this.quadTree_.getNearest(1, oldPos);
   goog.asserts.assert(nearestPoints.length == 1);
   return nearestPoints[0].value;
