@@ -24,7 +24,7 @@ diem.Pin = function(position, piece) {
   this.mesh_.position.set(position.x, position.y, position.z);
   this.mesh_.name = "pin" + diem.Pin.PINS++;
 
-  // TODO: this should be a contrasting color to whatever the material is..
+  // TODO: this should be a contrasting color to whatever the material is.
   var shadowMaterial = new THREE.MeshBasicMaterial({
     color : diem.Pin.COLOR,
     opacity: .5
@@ -78,7 +78,6 @@ diem.Pin.prototype.getIntersectables = function() {
  */
 diem.Pin.prototype.addToParent = function(parent) {
   parent.add(this.mesh_);
-  this.shadow_.position.sub(this.piece_.getWorkboardMesh().position);
   this.piece_.getWorkboardMesh().add(this.shadow_);
 };
 
@@ -94,7 +93,8 @@ diem.Pin.prototype.anchorTo = function(index) {
     this.rigidBody_,
     disableCollisionBetweenLinkedBodies,
     influence);
-  this.shadow_.position.copy(this.piece_.get2dPosition(index));
+  this.shadow_.position.copy(this.piece_.get2dPosition(index))
+    .sub(this.piece_.getWorkboardMesh().position);
 };
 
 /**
@@ -166,6 +166,7 @@ diem.Pin.prototype.drag3dEnd = function() {
 };
 
 diem.Pin.prototype.select = function() {
+  this.piece_.select();
 };
 
 diem.Pin.prototype.deselect = function() {
