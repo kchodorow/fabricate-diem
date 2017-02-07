@@ -108,8 +108,16 @@ diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
     }
     goog.asserts.assert(
       toolId in this.toolMap_, "Did you can registerTool for " + toolId + "?");
-    this.toolMap_[responses[i].getToolId()].addAction(
-      responses[i].getAction(), responses[i].getMeshWrapper());
+    if (responses[i].getEventType() == 'add') {
+      this.toolMap_[responses[i].getToolId()].addAction(
+        responses[i].getAction(), responses[i].getMeshWrapper());
+    } else if (responses[i].getEventType() == 'rm') {
+      this.toolMap_[responses[i].getToolId()].rmAction(
+        responses[i].getAction(), responses[i].getMeshWrapper());
+    } else {
+      goog.asserts.assert(
+        false, 'Action "' + responses[i].action + '" not recognized');
+    }
   }
 
   for (i in toolIds) {

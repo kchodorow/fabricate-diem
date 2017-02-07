@@ -10,6 +10,17 @@ diem.events.Intersectable = function(toolId, action, mesh) {
   this.toolId_ = toolId;
   this.action_ = action;
   this.meshWrapper_ = mesh;
+  this.eventType_ = "add";
+};
+
+/**
+ * @param {array}
+ */
+diem.events.Intersectable.remove = function(intersectables) {
+  for (var i = 0; i < intersectables.length; ++i) {
+    intersectables[i].eventType_ = "rm";
+  }
+  return intersectables;
 };
 
 /**
@@ -25,6 +36,14 @@ diem.events.Intersectable.prototype.getToolId = function() {
  */
 diem.events.Intersectable.prototype.getAction = function() {
   return this.action_;
+};
+
+/**
+ * @returns {string} what the tool manager should do (defaults to "add", to add
+ * the tool to the event listener.
+ */
+diem.events.Intersectable.prototype.getEventType = function() {
+  return this.eventType_;
 };
 
 /**

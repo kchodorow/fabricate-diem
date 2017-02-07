@@ -48,5 +48,5 @@ diem.tools.Delete.prototype.onClick = function(intersections) {
   goog.asserts.assert(intersections.length > 0);
   var meshWrapper = this.getMeshWrapper(intersections[0].object);
   meshWrapper.delete();
-  return [];
+  return diem.events.Intersectable.remove(meshWrapper.getIntersectables());
 };

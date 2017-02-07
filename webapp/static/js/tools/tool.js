@@ -132,6 +132,15 @@ diem.tools.Tool.prototype.addAction = function(action, meshWrapper) {
   this.wrapperMap_[obj.uuid] = meshWrapper;
 };
 
+diem.tools.Tool.prototype.rmAction = function(action, meshWrapper) {
+  var map = this.actionMap_[action];
+  var obj = meshWrapper.getObject();
+  var intersectable = this.intersectableList_[action];
+  intersectable.splice(intersectable.indexOf(obj), 1);
+  delete this.actionMap_[action][obj.uuid];
+  delete this.wrapperMap_[obj.uuid];
+};
+
 /**
  * @param {string} action
  * @returns {Array} the list of meshes for the raycaster to intersect.
