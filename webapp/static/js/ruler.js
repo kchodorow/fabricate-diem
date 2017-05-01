@@ -10,6 +10,9 @@ diem.Ruler = function() {
 
 diem.Ruler.INCHES_PER_THREE = 6;
 
+/**
+ * @return {THREE.Line}
+ */
 diem.Ruler.prototype.load = function() {
   var material = new THREE.LineBasicMaterial({
     color: 0x0000ff
@@ -31,10 +34,17 @@ diem.Ruler.prototype.load = function() {
   return line;
 };
 
+/**
+ * @param {number} num
+ * @constructor
+ */
 diem.Ruler.Inches = function(num) {
   this.num_ = num;
 };
 
+/**
+ * @return {number}
+ */
 diem.Ruler.Inches.prototype.toThree = function() {
   return this.num_ / diem.Ruler.INCHES_PER_THREE;
 };

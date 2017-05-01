@@ -16,7 +16,7 @@ filegroup(
 
 filegroup(
     name = "assets",
-    srcs = ["assets/dressform.json"],
+    srcs = glob(["assets/*"]),
 )
 
 closure_js_deps(

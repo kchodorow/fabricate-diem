@@ -1,7 +1,7 @@
 /* global Ammo, THREE */
 goog.provide('diem.cloth.PhysicalPiece');
-goog.provide('diem.cloth.PhysicalPiece.Constraint');
 
+goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.Physics');
 goog.require('diem.Pin');
@@ -297,6 +297,7 @@ diem.cloth.PhysicalPiece.toVector3 = function(btVec3, vec3) {
 };
 
 /**
+ * @param {number} index
  * @returns {THREE.Vector3}
  */
 diem.cloth.PhysicalPiece.prototype.get2dPosition = function(index) {
@@ -312,7 +313,10 @@ diem.cloth.PhysicalPiece.prototype.getWorkboardMesh = function() {
 };
 
 /**
- * Get the sb point nearest the workboard intersection.
+ * Get the sb point nearest the workboard intersection. This doesn't have a
+ * parent yet, so the pin cannot be added to the scene.
+ * @param {object} intersection
+ * @return {array}
  */
 diem.cloth.PhysicalPiece.prototype.dragFromWorkboard = function(intersection) {
   this.handle_ = this.geometryMapper_.getEquivalentIndex(intersection.point);
@@ -356,6 +360,8 @@ diem.cloth.PhysicalPiece.prototype.drag3dStart = function(intersection) {
 
 /**
  * Set one vertex to the current mouse posisiton.
+ * @param {THREE.Vector3} personIntersection
+ * @param {THREE.Camera} camera
  * @returns {Array}
  */
 diem.cloth.PhysicalPiece.prototype.drag3d = function(personIntersection, camera) {
@@ -436,12 +442,18 @@ diem.cloth.PhysicalPiece.prototype.delete = function() {
   this.mesh_.parent.remove(this.mesh_);
 };
 
+/**
+ * Called on click.
+ */
 diem.cloth.PhysicalPiece.prototype.deselect = function() {
   for (var i = 0; i < this.pinned_.length; ++i) {
     this.pinned_[i].shadow_.visible = false;
   }
 };
 
+/**
+ * Called when something else is clicked.
+ */
 diem.cloth.PhysicalPiece.prototype.select = function() {
   for (var i = 0; i < this.pinned_.length; ++i) {
     this.pinned_[i].shadow_.visible = true;

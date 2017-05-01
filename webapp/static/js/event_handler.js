@@ -11,6 +11,7 @@ goog.require('goog.fx.Dragger');
 /**
  * @param {THREE.Camera} camera the camera to use for raycasting
  * @param {diem.tools.ToolManager} toolManager
+ * @param {diem.Person} person
  * @constructor
  */
 diem.EventHandler = function(camera, toolManager, person) {

@@ -10,7 +10,6 @@ goog.require('diem.tools.DragPiece');
 
 /**
  * @param {THREE.Scene} scene
- * @param {Function} register
  * @constructor
  * @extends {diem.MeshWrapper}
  */
@@ -27,6 +26,7 @@ goog.inherits(diem.Person, diem.MeshWrapper);
 diem.Person.POSITION = new THREE.Vector3(-20, 8, 0);
 
 /**
+ * @param {THREE.Geometry} geometry
  * @private
  */
 diem.Person.prototype.onModelLoad_ = function(geometry) {

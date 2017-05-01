@@ -7,6 +7,7 @@ goog.require('diem.tools.Tool');
 goog.require('goog.events.KeyCodes');
 
 /**
+ * @param {THREE.Camera} camera
  * @constructor
  * @extends {diem.tools.Tool}
  */

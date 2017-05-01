@@ -14,7 +14,8 @@ diem.events.Intersectable = function(toolId, action, mesh) {
 };
 
 /**
- * @param {array}
+ * @param {array} intersectables
+ * @return {array}
  */
 diem.events.Intersectable.remove = function(intersectables) {
   for (var i = 0; i < intersectables.length; ++i) {

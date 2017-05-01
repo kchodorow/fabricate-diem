@@ -62,6 +62,7 @@ closure_js_library(
     deps = [
         ":tool",
         "//webapp/static/js:button",
+        "//webapp/static/js/events:intersectable",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

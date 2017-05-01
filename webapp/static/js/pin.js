@@ -7,7 +7,7 @@ goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 
 /**
- * @param {Ammo.btRigidBody} rigidBody The fixed point representing the mouse.
+ * @param {THREE.Vector3} position The fixed point representing the mouse.
  * @param {diem.cloth.PhysicalPiece} piece
  * @extends {diem.MeshWrapper}
  * @constructor
@@ -120,6 +120,8 @@ diem.Pin.prototype.drag3dStart = function() {
 
 /**
  * Set one vertex to the current mouse posisiton.
+ * @param {THREE.Vector3} [personIntersection]
+ * @param {THREE.Camera} camera
  * @returns {Array}
  */
 diem.Pin.prototype.drag3d = function(personIntersection, camera) {
@@ -165,10 +167,16 @@ diem.Pin.prototype.drag3dEnd = function() {
   return [];
 };
 
+/**
+ * Called on click.
+ */
 diem.Pin.prototype.select = function() {
   this.piece_.select();
 };
 
+/**
+ * Called when something else is clicked.
+ */
 diem.Pin.prototype.deselect = function() {
 };
 

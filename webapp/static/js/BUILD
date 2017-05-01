@@ -61,6 +61,7 @@ closure_js_library(
     deps = [
         ":event_handler",
         ":globals",
+        ":ground",
         ":person",
         ":physics",
         "//webapp/static/js/cloth",
@@ -73,8 +74,21 @@ closure_js_library(
 )
 
 closure_js_library(
+    name = "ground",
+    srcs = ["ground.js"],
+    deps = [
+        ":mesh-wrapper",
+        ":physics",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
     name = "pattern",
-    srcs = ["pattern.js"],
+    srcs = [
+        "pattern.js",
+        "ruler.js",
+    ],
     visibility = ["//webapp/static/js/tools:__pkg__"],
     deps = [
         "//webapp/static/js/cloth",

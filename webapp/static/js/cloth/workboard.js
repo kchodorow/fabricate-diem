@@ -219,7 +219,7 @@ diem.cloth.Workboard.prototype.move = function() {
 };
 
 /**
- * @param {diem.tools.Tool} tool
+ * @param {THREE.Vector3} intersection
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3dStart = function(intersection) {
@@ -236,7 +236,8 @@ diem.cloth.Workboard.prototype.drag3dStart = function(intersection) {
 
 /**
  * Moves the fabric.
- * @param {diem.tools.Tool} tool
+ * @param {THREE.Vector3} personIntersection
+ * @param {THREE.Camera} camera
  * @returns {Array}
  */
 diem.cloth.Workboard.prototype.drag3d = function(personIntersection, camera) {
@@ -253,9 +254,15 @@ diem.cloth.Workboard.prototype.drag3dEnd = function(tool) {
   return this.currentPiece_.drag3dEnd();
 };
 
+/**
+ * Called on select.
+ */
 diem.cloth.Workboard.prototype.select = function() {
 };
 
+/**
+ * Called when something else is selected.
+ */
 diem.cloth.Workboard.prototype.deselect = function() {
   this.currentPiece_.deselect();
 };

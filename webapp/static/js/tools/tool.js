@@ -132,6 +132,10 @@ diem.tools.Tool.prototype.addAction = function(action, meshWrapper) {
   this.wrapperMap_[obj.uuid] = meshWrapper;
 };
 
+/**
+ * @param {string} action
+ * @param {diem.MeshWrapper} meshWrapper
+ */
 diem.tools.Tool.prototype.rmAction = function(action, meshWrapper) {
   var map = this.actionMap_[action];
   var obj = meshWrapper.getObject();

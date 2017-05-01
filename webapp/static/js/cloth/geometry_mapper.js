@@ -47,6 +47,7 @@ diem.cloth.GeometryMapper.prototype.storePositions = function() {
  * points. E.g., if point 123 is nearest points 45, 6, and 473 in the old 2D
  * rep, then find the "average" 3D point in the old soft body and make that the
  * coordinates of point 123's physical representation.
+ * @param {Ammo.btSoftBody} newSoftBody
  */
 diem.cloth.GeometryMapper.prototype.flipPositions = function(newSoftBody) {
   // Store the new geometry, since we want a "pristine" copy of the node
@@ -60,7 +61,8 @@ diem.cloth.GeometryMapper.prototype.flipPositions = function(newSoftBody) {
 
     var new3DPos = new2DNode.get_m_x();
     new3DPos.setX(old3DNode.position.x);
-    new3DPos.setY(old3DNode.position.y);
+    // Add a little bit, or the fabric will "droop" off the pin.
+    new3DPos.setY(old3DNode.position.y + .1);
     new3DPos.setZ(old3DNode.position.z);
 
     var new3DNormal = new2DNode.get_m_n();
@@ -144,6 +146,10 @@ diem.cloth.GeometryMapper.prototype.getEquivalentNode_ = function(newNode) {
   return {position : retPos, normal : retNormal};
 };
 
+/**
+ * @param {Ammo.btSoftBody} softBody
+ * @private
+ */
 diem.cloth.GeometryMapper.prototype.setupSoftBody_ = function(softBody) {
   if (this.softBody_ == softBody) {
     return;
@@ -160,6 +166,7 @@ diem.cloth.GeometryMapper.prototype.setupSoftBody_ = function(softBody) {
 
 /**
  * Creates a QuadTree of 2D workboard coordinates to node index.
+ * @param {Ammo.btSoftBody} softBody
  * @returns {diem.cloth.QueryableQuadTree}
  * @private
  */

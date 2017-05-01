@@ -2,6 +2,7 @@
 goog.provide('diem.tools.Delete');
 
 goog.require('diem.Button');
+goog.require('diem.events.Intersectable');
 goog.require('diem.tools.Tool');
 goog.require('goog.asserts');
 goog.require('goog.events.KeyCodes');
