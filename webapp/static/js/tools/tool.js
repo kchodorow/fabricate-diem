@@ -15,9 +15,6 @@ goog.require('diem.events.Intersectable');
  * @constructor
  */
 diem.tools.Tool = function() {
-  /**
-   *
-   */
   this.name_ = "tool";
 
   // Mappings of actions to a dict of THREE.Mesh ids and their

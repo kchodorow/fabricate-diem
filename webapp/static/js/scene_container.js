@@ -48,6 +48,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.FabricTool());
   this.toolManager_.registerTool(new diem.tools.MovePiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
+  this.toolManager_.registerTool(new diem.tools.SeamTool());
   // TODO: it's silly to create 8 separate camera tools.
   this.toolManager_.registerTool(
     new diem.tools.CameraTool(this.camera, [goog.events.KeyCodes.LEFT]));

@@ -100,6 +100,7 @@ diem.tools.ToolManager.prototype.getTool = function(opt_name) {
  * @param {Array} responses
  */
 diem.tools.ToolManager.prototype.handleIntersectables = function(responses) {
+  goog.asserts.assert(responses.constructor == Array);
   var toolIds = [];
   for (var i = 0; i < responses.length; ++i) {
     var toolId = responses[i].getToolId();

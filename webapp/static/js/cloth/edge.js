@@ -8,6 +8,7 @@ goog.require('diem.cloth.ControlPoint');
 goog.require('diem.events');
 goog.require('diem.storage.Anchor');
 goog.require('diem.tools.AddAnchorPoint');
+goog.require('diem.tools.SeamTool');
 
 goog.require('goog.asserts');
 
@@ -44,11 +45,15 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   }
   var material = new THREE.LineBasicMaterial({color : 0x000000});
   this.mesh_ = new THREE.Line(geometry, material);
+  this.mesh_.name = "edge" + diem.cloth.Edge.INDEX++;
+
+  this.selected_ = false;
 };
 
 goog.inherits(diem.cloth.Edge, diem.MeshWrapper);
 
 diem.cloth.Edge.NUM_POINTS = 12;
+diem.cloth.Edge.INDEX = 0;
 
 /**
  * @override
@@ -66,6 +71,8 @@ diem.cloth.Edge.prototype.addToParent = function(parent) {
 diem.cloth.Edge.prototype.getIntersectables = function() {
   return [
     diem.tools.AddAnchorPoint.createIntersectable(
+      diem.events.CLICKABLE, this),
+    diem.tools.SeamTool.createIntersectable(
       diem.events.CLICKABLE, this)];
 };
 
@@ -157,4 +164,18 @@ diem.cloth.Edge.prototype.updateGeometry = function() {
     this.mesh_.geometry.vertices[i].copy(points[i]);
   }
   this.mesh_.geometry.verticesNeedUpdate = true;
+};
+
+/**
+ * onClick handler for seam selection tool.
+ */
+diem.cloth.Edge.prototype.selectForSeaming = function() {
+  this.selected_ = !this.selected_;
+  var props;
+  if (this.selected_) {
+    this.mesh_.material.color.set(0xff0000);
+  } else {
+    this.mesh_.material.color.set(0x000000);
+  }
+  return [];
 };

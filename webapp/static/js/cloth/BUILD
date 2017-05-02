@@ -46,6 +46,7 @@ closure_js_library(
         "//webapp/static/js/storage",
         "//webapp/static/js/tools:anchor-point",
         "//webapp/static/js/tools:delete",
+        "//webapp/static/js/tools:seam",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

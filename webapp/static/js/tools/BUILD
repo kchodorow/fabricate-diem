@@ -125,6 +125,17 @@ closure_js_library(
 )
 
 closure_js_library(
+    name = "seam",
+    srcs = ["seam_tool.js"],
+    visibility = ["//webapp/static/js:__subpackages__"],
+    deps = [
+        ":tool",
+        "//webapp/static/js:button",
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+
+closure_js_library(
     name = "toolbar",
     srcs = ["toolbar.js"],
     visibility = ["//webapp/static/js:__subpackages__"],
