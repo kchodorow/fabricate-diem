@@ -35,7 +35,7 @@ diem.cloth.Anchor = function(corner) {
 
 goog.inherits(diem.cloth.Anchor, diem.MeshWrapper);
 
-diem.cloth.Anchor.ANCHOR_SIZE = .30;
+diem.cloth.Anchor.ANCHOR_SIZE = .20;
 diem.cloth.Anchor.INDEX = 0;
 
 /**

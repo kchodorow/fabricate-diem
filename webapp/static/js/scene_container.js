@@ -110,6 +110,7 @@ diem.SceneContainer.prototype.load = function(model) {
  * @private
  */
 diem.SceneContainer.prototype.drawAxes_ = function() {
+  return;
   var color = 0xACCFCC;
   var material = new THREE.LineBasicMaterial({color : color});
   var x = new THREE.Line();
@@ -129,20 +130,21 @@ diem.SceneContainer.prototype.drawAxes_ = function() {
   var line2 = new THREE.Line(geometry2, lineMaterial);
   var og = new THREE.CircleGeometry(.2, 8);
   var odd = false;
-  for (var i = -5; i < 5; i++) {
+  var z = -5;
+  for (var i = -25; i < 25; i++) {
     odd = !odd;
-    for (var j = -5; j < 5; j++) {
+    for (var j = -20; j < 20; j++) {
       var dot = Math.abs(j) % 2 == (odd ? 1 : 0);
       if (dot) {
         this.scene.add(new THREE.Mesh(
-          og.clone().translate(2 * i, 2 * j, -.1),
+          og.clone().translate(2 * i, 2 * j, z),
           material));
       } else {
         this.scene.add(new THREE.Line(
-          geometry1.clone().translate(2 * i, 2 * j, -.1),
+          geometry1.clone().translate(2 * i, 2 * j, z),
           lineMaterial));
         this.scene.add(new THREE.Line(
-          geometry2.clone().translate(2 * i, 2 * j, -.1),
+          geometry2.clone().translate(2 * i, 2 * j, z),
           lineMaterial));
       }
     }
@@ -185,6 +187,9 @@ diem.SceneContainer.prototype.render = function(now) {
 
   requestAnimationFrame(render);
   diem.Physics.get().update();
+  if (this.scene == null) {
+    return;
+  }
   this.renderer.render(this.scene, this.camera);
   diem.storage.Storage.get().send();
 };

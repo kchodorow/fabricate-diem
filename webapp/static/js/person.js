@@ -23,7 +23,7 @@ diem.Person = function(scene) {
 
 goog.inherits(diem.Person, diem.MeshWrapper);
 
-diem.Person.POSITION = new THREE.Vector3(-20, 8, 0);
+diem.Person.POSITION = new THREE.Vector3(-9, 8, 0);
 
 /**
  * @param {THREE.Geometry} geometry
@@ -35,7 +35,7 @@ diem.Person.prototype.onModelLoad_ = function(geometry) {
   this.mesh_ = person;
   this.mesh_.position.set(
     diem.Person.POSITION.x, diem.Person.POSITION.y, diem.Person.POSITION.z);
-  this.mesh_.rotation.y = THREE.Math.degToRad(45);
+  this.mesh_.rotation.y = THREE.Math.degToRad(35);
   this.addToParent(this.scene_);
   this._addPhysics();
 };

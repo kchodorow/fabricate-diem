@@ -138,6 +138,7 @@ diem.cloth.Workboard.prototype.addToParent = function(parent) {
       piece.pinned_[j].addToParent(parent);
     }
   }
+  this.mesh_.position.set(0, 13.5 - (diem.cloth.Workboard.INDEX * 3.4), 0);
 };
 
 /**

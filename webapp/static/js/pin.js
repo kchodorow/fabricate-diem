@@ -37,7 +37,7 @@ goog.inherits(diem.Pin, diem.MeshWrapper);
 
 diem.Pin.COLOR = 0x000000;
 diem.Pin.PINS = 0;
-diem.Pin.RADIUS = .2;
+diem.Pin.RADIUS = .075;
 diem.Pin.EPSILON = .25;
 
 /**

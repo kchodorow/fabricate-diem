@@ -80,7 +80,7 @@ diem.tools.CameraTool.setCameraPosition = function(
   if (opt_x == undefined) {
     opt_x = 0;
     opt_y = 10;
-    opt_z = 20;
+    opt_z = 10;
   }
   camera.position.set(opt_x, opt_y, opt_z);
 };
