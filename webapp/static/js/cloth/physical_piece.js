@@ -1,10 +1,11 @@
-/* global Ammo, THREE */
+/* global Ammo, THREE, goog */
 goog.provide('diem.cloth.PhysicalPiece');
 
 goog.require('diem.Globals');
 goog.require('diem.MeshWrapper');
 goog.require('diem.Physics');
 goog.require('diem.Pin');
+goog.require('diem.cloth.EdgeTracker');
 goog.require('diem.cloth.GeometryMapper');
 goog.require('diem.cloth.LinkTracker');
 goog.require('diem.events');
@@ -35,6 +36,8 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
   this.mesh_.name = "pp" + this.id_;
+  var tracker = new diem.cloth.EdgeTracker(this.mesh_.geometry);
+  this.edge_ = tracker.getOutsideEdge();
 
   this.createSoftBody_();
   this.geometryMapper_ = new diem.cloth.GeometryMapper(
@@ -281,6 +284,7 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
     meshPos.z = pinPos.z;
   }
 
+  this.edge_.geometry.verticesNeedUpdate = true;
   geometry.verticesNeedUpdate = true;
   geometry.normalsNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
@@ -323,6 +327,14 @@ diem.cloth.PhysicalPiece.prototype.dragFromWorkboard = function(intersection) {
   this.currentPin_ = this.addPin_(this.handle_, intersection.point);
   this.currentPin_.addToParent(this.mesh_.parent);
   return this.currentPin_.getIntersectables();
+};
+
+/**
+ * @override
+ */
+diem.cloth.PhysicalPiece.prototype.addToParent = function(parent) {
+  parent.add(this.mesh_);
+  parent.add(this.edge_);
 };
 
 /**

@@ -16,6 +16,8 @@ diem.tools.SeamTool = function() {
     .setInnerHtml('S')
     .setTooltip('Add seam [S]')
     .build();
+  this.seams_ = [];
+  this.currentSeam_ = [];
 };
 
 goog.inherits(diem.tools.SeamTool, diem.tools.Tool);
@@ -27,6 +29,16 @@ diem.tools.SeamTool.NAME = 'SEAM';
  */
 diem.tools.SeamTool.prototype.getKeys = function() {
   return [goog.events.KeyCodes.S];
+};
+
+/**
+ * @override
+ */
+diem.tools.SeamTool.prototype.onDeselect = function() {
+  if (this.currentSeam_.length > 1) {
+    this.seams_.push(new diem.cloth.Seam(this.currentSeam_));
+  }
+  this.currentSeam_ = [];
 };
 
 /**
@@ -45,5 +57,6 @@ diem.tools.SeamTool.createIntersectable = function(action, meshWrapper) {
  */
 diem.tools.SeamTool.prototype.onClick = function(intersections) {
   var meshWrapper = this.getMeshWrapper(intersections[0].object);
+  this.currentSeam_.push(meshWrapper);
   return meshWrapper.selectForSeaming();
 };
