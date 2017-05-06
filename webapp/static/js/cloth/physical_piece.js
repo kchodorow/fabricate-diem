@@ -12,6 +12,7 @@ goog.require('diem.events');
 goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.MovePiece');
+goog.require('diem.tools.SeamTool');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.
@@ -238,6 +239,7 @@ diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
   return [
     diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this),
+    diem.tools.SeamTool.createIntersectable(diem.events.CLICKABLE, this),
     diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this)
   ];
 };
@@ -288,6 +290,14 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
   geometry.verticesNeedUpdate = true;
   geometry.normalsNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
+};
+
+/**
+ * @returns {Array}
+ */
+diem.cloth.PhysicalPiece.prototype.selectForSeaming = function() {
+  this.edge_.material.color.set(0xff0000);
+  return [];
 };
 
 /**

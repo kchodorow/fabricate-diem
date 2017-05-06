@@ -1,4 +1,4 @@
-/* global goog */
+/* global goog, THREE */
 
 goog.provide('diem.cloth.EdgeTracker');
 
