@@ -1,15 +1,26 @@
 /* global goog, THREE */
 
 goog.provide('diem.cloth.EdgeTracker');
+goog.provide('diem.cloth.PhysicalEdge');
 
-diem.cloth.EdgeTracker = function(geometry) {
+goog.require('diem.tools.SeamTool');
+
+diem.cloth.EdgeTracker = function(geometry, workboardMesh) {
   this.geometry_ = geometry;
+  this.corners_ = [];
   this.edges_ = {};
   for (let i = 0; i < geometry.faces.length; ++i) {
     var face = geometry.faces[i];
     this.addEdge_(face.a, face.b);
     this.addEdge_(face.b, face.c);
     this.addEdge_(face.a, face.c);
+  }
+
+  var offset = workboardMesh.position;
+  var curves = workboardMesh.shape.curves;
+  for (let i = 0; i < curves.length; ++i) {
+    var curve = curves[i];
+    this.corners_.push(curve.v0.clone().add(offset));
   }
 };
 
@@ -25,11 +36,10 @@ diem.cloth.EdgeTracker.prototype.addEdge_ = function(a, b) {
 };
 
 // Find the outside edges of the geometry.
-// For outside edges, the edge will only have one face attached.
 diem.cloth.EdgeTracker.prototype.getOutsideEdge = function() {
-  var idxSet = goog.structs.Set();
   var segments = {};
   for (let i in this.edges_) {
+    // For outside edges, the edge will only have one face attached.
     if (this.edges_[i] == 1) {
       var vertexIndexes = i.split('_');
       var vertex0 = parseInt(vertexIndexes[0]);
@@ -47,22 +57,78 @@ diem.cloth.EdgeTracker.prototype.getOutsideEdge = function() {
     }
   }
 
-  goog.asserts.assert(Object.keys(segments).length > 0);
   // Choose an arbitrary "start" vertex.
-  var first = Object.keys(segments)[0];
-  var prev = null;
-  var current = first;
+  goog.asserts.assert(Object.keys(segments).length > 0);
+  var current = Object.keys(segments)[0];
   var next = segments[current][0];
-  var geometry = new THREE.Geometry();
-  var count = 0;
-  while (next != first && count++ < 1000) {
-    geometry.vertices.push(this.geometry_.vertices[current]);
-    var tmp = current;
+
+  // Find the first corner.
+  var lastCorner = this.getCorner_(current);
+  var first = current;
+  while (lastCorner == null) {
+    lastCorner = this.getCorner_(current);
+    first = current;
+    let tmp = current;
     current = next;
-    var options = segments[current];
+    let options = segments[current];
     next = options[0] == tmp ? options[1] : options[0];
   }
 
+  // Travel around the edge, finding corners.
+  var lines = [];
+  var geometry = new THREE.Geometry();
+  while (next != first) {
+    geometry.vertices.push(this.geometry_.vertices[current]);
+    let tmp = current;
+    current = next;
+    let options = segments[current];
+    next = options[0] == tmp ? options[1] : options[0];
+    var currentCorner = this.getCorner_(current);
+    if (currentCorner != null && currentCorner != lastCorner) {
+      lastCorner = currentCorner;
+      geometry.vertices.push(this.geometry_.vertices[current]);
+      lines.push(new diem.cloth.PhysicalEdge(geometry));
+      geometry = new THREE.Geometry();
+    }
+  }
+  return lines;
+};
+
+diem.cloth.EdgeTracker.prototype.getCorner_ = function(idx) {
+  var EPSILON = .1;
+  for (let i = 0; i < this.corners_.length; ++i) {
+    if (this.geometry_.vertices[idx].distanceTo(this.corners_[i]) < EPSILON) {
+      return this.corners_[i];
+    }
+  }
+  return null;
+};
+
+diem.cloth.PhysicalEdge = function(geometry) {
   var material = new THREE.LineBasicMaterial({color : 0x000000, linewidth: 4});
-  return new THREE.Line(geometry, material);
+  this.mesh_ = new THREE.Line(geometry, material);
+};
+
+goog.inherits(diem.cloth.PhysicalEdge, diem.MeshWrapper);
+
+/**
+ * @override
+ */
+diem.cloth.PhysicalEdge.prototype.getIntersectables = function() {
+  return [
+    diem.tools.SeamTool.createIntersectable(diem.events.CLICKABLE, this),
+  ];
+};
+
+diem.cloth.PhysicalEdge.prototype.simulate = function() {
+  this.mesh_.geometry.verticesNeedUpdate = true;
+  this.mesh_.geometry.boundingSphere = null;
+};
+
+/**
+ * @returns {Array}
+ */
+diem.cloth.PhysicalEdge.prototype.selectForSeaming = function() {
+  this.mesh_.material.color.set(0xff0000);
+  return [];
 };

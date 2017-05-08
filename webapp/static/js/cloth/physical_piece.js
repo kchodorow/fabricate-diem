@@ -12,7 +12,6 @@ goog.require('diem.events');
 goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.MovePiece');
-goog.require('diem.tools.SeamTool');
 
 /**
  * This is basically a workboard piece with constraints between the nodes.
@@ -37,8 +36,8 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.mesh_.castShadow = true;
   this.mesh_.receiveShadow = true;
   this.mesh_.name = "pp" + this.id_;
-  var tracker = new diem.cloth.EdgeTracker(this.mesh_.geometry);
-  this.edge_ = tracker.getOutsideEdge();
+  var tracker = new diem.cloth.EdgeTracker(this.mesh_.geometry, piece);
+  this.edges_ = tracker.getOutsideEdge();
 
   this.createSoftBody_();
   this.geometryMapper_ = new diem.cloth.GeometryMapper(
@@ -237,11 +236,14 @@ diem.cloth.PhysicalPiece.prototype.createAmmoArrays_ = function() {
  * @override
  */
 diem.cloth.PhysicalPiece.prototype.getIntersectables = function() {
-  return [
+  var intersects = [
     diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this),
-    diem.tools.SeamTool.createIntersectable(diem.events.CLICKABLE, this),
     diem.tools.DragPiece.createIntersectable(diem.events.DRAGGABLE, this)
   ];
+  for (var i = 0; i < this.edges_.length; ++i) {
+    intersects = intersects.concat(this.edges_[i].getIntersectables());
+  }
+  return intersects;
 };
 
 /**
@@ -286,18 +288,12 @@ diem.cloth.PhysicalPiece.prototype.simulate = function() {
     meshPos.z = pinPos.z;
   }
 
-  this.edge_.geometry.verticesNeedUpdate = true;
+  for (i = 0; i < this.edges_.length; ++i) {
+    this.edges_[i].simulate();
+  }
   geometry.verticesNeedUpdate = true;
   geometry.normalsNeedUpdate = true;
   this.mesh_.geometry.boundingSphere = null;
-};
-
-/**
- * @returns {Array}
- */
-diem.cloth.PhysicalPiece.prototype.selectForSeaming = function() {
-  this.edge_.material.color.set(0xff0000);
-  return [];
 };
 
 /**
@@ -344,7 +340,9 @@ diem.cloth.PhysicalPiece.prototype.dragFromWorkboard = function(intersection) {
  */
 diem.cloth.PhysicalPiece.prototype.addToParent = function(parent) {
   parent.add(this.mesh_);
-  parent.add(this.edge_);
+  for (let i = 0; i < this.edges_.length; ++i) {
+    this.edges_[i].addToParent(parent);
+  }
 };
 
 /**

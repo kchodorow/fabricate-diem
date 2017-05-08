@@ -17,7 +17,7 @@ goog.require('goog.fx.Dragger');
 diem.EventHandler = function(camera, toolManager, person) {
   this.camera_ = camera;
   this.raycaster_ = new THREE.Raycaster();
-  this.raycaster_.linePrecision = 1;
+  this.raycaster_.linePrecision = 3;
   this.toolManager_ = toolManager;
   this.person_ = person;
 
