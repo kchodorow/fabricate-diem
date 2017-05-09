@@ -125,10 +125,27 @@ diem.cloth.PhysicalEdge.prototype.simulate = function() {
   this.mesh_.geometry.boundingSphere = null;
 };
 
+diem.cloth.PhysicalEdge.prototype.getLength = function() {
+  var total = 0;
+  var vertices = this.mesh_.geometry.vertices;
+  for (var i = 0; i < vertices.length - 1; ++i) {
+    total += vertices[i].distanceTo(vertices[i + 1]);
+  }
+  return total;
+};
+
 /**
+ * onClick handler for seam selection tool.
  * @returns {Array}
  */
-diem.cloth.PhysicalEdge.prototype.selectForSeaming = function() {
-  this.mesh_.material.color.set(0xff0000);
+diem.cloth.PhysicalEdge.prototype.selectForSeaming = function(currentSeam) {
+  this.selected_ = !this.selected_;
+  if (this.selected_) {
+    this.mesh_.material.color.set(0xff0000);
+    currentSeam.push(this);
+  } else {
+    this.mesh_.material.color.set(0x000000);
+    currentSeam.splice(currentSeam.indexOf(this), 1);
+  }
   return [];
 };

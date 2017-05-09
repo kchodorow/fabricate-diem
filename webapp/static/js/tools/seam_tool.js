@@ -1,6 +1,7 @@
 goog.provide('diem.tools.SeamTool');
 
 goog.require('diem.Button');
+goog.require('diem.cloth.Seam');
 goog.require('diem.tools.Tool');
 goog.require('goog.asserts');
 goog.require('goog.events.KeyCodes');
@@ -57,6 +58,5 @@ diem.tools.SeamTool.createIntersectable = function(action, meshWrapper) {
  */
 diem.tools.SeamTool.prototype.onClick = function(intersections) {
   var meshWrapper = this.getMeshWrapper(intersections[0].object);
-  this.currentSeam_.push(meshWrapper);
-  return meshWrapper.selectForSeaming();
+  return meshWrapper.selectForSeaming(this.currentSeam_);
 };
