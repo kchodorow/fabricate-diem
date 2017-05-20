@@ -13,6 +13,7 @@ filegroup(
         "bootstrap.min.js",
         "jquery-3.1.1.min.js",
         "three.js",
+        "//third_party/ammo.js",
     ],
     visibility = ["//webapp/static/js:__subpackages__"],
 )
