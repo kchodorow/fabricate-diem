@@ -194,9 +194,13 @@ diem.cloth.PhysicalPiece.prototype.shiftNodes = function(diff) {
   for (var j = 0; j < nodes.size(); ++j) {
     var node = nodes.at(j);
     var nodePos = node.get_m_x();
-    nodePos.setX(nodePos.x() + diff.x);
-    nodePos.setY(nodePos.y() + diff.y);
-    nodePos.setZ(nodePos.z() + diff.z);
+    nodePos.setX(nodePos.x() - diff.x);
+    nodePos.setY(nodePos.y() - diff.y);
+    nodePos.setZ(nodePos.z() - diff.z);
+    var prevPos = node.get_m_q();
+    prevPos.setX(prevPos.x() - diff.x);
+    prevPos.setY(prevPos.y() - diff.y);
+    prevPos.setZ(prevPos.z() - diff.z);
   }
 };
 
