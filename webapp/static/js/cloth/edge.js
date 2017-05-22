@@ -47,6 +47,7 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
   this.mesh_.name = "edge" + diem.cloth.Edge.INDEX++;
 
   this.selected_ = false;
+  this.isFold_ = false;
 };
 
 goog.inherits(diem.cloth.Edge, diem.MeshWrapper);
@@ -69,8 +70,9 @@ diem.cloth.Edge.prototype.addToParent = function(parent) {
  */
 diem.cloth.Edge.prototype.getIntersectables = function() {
   return [
-    diem.tools.AddAnchorPoint.createIntersectable(
-      diem.events.CLICKABLE, this)];
+    diem.tools.AddAnchorPoint.createIntersectable(diem.events.CLICKABLE, this),
+    diem.tools.FoldTool.createIntersectable(diem.events.CLICKABLE, this)
+  ];
 };
 
 /**
@@ -129,6 +131,44 @@ diem.cloth.Edge.prototype.onClick = function(intersects) {
   newEdge.addToParent(workboardMesh);
   diem.cloth.ControlPoint.updateWorkboardGeometry(workboardMesh);
   return newEdge.getIntersectables().concat(newAnchor.getIntersectables());
+};
+
+/*
+ * Turn this edge into the fabric's fold.
+ */
+diem.cloth.Edge.prototype.fold = function() {
+  // Check that the anchor points are not making this curved.
+  var startCp = this.startAnchor_.getClockwiseCp();
+  var endCp = this.endAnchor_.getCounterClockwiseCp();
+  if (!startCp.getObject().position.equals(
+    this.startAnchor_.getObject().position)
+      || !endCp.getObject().position.equals(
+        this.endAnchor_.getObject().position)) {
+    // TODO: make this error in some way (turn red?).
+    return [];
+  }
+
+  // Make sure there are no other folds.
+  var edges = this.mesh_.parent.shape.edges_;
+  for (let i = 0; i < edges.length; ++i) {
+    if (edges[i].isFold_) {
+      edges[i].unfold();
+    }
+  }
+
+  startCp.lock();
+  endCp.lock();
+  this.isFold_ = true;
+  this.mesh_.material.color.set(0x0000ff);
+  // TODO: add "on the fold" arrows.
+  return [];
+};
+
+diem.cloth.Edge.prototype.unfold = function() {
+  this.mesh_.material.color.set(0x000000);
+  this.startAnchor_.getClockwiseCp().unlock();
+  this.endAnchor_.getCounterClockwiseCp().unlock();
+  this.isFold_ = false;
 };
 
 /**

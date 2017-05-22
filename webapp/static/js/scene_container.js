@@ -15,6 +15,7 @@ goog.require('diem.tools.CameraTool');
 goog.require('diem.tools.Delete');
 goog.require('diem.tools.DragPiece');
 goog.require('diem.tools.FabricTool');
+goog.require('diem.tools.FoldTool');
 goog.require('diem.tools.MovePiece');
 goog.require('diem.tools.PersonTool');
 goog.require('diem.tools.RemoveAnchorPoint');
@@ -49,6 +50,7 @@ diem.SceneContainer = function() {
   this.toolManager_.registerTool(new diem.tools.MovePiece());
   this.toolManager_.registerTool(new diem.tools.RemoveAnchorPoint());
   this.toolManager_.registerTool(new diem.tools.SeamTool());
+  this.toolManager_.registerTool(new diem.tools.FoldTool());
   // TODO: it's silly to create 8 separate camera tools.
   this.toolManager_.registerTool(
     new diem.tools.CameraTool(this.camera, [goog.events.KeyCodes.LEFT]));

@@ -26,6 +26,7 @@ diem.cloth.ControlPoint = function(position, mesh) {
   // The initial drag is handled by the anchor point, since both control points
   // move.
   this.independentlyDraggable_ = true;
+  this.locked_ = false;
 };
 
 goog.inherits(diem.cloth.ControlPoint, diem.MeshWrapper);
@@ -54,6 +55,20 @@ diem.cloth.ControlPoint.prototype.getIntersectables = function() {
     diem.tools.AnchorPoint.createIntersectable(diem.events.DRAGGABLE, this),
     diem.tools.Delete.createIntersectable(diem.events.CLICKABLE, this),
   ];
+};
+
+/**
+ * When the control point is on a fold, the control point cannot be moved.
+ */
+diem.cloth.ControlPoint.prototype.lock = function() {
+  this.locked_ = true;
+};
+
+/**
+ * When the control point is on a fold, the control point cannot be moved.
+ */
+diem.cloth.ControlPoint.prototype.unlock = function() {
+  this.locked_ = false;
 };
 
 /**
@@ -97,6 +112,9 @@ diem.cloth.ControlPoint.prototype.move = function() {
  * @param {boolean} [opt_update] if the geometry should be updated (default=true).
  */
 diem.cloth.ControlPoint.prototype.moveImpl = function(opt_multiplier, opt_update) {
+  if (this.locked_) {
+    return;
+  }
   opt_multiplier = opt_multiplier || 1;
   opt_update = opt_update === undefined ? true : opt_update;
   var patternPiece = this.mesh_.parent;
