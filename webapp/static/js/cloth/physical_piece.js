@@ -161,10 +161,10 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
   softBody.randomizeConstraints();
 
   var sbConfig = softBody.get_m_cfg();
-  sbConfig.set_viterations(10);
+  sbConfig.set_viterations(0);
   sbConfig.set_piterations(10);
   // Set damping and drag coefficients.
-  sbConfig.set_kDP(.001);
+  sbConfig.set_kDP(.01);
   sbConfig.set_kDG(.001);
 
   if (this.mesh_.userData.physicsBody != null) {
