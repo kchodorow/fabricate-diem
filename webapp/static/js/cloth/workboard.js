@@ -48,6 +48,8 @@ diem.cloth.Workboard.INDEX = 0;
  */
 diem.cloth.Workboard.createNew = function(w, h) {
   var workboard = new diem.cloth.Workboard();
+  // The z-offsets need to be slightly more than the workboard's z (0), so the
+  // anchors and edges aren't hidden.
   var anchors = [
     diem.storage.Anchor.fromVector(new THREE.Vector3(0, 0, .001)),
     diem.storage.Anchor.fromVector(new THREE.Vector3(w, 0, .001)),
@@ -227,12 +229,25 @@ diem.cloth.Workboard.prototype.drag3dStart = function(intersection) {
   if (this.currentPiece_) {
     this.currentPiece_.deselect();
   }
-  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_);
+  var physicalPiece = new diem.cloth.PhysicalPiece(this.mesh_, this.getFold_());
   physicalPiece.addToParent(this.mesh_.parent);
   var pinIntersectables = physicalPiece.dragFromWorkboard(intersection);
   this.currentPiece_ = physicalPiece;
   this.mesh_.userData.physicalPieces.push(physicalPiece);
   return pinIntersectables.concat(physicalPiece.getIntersectables());
+};
+
+/**
+ * @returns {diem.cloth.Edge} the edge on the fold, or null if there is no fold.
+ */
+diem.cloth.Workboard.prototype.getFold_ = function() {
+  var edges = this.shape_['edges_'];
+  for (let i = 0; i < edges.length; ++i) {
+    if (edges[i].isFold()) {
+      return edges[i];
+    }
+  }
+  return null;
 };
 
 /**

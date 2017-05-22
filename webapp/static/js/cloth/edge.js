@@ -133,10 +133,17 @@ diem.cloth.Edge.prototype.onClick = function(intersects) {
   return newEdge.getIntersectables().concat(newAnchor.getIntersectables());
 };
 
-/*
+/**
  * Turn this edge into the fabric's fold.
+ * @returns {Array}
  */
 diem.cloth.Edge.prototype.fold = function() {
+  // If this is already a fold, just unfold it.
+  if (this.isFold_) {
+    this.unfold();
+    return [];
+  }
+
   // Check that the anchor points are not making this curved.
   var startCp = this.startAnchor_.getClockwiseCp();
   var endCp = this.endAnchor_.getCounterClockwiseCp();
@@ -164,6 +171,9 @@ diem.cloth.Edge.prototype.fold = function() {
   return [];
 };
 
+/**
+ * Unmark this edge as folded.
+ */
 diem.cloth.Edge.prototype.unfold = function() {
   this.mesh_.material.color.set(0x000000);
   this.startAnchor_.getClockwiseCp().unlock();
@@ -172,11 +182,25 @@ diem.cloth.Edge.prototype.unfold = function() {
 };
 
 /**
+ * @returns {boolean} if this is a folded edge.
+ */
+diem.cloth.Edge.prototype.isFold = function() {
+  return this.isFold_;
+};
+
+/**
  * Returns the second anchor point in the edge.
  * @returns {diem.cloth.Anchor}
  */
 diem.cloth.Edge.prototype.getEndAnchor = function() {
   return this.endAnchor_;
+};
+
+diem.cloth.Edge.prototype.getEndpoints = function() {
+  return {
+    start: this.startAnchor_.getObject().position.clone(),
+    end: this.endAnchor_.getObject().position.clone()
+  };
 };
 
 /**

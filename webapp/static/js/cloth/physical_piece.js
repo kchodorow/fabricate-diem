@@ -19,7 +19,7 @@ goog.require('diem.tools.MovePiece');
  * @constructor
  * @extends {diem.MeshWrapper}
  */
-diem.cloth.PhysicalPiece = function(piece) {
+diem.cloth.PhysicalPiece = function(piece, fold) {
   goog.base(this);
   this.id_ = diem.cloth.PhysicalPiece.pieces_.length;
   diem.cloth.PhysicalPiece.pieces_.push(this);
@@ -30,7 +30,7 @@ diem.cloth.PhysicalPiece = function(piece) {
   this.originalPosition_ = new THREE.Vector3().copy(piece.position);
   this.workboardGeometry_ = null;
 
-  var geometry = this.createGeometry_(piece.geometry);
+  var geometry = this.createGeometry_(piece.geometry, fold);
   var clothMaterial = piece.material;
   this.mesh_ = new THREE.Mesh(geometry, clothMaterial);
   this.mesh_.castShadow = true;
@@ -209,8 +209,9 @@ diem.cloth.PhysicalPiece.prototype.shiftNodes = function(diff) {
  * @returns {THREE.BufferGeometry}
  * @private
  */
-diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
+diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry, fold) {
   geometry = geometry.clone();
+  this.addFold_(geometry, fold);
   geometry.translate(this.originalPosition_.x, this.originalPosition_.y, 0);
   var subdivider = new THREE.SubdivisionModifier(3);
   subdivider.maxEdgeLength = .5;
@@ -220,6 +221,25 @@ diem.cloth.PhysicalPiece.prototype.createGeometry_ = function(geometry) {
   this.workboardGeometry_ = geometry.clone();
   return geometry;
 };
+
+diem.cloth.PhysicalPiece.prototype.addFold_ = function(geometry, fold) {
+  if (fold == null) {
+    return;
+  }
+  let foldEndpoints = fold.getEndpoints();
+  let foldAxis = new THREE.Vector2().subVectors(foldEndpoints.end, foldEndpoints.start);
+  let foldAngle = foldAxis.angle();
+  let reflectionMatrix = new THREE.Matrix4();
+  // 2D coordinate reflection.
+  reflectionMatrix.set(
+    Math.cos(2 * foldAngle), Math.sin(2 * foldAngle), 0, 0,
+    Math.sin(2 * foldAngle), -Math.cos(2 * foldAngle), 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  );
+  geometry.merge(geometry.clone(), reflectionMatrix);
+};
+
 
 /**
  * Initialize position and index arrays from this.mesh_.geometry.
@@ -487,8 +507,9 @@ diem.cloth.PhysicalPiece.prototype.delete = function() {
 
   for (var i = 0; i < this.edges_.length; ++i) {
     this.edges_[i].delete();
-    this.edges_[i] = null;
   }
+  // handleIntersectables is being called for this after deletion.
+  this.edges_ = [];
 };
 
 /**
