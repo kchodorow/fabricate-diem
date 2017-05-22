@@ -49,10 +49,10 @@ diem.cloth.Workboard.INDEX = 0;
 diem.cloth.Workboard.createNew = function(w, h) {
   var workboard = new diem.cloth.Workboard();
   var anchors = [
-    diem.storage.Anchor.fromVector(new THREE.Vector3(0, 0, 0)),
-    diem.storage.Anchor.fromVector(new THREE.Vector3(w, 0, 0)),
-    diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, 0)),
-    diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, 0))];
+    diem.storage.Anchor.fromVector(new THREE.Vector3(0, 0, .001)),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(w, 0, .001)),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(w, h, .001)),
+    diem.storage.Anchor.fromVector(new THREE.Vector3(0, h, .001))];
   var edges = diem.storage.Edge.fromAnchors(anchors);
   var material = {
     color: diem.Fabric.getRandomColor(),
@@ -126,19 +126,19 @@ diem.cloth.Workboard.prototype.initMeshes_ = function(piece) {
  */
 diem.cloth.Workboard.prototype.addToParent = function(parent) {
   parent.add(this.mesh_);
-  for (i = 0; i < this.anchors_.length; ++i) {
+  for (let i = 0; i < this.anchors_.length; ++i) {
     this.anchors_[i].addToParent(this.mesh_);
     this.shape_['edges_'][i].addToParent(this.mesh_);
   }
   var pieces = this.mesh_.userData.physicalPieces;
-  for (var i = 0; i < pieces.length; ++i) {
+  for (let i = 0; i < pieces.length; ++i) {
     var piece = pieces[i];
     piece.addToParent(parent);
     for (var j = 0; j < piece.pins().length; ++j) {
       piece.pinned_[j].addToParent(parent);
     }
   }
-  this.mesh_.position.set(0, 13.5 - (diem.cloth.Workboard.INDEX * 3.4), -.01);
+  this.mesh_.position.set(0, 13.5 - (diem.cloth.Workboard.INDEX * 3.4), 0);
 };
 
 /**

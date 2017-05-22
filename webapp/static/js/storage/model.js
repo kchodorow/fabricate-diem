@@ -154,10 +154,10 @@ diem.storage.Edge.fromAnchors = function(anchors) {
   goog.asserts.assert(anchors.length > 1);
 
   var edges = [];
-  for (var i = 1; i < anchors.length; ++i) {
+  for (var i = 0; i < anchors.length - 1; ++i) {
     var edge = new diem.storage.Edge();
-    edge.startAnchor = anchors[i - 1].uuid;
-    edge.endAnchor = anchors[i].uuid;
+    edge.startAnchor = anchors[i].uuid;
+    edge.endAnchor = anchors[i + 1].uuid;
     edges.push(edge);
   }
   edge = new diem.storage.Edge();
