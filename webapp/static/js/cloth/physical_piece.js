@@ -484,6 +484,11 @@ diem.cloth.PhysicalPiece.prototype.delete = function() {
   diem.Physics.get().getWorld().removeSoftBody(this.mesh_.userData.physicsBody);
   this.mesh_.userData.physicsBody = null;
   this.mesh_.parent.remove(this.mesh_);
+
+  for (var i = 0; i < this.edges_.length; ++i) {
+    this.edges_[i].delete();
+    this.edges_[i] = null;
+  }
 };
 
 /**

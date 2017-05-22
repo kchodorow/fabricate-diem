@@ -38,6 +38,13 @@ diem.MeshWrapper.prototype.addToParent = function(parent) {
 };
 
 /**
+ * Removes the mesh from its parent and does any other cleanup needed.
+ */
+diem.MeshWrapper.prototype.delete = function() {
+  this.mesh_.parent.remove(this.mesh_);
+};
+
+/**
  * @returns {boolean}
  */
 diem.MeshWrapper.prototype.isDirty = function() {
