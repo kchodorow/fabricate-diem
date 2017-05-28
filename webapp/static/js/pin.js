@@ -154,11 +154,6 @@ diem.Pin.prototype.drag3d = function(personIntersection, camera) {
   mouseToCamera.multiplyScalar(1 / diem.Pin.EPSILON * 5);
   meshPos.add(mouseToCamera);
 
-  // If this is the only pin, adjust all of the nodes so that you can "move"
-  // the 3D shape instead of "dragging" the 3D shape.
-  var diff = this.mesh_.position.sub(meshPos);
-  this.piece_.shiftNodes(diff);
-
   this.mesh_.position = meshPos;
   this.rigidBody_.getWorldTransform().setOrigin(
     new Ammo.btVector3(bodyPos.x, bodyPos.y, bodyPos.z));

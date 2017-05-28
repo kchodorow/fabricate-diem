@@ -181,30 +181,6 @@ diem.cloth.PhysicalPiece.prototype.createSoftBody_ = function() {
 };
 
 /**
- * Shifts all nodes by diff without using physics.
- * @param {THREE.Vector3} diff
- */
-diem.cloth.PhysicalPiece.prototype.shiftNodes = function(diff) {
-  if (this.pinned_.length > 1) {
-    // If there's more than one pin, apply physics normally.
-    return;
-  }
-  var softBody = this.mesh_.userData.physicsBody;
-  var nodes = softBody.get_m_nodes();
-  for (var j = 0; j < nodes.size(); ++j) {
-    var node = nodes.at(j);
-    var nodePos = node.get_m_x();
-    nodePos.setX(nodePos.x() - diff.x);
-    nodePos.setY(nodePos.y() - diff.y);
-    nodePos.setZ(nodePos.z() - diff.z);
-    var prevPos = node.get_m_q();
-    prevPos.setX(prevPos.x() - diff.x);
-    prevPos.setY(prevPos.y() - diff.y);
-    prevPos.setZ(prevPos.z() - diff.z);
-  }
-};
-
-/**
  * @param {THREE.Geometry} geometry
  * @returns {THREE.BufferGeometry}
  * @private

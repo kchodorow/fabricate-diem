@@ -82,6 +82,9 @@ diem.EventHandler.prototype.updateMouseCoordinates_ = function(x, y) {
   var distance = -this.camera_.position.z / dir.z;
   diem.Globals.mouse = this.camera_.position.clone().add(dir.multiplyScalar(distance));
   diem.Globals.raycaster.setFromCamera(diem.Globals.mouse, this.camera_);
+  // z ends up being ~5, which makes the dragged fabric much closer to the
+  // camera than desired.
+  diem.Globals.z = 0;
 };
 
 /**
