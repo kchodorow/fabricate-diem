@@ -71,7 +71,6 @@ diem.SceneContainer = function() {
 
   var ground = new diem.Ground();
   ground.addToParent(this.scene);
-  this.drawAxes_();
   this.initLights_();
   var person = new diem.Person(this.scene);
   this.toolManager_.registerTool(
@@ -106,51 +105,6 @@ diem.SceneContainer.prototype.load = function(model) {
   if (model.camera != null) {
     diem.tools.CameraTool.setCameraPosition(
       this.camera, model.camera.x, model.camera.y, model.camera.z);
-  }
-};
-
-/**
- * @private
- */
-diem.SceneContainer.prototype.drawAxes_ = function() {
-  return;
-  var color = 0xACCFCC;
-  var material = new THREE.LineBasicMaterial({color : color});
-  var x = new THREE.Line();
-  var geometry1 = new THREE.Geometry();
-  geometry1.vertices.push(
-    new THREE.Vector3(-.15, -.15, 0),
-    new THREE.Vector3(.15, .15, 0)
-  );
-  var geometry2 = new THREE.Geometry();
-  geometry2.vertices.push(
-    new THREE.Vector3(-.15, .15, 0),
-    new THREE.Vector3(.15, -.15, 0)
-  );
-
-  var lineMaterial = new THREE.LineBasicMaterial({color: color, linewidth: 2});
-  var line1 = new THREE.Line(geometry1, lineMaterial);
-  var line2 = new THREE.Line(geometry2, lineMaterial);
-  var og = new THREE.CircleGeometry(.2, 8);
-  var odd = false;
-  var z = -5;
-  for (var i = -25; i < 25; i++) {
-    odd = !odd;
-    for (var j = -20; j < 20; j++) {
-      var dot = Math.abs(j) % 2 == (odd ? 1 : 0);
-      if (dot) {
-        this.scene.add(new THREE.Mesh(
-          og.clone().translate(2 * i, 2 * j, z),
-          material));
-      } else {
-        this.scene.add(new THREE.Line(
-          geometry1.clone().translate(2 * i, 2 * j, z),
-          lineMaterial));
-        this.scene.add(new THREE.Line(
-          geometry2.clone().translate(2 * i, 2 * j, z),
-          lineMaterial));
-      }
-    }
   }
 };
 
