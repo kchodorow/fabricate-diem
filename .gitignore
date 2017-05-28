@@ -1,4 +1,5 @@
 *.zip
+*.pdf
 webapp/static/js/closure_library
 bazel-*
 .bazelrc
