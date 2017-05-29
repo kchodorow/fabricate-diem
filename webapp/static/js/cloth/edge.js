@@ -48,6 +48,7 @@ diem.cloth.Edge = function(startAnchor, endAnchor) {
 
   this.selected_ = false;
   this.isFold_ = false;
+  this.foldLine_ = null;
 };
 
 goog.inherits(diem.cloth.Edge, diem.MeshWrapper);
@@ -166,16 +167,57 @@ diem.cloth.Edge.prototype.fold = function() {
   startCp.lock();
   endCp.lock();
   this.isFold_ = true;
-  this.mesh_.material.color.set(0x0000ff);
-  // TODO: add "on the fold" arrows.
+
+  this.foldLine_ = this.createFoldLine_();
+  this.mesh_.add(this.foldLine_);
   return [];
+};
+
+diem.cloth.Edge.prototype.createFoldLine_ = function() {
+  var start = this.curve_.v0.clone();
+  var end = this.curve_.v3.clone();
+  var edgeVec = end.clone().sub(start);
+  var unit = edgeVec.clone().normalize();
+  var norm = new THREE.Vector3(unit.y, unit.x, 0);
+  var bump = edgeVec.clone().multiplyScalar(.2);
+  var triangle = new THREE.Geometry();
+  triangle.vertices.push(new THREE.Vector3(0, 0, 0));
+  triangle.vertices.push(new THREE.Vector3(.25, .5, 0));
+  triangle.vertices.push(new THREE.Vector3(-.25, .5, 0));
+  triangle.faces.push(new THREE.Face3(0, 1, 2));
+  triangle.computeFaceNormals();
+  let normAngle = new THREE.Vector2(norm.x, norm.y).angle() + Math.PI/2;
+  let rotationMatrix = new THREE.Matrix4();
+  rotationMatrix.set(
+    Math.cos(normAngle), -Math.sin(normAngle), 0, 0,
+    Math.sin(normAngle), Math.cos(normAngle), 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  );
+  triangle.applyMatrix(rotationMatrix);
+  var triangleMaterial = new THREE.MeshBasicMaterial({color: 0x000000});
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(start.add(bump).clone());
+  var triangle1 = new THREE.Mesh(triangle.clone(), triangleMaterial);
+  triangle1.position.set(start.x, start.y, 0);
+  geometry.vertices.push(start.sub(norm).clone());
+  geometry.vertices.push(start.add(edgeVec.multiplyScalar(.6)).clone());
+  geometry.vertices.push(start.add(norm).clone());
+  var triangle2 = new THREE.Mesh(triangle.clone(), triangleMaterial);
+  triangle2.position.set(start.x, start.y, 0);
+
+  var material = new THREE.LineBasicMaterial({color: 0x000000});
+  var foldLine = new THREE.Line(geometry, material);
+  foldLine.add(triangle1);
+  foldLine.add(triangle2);
+  return foldLine;
 };
 
 /**
  * Unmark this edge as folded.
  */
 diem.cloth.Edge.prototype.unfold = function() {
-  this.mesh_.material.color.set(0x000000);
+  this.mesh_.remove(this.foldLine_);
   this.startAnchor_.getClockwiseCp().unlock();
   this.endAnchor_.getCounterClockwiseCp().unlock();
   this.isFold_ = false;
