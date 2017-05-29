@@ -65,6 +65,7 @@ diem.cloth.EdgeTracker.prototype.getOutsideEdge = function() {
   // Find the first corner.
   var lastCorner = this.getCorner_(current);
   var first = current;
+  // TODO: add a condition to exit if no match is found.
   while (lastCorner == null) {
     lastCorner = this.getCorner_(current);
     first = current;

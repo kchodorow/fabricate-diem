@@ -361,7 +361,7 @@ diem.cloth.PhysicalPiece.prototype.dragFromWorkboard = function(intersection) {
 diem.cloth.PhysicalPiece.prototype.addToParent = function(parent) {
   parent.add(this.mesh_);
   for (let i = 0; i < this.edges_.length; ++i) {
-    this.edges_[i].addToParent(parent);
+    this.edges_[i].addToParent(this.mesh_);
   }
 };
 
