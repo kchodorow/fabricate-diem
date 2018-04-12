@@ -2,6 +2,15 @@
   <h1>
     {{title}}
   </h1>
-  <div *ngIf="user">{{ user.username }}</div>
+  <div *ngIf="user">
+    New project
+    <div>{{ user.username }}
+      <ul>
+        <li>Projects</li>
+        <li>Profile</li>
+        <li>Log out</li>
+      </ul>
+    </div>
+  </div>
   <div *ngIf="!user">Login</div>
 </div>
