@@ -3,13 +3,14 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
-import { AppComponent } from './app.component';
-import { EditorComponent } from './editor/editor.component';
-import { HeaderComponent } from './header/header.component';
-import { InMemoryDataService }  from './in-memory-data.service';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { UserService } from './user.service';
-import { HistoryComponent } from './history/history.component';
+import { AppComponent } from 'app/app.component';
+import { EditorComponent } from 'app/editor/editor.component';
+import { HeaderComponent } from 'app/header/header.component';
+import { HistoryComponent } from 'app/history/history.component';
+import { InMemoryDataService }  from 'app/in-memory-data.service';
+import { SidebarComponent } from 'app/sidebar/sidebar.component';
+import { ToolService } from 'app/tools/tool.service';
+import { UserService } from 'app/user.service';
 
 
 @NgModule({
@@ -27,7 +28,10 @@ import { HistoryComponent } from './history/history.component';
       InMemoryDataService, { dataEncapsulation: false }
     )
   ],
-  providers: [UserService],
+  providers: [
+    UserService,
+    ToolService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

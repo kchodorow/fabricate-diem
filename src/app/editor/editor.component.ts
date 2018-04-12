@@ -9,7 +9,7 @@ import * as THREE from 'three';
 export class EditorComponent implements OnInit {
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
 
-  renderer: THREE.Renderer = new THREE.WebGLRenderer();
+  renderer: THREE.Renderer = new THREE.WebGLRenderer({ alpha: true });
   scene: THREE.Scene = new THREE.Scene();
   camera: THREE.Camera;
   mesh: THREE.Mesh;
@@ -18,10 +18,14 @@ export class EditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-    this.camera.position.z = 1000;
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const geometry = new THREE.BoxGeometry(200, 200, 200);
+    this.camera = new THREE.PerspectiveCamera(
+      75, window.innerWidth / window.innerHeight, 0.1, 50);
+    this.camera.position.set(0, 10, 10);
+    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    const geometry = new THREE.BoxGeometry(5, 5, 5);
     const material = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
     this.mesh = new THREE.Mesh(geometry, material);
 

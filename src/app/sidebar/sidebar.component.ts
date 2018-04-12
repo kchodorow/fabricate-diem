@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ToolService } from 'app/tools/tool.service';
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -7,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SidebarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private toolService: ToolService) { }
 
   ngOnInit() {
+  }
+
+  setTool(toolName: string) {
+    this.toolService.setTool(toolName);
   }
 
 }
