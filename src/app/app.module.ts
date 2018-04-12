@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { InMemoryDataService }  from './in-memory-data.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { UserService } from './user.service';
+import { HistoryComponent } from './history/history.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { UserService } from './user.service';
     AppComponent,
     HeaderComponent,
     SidebarComponent,
-    EditorComponent
+    EditorComponent,
+    HistoryComponent
   ],
   imports: [
     BrowserModule,
