@@ -1,6 +1,16 @@
+import { Injectable } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs/observable/of'
 
+import { UserService } from 'app/user.service';
 import { HeaderComponent } from './header.component';
+
+@Injectable()
+class FakeUserService {
+  getUser() {
+    return of(null);
+  }
+}
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -8,7 +18,10 @@ describe('HeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ]
+      declarations: [ HeaderComponent ],
+      providers: [
+        { provide: UserService, useClass: FakeUserService },
+      ]
     })
     .compileComponents();
   }));
