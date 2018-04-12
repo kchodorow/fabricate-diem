@@ -1,7 +1,6 @@
 java_library(
     name = "pattern",
     srcs = [
-        "AnchorPoint.java",
         "CuttingLine.java",
         "InvalidPatternPieceException.java",
         "SewingPattern.java",

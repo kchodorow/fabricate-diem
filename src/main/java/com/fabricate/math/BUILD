@@ -1,6 +1,10 @@
 java_library(
     name = "math",
-    srcs = ["Vector2.java"],
+    srcs = [
+        "AnchorPoint.java",
+        "BezierCurve.java",
+        "Vector2.java",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "@auto_value//:jar",

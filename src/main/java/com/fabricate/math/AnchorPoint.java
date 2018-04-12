@@ -1,6 +1,5 @@
-package com.fabricate.pattern;
+package com.fabricate.math;
 
-import com.fabricate.math.Vector2;
 import com.google.common.annotations.VisibleForTesting;
 
 public class AnchorPoint {

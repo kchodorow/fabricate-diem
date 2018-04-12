@@ -1,5 +1,6 @@
 package com.fabricate.pattern;
 
+import com.fabricate.math.AnchorPoint;
 import com.fabricate.math.Vector2;
 import com.google.common.collect.Sets;
 
