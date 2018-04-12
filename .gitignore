@@ -3,3 +3,5 @@
 webapp/static/js/closure_library
 bazel-*
 .bazelrc
+node_modules
+
