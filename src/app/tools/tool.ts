@@ -1,13 +1,15 @@
 export class Tool {
-  name: string;
+  key: string;
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(key: string) {
+    this.key = key;
   }
 
   // Bindings for when the tool is deselected.
-  disable() {}
+  disable() {
+  }
 
   // Bindings for when the tool is selected.
-  enable() {}
+  enable() {
+  }
 }

@@ -1,4 +1,4 @@
 import { Tool } from 'app/tools/tool';
 
-export class Add extends Tool {
+export class Remove extends Tool {
 }

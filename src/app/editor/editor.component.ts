@@ -38,6 +38,10 @@ export class EditorComponent implements OnInit {
     this.animate();
   }
 
+  onClick(event) {
+    console.log('clicked!');
+  }
+
   animate() {
     window.requestAnimationFrame(() => this.animate());
     this.mesh.rotation.x += 0.01;
