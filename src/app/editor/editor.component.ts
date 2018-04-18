@@ -4,7 +4,7 @@ import * as THREE from 'three';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  styleUrls: ['./editor.component.css']
+  styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit {
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
