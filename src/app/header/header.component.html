@@ -1,16 +1,30 @@
-<div>
-  <h1>
-    {{title}}
-  </h1>
-  <div *ngIf="user">
-    New project
-    <div>{{ user.username }}
-      <ul>
-        <li>Projects</li>
-        <li>Profile</li>
-        <li>Log out</li>
+<nav class="navbar navbar-expand-lg">
+  <a class="navbar-brand" href="/">Fabricate</a>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div *ngIf="user">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">New project</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"   aria-haspopup="true" aria-expanded="false">
+          {{ user.username }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Projects</a>
+            <a class="dropdown-item" href="#">Profile</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Log out</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="!user">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Login</a>
+        </li>
       </ul>
     </div>
   </div>
-  <div *ngIf="!user">Login</div>
-</div>
+</nav>
